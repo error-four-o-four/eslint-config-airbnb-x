@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url';
 
 const prettierConfig = JSON.parse(
 	fs.readFileSync(
-		fileURLToPath(new URL('../../prettier/index.json', import.meta.url))
+		fileURLToPath(new URL('../.prettierrc.json', import.meta.url))
 	)
 );
 
