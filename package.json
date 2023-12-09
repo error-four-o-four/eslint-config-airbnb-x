@@ -1,0 +1,38 @@
+{
+	"name": "@custom-bits/eslint-config-airbnb-flat",
+	"type": "module",
+	"version": "0.0.0",
+	"description": "Unofficial port of eslint airbnb styleguide to eslint-flat-config",
+	"author": "error-four-o-four",
+	"license": "MIT",
+	"keywords": [
+		"eslint",
+		"eslint-config",
+		"eslint-flat-config",
+		"airbnb",
+		"styleguide",
+		"unofficial"
+	],
+	"exports": {
+		".": {
+			"default": "./src/index.js"
+		}
+	},
+	"engines": {
+		"node": ">=18"
+	},
+	"scripts": {
+		"write": "node ./scripts/writeConfigs.js"
+	},
+	"dependencies": {
+		"@stylistic/eslint-plugin": "^1.5.0",
+		"eslint": "^8.55.0",
+		"eslint-plugin-i": "^2.29.0",
+		"eslint-plugin-n": "^16.3.1"
+	},
+	"devDependencies": {
+		"@eslint/eslintrc": "^2.1.4",
+		"eslint-config-airbnb-base": "^15.0.0",
+		"prettier": "^3.1.0"
+	}
+}
