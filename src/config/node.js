@@ -8,7 +8,7 @@ const rules = Object.entries({
 	'callback-return': 'off',
 	'global-require': 'error',
 	'handle-callback-err': 'off',
-	'no-buffer-constructor': 'error',
+	// 'no-buffer-constructor': 'error',
 	'no-mixed-requires': ['off', false],
 	'no-new-require': 'error',
 	'no-path-concat': 'error',
@@ -16,14 +16,14 @@ const rules = Object.entries({
 	'no-process-exit': 'off',
 	'no-restricted-modules': 'off',
 	'no-sync': 'off',
-}).reduce((all, [rule, value]) =>
+}).reduce((all, rule) =>
 	Object.assign(
 		all,
 		{
-			[`${name}/${rule}`]: value,
-		},
+			[`${name}/${rule[0]}`]: rule[1],
+		}
+		),
 		{}
-	)
 );
 
 // Rules generated with script
