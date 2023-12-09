@@ -1,4 +1,5 @@
 import * as pluginImport from 'eslint-plugin-i';
+
 import compatImport from './_imports.js';
 
 /** @type {import('eslint').Linter.FlatConfig} */
@@ -8,10 +9,15 @@ export default {
 		import: pluginImport,
 	},
 	languageOptions: {
+		// parser: espree,
 		ecmaVersion: 2022,
 		sourceType: 'module',
 	},
 	settings: compatImport.settings,
+	// settings: {
+	// 	...compatImport.settings,
+	// 	'import/parser': 'espree',
+	// },
 	rules: {
 		// https://github.com/import-js/eslint-plugin-import/blob/main/README.md#helpful-warnings
 		'import/export': 'error',

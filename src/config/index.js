@@ -19,16 +19,16 @@ const all = [
 	variables,
 ];
 
-export default {
-	configs: {
-		all,
-		bestPractice,
-		errors,
-		es6,
-		imports,
-		node,
-		strict,
-		style,
-		variables,
-	},
-};
+const configs = {
+	all,
+	bestPractice,
+	errors,
+	es6,
+	imports,
+	node,
+	strict,
+	style,
+	variables,
+}
+
+export default configs
