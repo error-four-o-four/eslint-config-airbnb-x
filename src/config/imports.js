@@ -9,19 +9,27 @@ export default {
 		import: pluginImport,
 	},
 	languageOptions: {
-		// parser: espree,
 		ecmaVersion: 2022,
 		sourceType: 'module',
+		parserOptions: {
+			sourceType: 'module',
+			ecmaVersion: 2022,
+			ecmaFeatures: {
+				jsx: 'preserve'
+			}
+		}
 	},
-	settings: compatImport.settings,
-	// settings: {
-	// 	...compatImport.settings,
-	// 	'import/parser': 'espree',
-	// },
+	settings: {
+		...compatImport.settings,
+		'import/parsers': {
+      'espree': ['.mjs', '.js', '.json'],
+    },
+	},
 	rules: {
 		// https://github.com/import-js/eslint-plugin-import/blob/main/README.md#helpful-warnings
 		'import/export': 'error',
 		'import/no-deprecated': 'off',
+		'import/no-empty-named-blocks': 'off', // added
 		'import/no-extraneous-dependencies': [
 			'error',
 			{
@@ -105,8 +113,7 @@ export default {
 		],
 		'import/first': 'error',
 		'import/group-exports': 'off',
-		// deprecated
-		// 'import/imports-first': 'off',
+		// 'import/imports-first': 'off', // deprecated
 		'import/max-dependencies': ['off', { max: 10 }],
 		'import/newline-after-import': 'error',
 		'import/no-anonymous-default-export': [

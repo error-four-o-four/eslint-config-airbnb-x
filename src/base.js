@@ -15,12 +15,16 @@ import configs from './config/index.js';
 const defineBaseConfig = (overrides = []) => [
 	configs.bestPractice,
 	configs.errors,
-	// configs.es6, // temporary removed due to missing spread syntax
-	// configs.imports,
 	configs.node,
-	configs.strict,
 	configs.style,
 	configs.variables,
+	{
+		// omit languageOptions
+		name: configs.es6.name,
+		rules: configs.es6.rules
+	},
+	configs.imports,
+	configs.strict,
 	...overrides
 ]
 
