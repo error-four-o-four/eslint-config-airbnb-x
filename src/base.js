@@ -1,11 +1,9 @@
-import configs from './config/index.js';
+import parser from '@typescript-eslint/parser';
 
-// /**
-//  *
-//  * @param {import('eslint').Linter.FlatConfig[]} overrides
-//  * @returns {import('eslint').Linter.FlatConfig[]}
-//  */
-// const defineBaseConfig = (overrides = []) => [...configs.all, ...overrides]
+import rules from './rules.js';
+
+import { pluginNames, plugins } from './plugins.js';
+import { baseOptions, baseSettings } from './options.js';
 
 /**
  *
@@ -13,19 +11,26 @@ import configs from './config/index.js';
  * @returns {import('eslint').Linter.FlatConfig[]}
  */
 const defineBaseConfig = (overrides = []) => [
-	configs.bestPractice,
-	configs.errors,
-	configs.node,
-	configs.style,
-	configs.variables,
 	{
-		// omit languageOptions
-		name: configs.es6.name,
-		rules: configs.es6.rules
+		name: 'airbnb:setup',
+		languageOptions: {
+			// use typescript parser by default
+			// to support 'imports/exports' field in package.json
+			parser,
+			...baseOptions,
+		},
+		plugins: {
+			// import
+			[pluginNames.i]: plugins[pluginNames.i],
+			// node
+			[pluginNames.n]: plugins[pluginNames.n],
+			// stylistic
+			[pluginNames.s]: plugins[pluginNames.s],
+		},
+		settings: baseSettings,
 	},
-	configs.imports,
-	configs.strict,
-	...overrides
-]
+	...rules,
+	...overrides,
+];
 
-export default defineBaseConfig
+export default defineBaseConfig;

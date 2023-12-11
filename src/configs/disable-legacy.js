@@ -1,0 +1,31 @@
+// FILE GENERATED WITH SCRIPT
+/** @type {import('eslint').Linter.FlatConfig} */
+export default {
+	name: 'airbnb:disable-legacy',
+	rules: {
+		'no-native-reassign': 'off',
+		'no-return-await': 'off',
+		'no-negated-in-lhs': 'off',
+		'valid-jsdoc': 'off',
+		'callback-return': 'off',
+		'global-require': 'off',
+		'handle-callback-err': 'off',
+		'no-buffer-constructor': 'off',
+		'no-mixed-requires': 'off',
+		'no-new-require': 'off',
+		'no-path-concat': 'off',
+		'no-process-env': 'off',
+		'no-process-exit': 'off',
+		'no-restricted-modules': 'off',
+		'no-sync': 'off',
+		'lines-around-directive': 'off',
+		'newline-after-var': 'off',
+		'newline-before-return': 'off',
+		'no-new-object': 'off',
+		'no-spaced-func': 'off',
+		'require-jsdoc': 'off',
+		'no-catch-shadow': 'off',
+		'prefer-reflect': 'off',
+		'import/imports-first': 'off',
+	},
+};

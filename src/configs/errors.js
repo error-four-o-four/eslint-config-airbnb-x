@@ -1,4 +1,4 @@
-// Rules generated with script
+// FILE GENERATED WITH SCRIPT
 /** @type {import('eslint').Linter.FlatConfig} */
 export default {
 	name: 'airbnb:errors',
@@ -21,6 +21,18 @@ export default {
 		'no-empty-character-class': 'error',
 		'no-ex-assign': 'error',
 		'no-extra-boolean-cast': 'error',
+		'no-extra-parens': [
+			'off',
+			'all',
+			{
+				conditionalAssign: true,
+				nestedBinaryExpressions: false,
+				returnAssign: false,
+				ignoreJSX: 'all',
+				enforceForArrowConditionals: false,
+			},
+		],
+		'no-extra-semi': 'error',
 		'no-func-assign': 'error',
 		'no-import-assign': 'error',
 		'no-inner-declarations': 'error',
@@ -46,8 +58,10 @@ export default {
 		],
 		'no-unused-private-class-members': 'off',
 		'no-useless-backreference': 'error',
+		'no-negated-in-lhs': 'off',
 		'require-atomic-updates': 'off',
 		'use-isnan': 'error',
+		'valid-jsdoc': 'off',
 		'valid-typeof': ['error', { requireStringLiterals: true }],
 	},
 };

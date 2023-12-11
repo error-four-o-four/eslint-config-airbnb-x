@@ -1,4 +1,4 @@
-// Rules generated with script
+// FILE GENERATED WITH SCRIPT
 /** @type {import('eslint').Linter.FlatConfig} */
 export default {
 	name: 'airbnb:es6',
@@ -18,8 +18,12 @@ export default {
 			'as-needed',
 			{ requireReturnForObjectLiteral: false },
 		],
+		'arrow-parens': ['error', 'always'],
+		'arrow-spacing': ['error', { before: true, after: true }],
 		'constructor-super': 'error',
+		'generator-star-spacing': ['error', { before: false, after: true }],
 		'no-class-assign': 'error',
+		'no-confusing-arrow': ['error', { allowParens: true }],
 		'no-const-assign': 'error',
 		'no-dupe-class-members': 'error',
 		'no-duplicate-imports': 'off',
@@ -59,10 +63,12 @@ export default {
 			{ enforceForRenamedProperties: false },
 		],
 		'prefer-numeric-literals': 'error',
+		'prefer-reflect': 'off',
 		'prefer-rest-params': 'error',
 		'prefer-spread': 'error',
 		'prefer-template': 'error',
 		'require-yield': 'error',
+		'rest-spread-spacing': ['error', 'never'],
 		'sort-imports': [
 			'off',
 			{
@@ -73,5 +79,7 @@ export default {
 			},
 		],
 		'symbol-description': 'error',
+		'template-curly-spacing': 'error',
+		'yield-star-spacing': ['error', 'after'],
 	},
 };

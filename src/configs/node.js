@@ -1,4 +1,4 @@
-// Rules generated with script
+// FILE GENERATED WITH SCRIPT
 /** @type {import('eslint').Linter.FlatConfig} */
 export default {
 	name: 'airbnb:node',
@@ -89,5 +89,14 @@ export default {
 		'no-process-exit': 'off',
 		'no-restricted-modules': 'off',
 		'no-sync': 'off',
+		'node/callback-return': 'off',
+		'node/global-require': 'error',
+		'node/handle-callback-err': 'off',
+		'node/no-mixed-requires': ['off', false],
+		'node/no-new-require': 'error',
+		'node/no-path-concat': 'error',
+		'node/no-process-env': 'off',
+		'node/no-process-exit': 'off',
+		'node/no-sync': 'off',
 	},
 };

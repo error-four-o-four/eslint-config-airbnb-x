@@ -1,4 +1,4 @@
-// Rules generated with script
+// FILE GENERATED WITH SCRIPT
 /** @type {import('eslint').Linter.FlatConfig} */
 export default {
 	name: 'airbnb:best-practices',
@@ -14,6 +14,7 @@ export default {
 		'default-case-last': 'error',
 		'default-param-last': 'error',
 		'dot-notation': ['error', { allowKeywords: true }],
+		'dot-location': ['error', 'property'],
 		eqeqeq: ['error', 'always', { null: 'ignore' }],
 		'grouped-accessor-pairs': 'error',
 		'guard-for-in': 'error',
@@ -35,7 +36,9 @@ export default {
 		'no-extra-bind': 'error',
 		'no-extra-label': 'error',
 		'no-fallthrough': 'error',
+		'no-floating-decimal': 'error',
 		'no-global-assign': ['error', { exceptions: [] }],
+		'no-native-reassign': 'off',
 		'no-implicit-coercion': [
 			'off',
 			{ boolean: false, number: true, string: true, allow: [] },
@@ -56,6 +59,7 @@ export default {
 				detectObjects: false,
 			},
 		],
+		'no-multi-spaces': ['error', { ignoreEOLComments: false }],
 		'no-multi-str': 'error',
 		'no-new': 'error',
 		'no-new-func': 'error',
@@ -136,6 +140,7 @@ export default {
 			},
 		],
 		'no-return-assign': ['error', 'always'],
+		'no-return-await': 'error',
 		'no-script-url': 'error',
 		'no-self-assign': ['error', { props: true }],
 		'no-self-compare': 'error',
@@ -169,6 +174,7 @@ export default {
 		'require-await': 'off',
 		'require-unicode-regexp': 'off',
 		'vars-on-top': 'error',
+		'wrap-iife': ['error', 'outside', { functionPrototypeMethods: false }],
 		yoda: 'error',
 	},
 };
