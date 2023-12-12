@@ -2,9 +2,21 @@ import { Linter } from 'eslint';
 
 import { pluginNames, plugins } from '../src/setup/plugins.js';
 
-const rulesImport = plugins[pluginNames.i].rules;
+const rulesImport = plugins[pluginNames.import].rules;
+// const rulesNode = plugins[pluginNames.node].rules;
+// const rulesTs = plugins[pluginNames.typescript].rules;
 
 const rulesEslint = new Linter().getRules();
+
+/**
+ * @typedef {Object} LegacyRule
+ * @property {string} name
+ * @property {import('eslint').Linter.RuleEntry<any[]>} value
+ * @property {string} config
+ * @property {string} plugin
+ * @property {string[] | undefined} replacedBy
+ * @property {string | undefined} url
+ */
 
 /**
  *
@@ -23,46 +35,15 @@ export const findRawRule = (name) => {
 };
 
 /**
- * @param {string} configName
- * @param {import('./utils.js').CustomConfig} configData
- * @returns {null | [ string[], import('./utils.js').CustomRule[] ]}
- */
-export const createDeprecatedRules = (configName, configData) => {
-	// store the names of all deprecated rules seperately
-	// to access them faster
-	const names = [];
-	// create a dict of the deprecated rules
-	const rules = {};
-
-	Object.keys(configData.rules).forEach((name) => {
-		const rule = findRawRule(name);
-
-		if (rule && rule.meta.deprecated) {
-			names.push(name);
-			rules[name] = rule;
-		}
-	});
-
-	if (names.length === 0 || rules.length === 0) {
-		return null;
-	}
-
-	console.log(`deprecated in ${configName}`);
-	console.log(names);
-
-	return [names, rules];
-};
-
-/**
  *
  * @param {string} ruleName
  * @returns {string}
  */
 export const findReplacedIn = (ruleName) => {
 	const map = {
-		[pluginNames.i]: Object.keys(plugins[pluginNames.i].rules),
-		[pluginNames.n]: Object.keys(plugins[pluginNames.n].rules),
-		[pluginNames.s]: Object.keys(plugins[pluginNames.s].rules),
+		[pluginNames.import]: Object.keys(plugins[pluginNames.import].rules),
+		[pluginNames.node]: Object.keys(plugins[pluginNames.node].rules),
+		[pluginNames.stylistic]: Object.keys(plugins[pluginNames.stylistic].rules),
 	};
 
 	const pluginName = Object.entries(map).reduce(
@@ -79,45 +60,60 @@ export const findReplacedIn = (ruleName) => {
 	return pluginName;
 };
 
-// /**
-//  *
-//  * @param {import('./utils.js').CustomConfig} config
-//  * @returns {import('./utils.js').CustomConfig}
-//  */
-// const replaceDeprecated = (config) => {
-// 	// use an array to sort the rules alphabetically
-// 	let entries = [];
+// export const getPluginsLegacy = () => {
+// 	let legacy = [];
 
-// 	console.log(config.name);
-
-// 	Object.entries(config.rules).forEach(([name, value]) => {
-// 		if (deprecated.keys.includes(name)) {
-// 			const plugin = findDeprecatedRule(name);
-
-// 			if (!plugin) {
-// 				console.log(`No replacement found for deprecated rule '${name}'`);
-// 				return;
-// 			}
-
-// 			console.log(`'${name}' found in ${plugin}`);
-// 			entries.push([`${plugin}/${name}`, value]);
-// 			return;
+// 	// node => rule.meta.deprecated
+// 	Object.entries(plugins[pluginNames.node].rules).forEach(([name, rule]) => {
+// 		if (rule.meta.deprecated) {
+// 			legacy.push(createLegacyRule(name, rule, '', pluginNames.node, rule))
 // 		}
+// 	})
 
-// 		entries.push([name, value]);
-// 	});
+// 	// ts => rule.meta.type === 'layout'
+// 	Object.entries(plugins[pluginNames.typescript].rules).forEach(([name, rule]) => {
+// 		if (rule.meta.type === 'layout') {
+// 			legacy.push(createLegacyRule(name, rule, '', pluginNames.typescript, rule))
+// 		}
+// 	})
 
-// 	entries = entries.sort((a, b) => {
-// 		const nameA = a[0].toUpperCase();
-// 		const nameB = b[0].toUpperCase();
-
-// 		return nameA < nameB ? -1 : nameA > nameB ? 1 : 0;
-// 	});
-
-// 	console.log('');
-
-// 	return {
-// 		name: config.name,
-// 		rules: Object.fromEntries(entries),
-// 	};
+// 	return legacy.sort(legacyRulesSorter).reduce((all, rule) => {}, {})
 // };
+
+/**
+ *
+ * @param {string} ruleName
+ * @param {import('eslint').Linter.RuleEntry<any[]>} ruleValue
+ * @param {string} configName
+ * @param {string} pluginName
+ * @param {import('eslint').Rule.RuleModule} rawRule
+ * @returns
+ */
+export const createLegacyRule = (
+	ruleName,
+	ruleValue,
+	configName,
+	pluginName,
+	rawRule
+) => ({
+	name: ruleName,
+	value: ruleValue,
+	config: configName,
+	plugin: pluginName,
+	replacedBy: rawRule.meta.replacedBy,
+	url: rawRule.meta.docs.url,
+});
+
+/**
+ *
+ * @param {LegacyRule} a
+ * @param {LegacyRule} b
+ * @returns {number}
+ */
+export const legacyRulesSorter = (a, b) => {
+	const nameA = a.name.toUpperCase();
+	const nameB = b.name.toUpperCase();
+
+	/* eslint-disable no-nested-ternary */
+	return nameA < nameB ? -1 : nameA > nameB ? 1 : 0;
+};

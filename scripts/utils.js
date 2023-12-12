@@ -10,6 +10,10 @@ import prettier from 'prettier';
  */
 
 /**
+ * @typedef {{[x: string]: {name: string} & import('./utils').CustomConfig}} CustomConfigDict
+ */
+
+/**
  * @typedef {import('eslint').Rule.RuleModule} CustomRule
  */
 
@@ -38,7 +42,7 @@ const compat = new FlatCompat({
 
 export const NOTICE = '// FILE GENERATED WITH SCRIPT';
 
-const prefix = 'airbnb';
+export const prefix = 'airbnb';
 
 /**
  *

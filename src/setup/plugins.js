@@ -4,17 +4,17 @@ import pluginStylistic from '@stylistic/eslint-plugin';
 import pluginTypescript from '@typescript-eslint/eslint-plugin';
 
 const keys = {
-	i: 'import',
-	n: 'node',
-	s: 'stylistic',
-	ts: 'typescript',
+	import: 'import',
+	node: 'node',
+	stylistic: 'stylistic',
+	typescript: 'typescript',
 };
 
 export { keys as pluginNames };
 
 export const plugins = {
-	[keys.i]: pluginImport,
-	[keys.n]: pluginNode,
-	[keys.s]: pluginStylistic,
-	[keys.ts]: pluginTypescript,
+	[keys.import]: pluginImport,
+	[keys.node]: pluginNode,
+	[keys.stylistic]: pluginStylistic,
+	[keys.typescript]: pluginTypescript,
 };

@@ -5,7 +5,14 @@ import { FlatCompat } from '@eslint/eslintrc';
 
 import { pluginNames } from '../src/setup/plugins.js';
 
-import { findRawRule, findReplacedIn } from './utils.deprecated.js';
+import { prefix } from './utils.js';
+
+import {
+	createLegacyRule,
+	findRawRule,
+	findReplacedIn,
+	legacyRulesSorter,
+} from './utils.deprecated.js';
 
 const filename = fileURLToPath(import.meta.url);
 const root = dirname(resolve(filename, '..'));
@@ -13,8 +20,6 @@ const root = dirname(resolve(filename, '..'));
 const compat = new FlatCompat({
 	baseDirectory: root,
 });
-
-const prefix = 'airbnb';
 
 /**
  *
@@ -27,99 +32,21 @@ const convertBaseToFlat = (name, config) =>
 		name: `${prefix}:${name}`,
 	});
 
-/**
- * @typedef {{[x: string]: {name: string} & import('./utils').CustomConfig}} CustomConfigDict
- */
-
-/**
- * @typedef {Object} DeprecatedRule
- * @property {string} name
- * @property {import('eslint').Linter.RuleEntry<any[]>} value
- * @property {string} config
- * @property {string} replacedIn
- * @property {string[] | undefined} replacedBy
- * @property {string | undefined} url
- */
-
-/**
- *
- * @param {DeprecatedRule[]} deprecated
- * @returns {import('./utils.js').CustomConfig}
- */
-const createDisableLegacyConfig = (deprecated) => {
-	const rules = deprecated
-		.filter((item) => item.replacedIn !== pluginNames.s)
-		.reduce(
-			(all, item) =>
-				Object.assign(all, {
-					[item.name]: 'off',
-				}),
-			{}
-		);
-
-	return {
-		name: 'airbnb:disable-legacy',
-		rules,
-	};
-};
-
-/**
- *
- * @param {DeprecatedRule[]} deprecated
- * @returns {import('./utils.js').CustomConfig}
- */
-const createDisableLegacyStylisticConfig = (deprecated) => {
-	const rules = deprecated
-		.filter((item) => item.replacedIn === pluginNames.s)
-		.reduce(
-			(all, item) =>
-				Object.assign(all, {
-					[item.name]: 'off',
-				}),
-			{}
-		);
-
-	return {
-		name: 'airbnb:disable-legacy-stylistic',
-		rules,
-	};
-};
-
-/**
- *
- * @param {DeprecatedRule[]} deprecated
- * @returns {import('./utils.js').CustomConfig}
- */
-const createStylisticConfig = (deprecated) => {
-	const rules = deprecated
-		.filter((item) => item.replacedIn === pluginNames.s)
-		.reduce(
-			(all, item) =>
-				Object.assign(all, {
-					[`${pluginNames.s}/${item.name}`]: item.value,
-				}),
-			{}
-		);
-
-	return {
-		name: 'airbnb:stylistic',
-		rules,
-	};
-};
+// @todo single responsibility!
 
 /**
  *
  * @param {[string, Linter.BaseConfig<Linter.RulesRecord, Linter.RulesRecord>][]} entries
- * @returns {[CustomConfigDict, DeprecatedRule[]]}
+ * @returns {[import('./utils.js').CustomConfigDict, import('./utils.deprecated.js').LegacyRule[]]}
  */
 export default (entries) => {
 	/**
-	 * @type {CustomConfigDict}
+	 * @type {import('./utils.js').CustomConfigDict}
 	 */
 	const configs = {};
 
 	/**
-	 * @type {DeprecatedRule[]}
+	 * @type {import('./utils.deprecated.js').LegacyRule[]}
 	 */
 	let legacy = [];
 
@@ -144,26 +71,29 @@ export default (entries) => {
 			}
 
 			if (rawRule && rawRule.meta.deprecated) {
-				const pluginName = findReplacedIn(ruleName);
+				const strippedRuleName = ruleName.includes('/')
+					? ruleName.split('/')[1]
+					: ruleName;
 
-				// @todo const createLegacyRule = () => {}
+				const pluginName = findReplacedIn(strippedRuleName);
+
 				// create meta
-				legacy.push({
-					name: ruleName,
-					value: ruleValue,
-					config: configName,
-					replacedIn: pluginName,
-					replacedBy: rawRule.meta.replacedBy,
-					url: rawRule.meta.docs.url,
-				});
+				const legacyRule = createLegacyRule(
+					strippedRuleName,
+					ruleValue,
+					configName,
+					pluginName,
+					rawRule
+				);
 
-				// turn off deprecated rule
-				// flatConfig.rules[ruleName] = 'off';
+				legacy.push(legacyRule);
+
+				// remove deprecated rule
 				delete flatConfig.rules[ruleName];
 
-				// set plugin scope 'import' | 'node'
-				if (pluginName && pluginName !== pluginNames.s) {
-					flatConfig.rules[`${pluginName}/${ruleName}`] = ruleValue;
+				// copy value and set plugin scope 'import' | 'node' in flatConfig
+				if (pluginName && pluginName !== pluginNames.stylistic) {
+					flatConfig.rules[`${pluginName}/${strippedRuleName}`] = ruleValue;
 				}
 			}
 		});
@@ -172,33 +102,40 @@ export default (entries) => {
 		configs[configName] = flatConfig;
 	});
 
-	// @todo refactor
-	legacy = legacy.sort((a, b) => {
-		const nameA = a.name.toUpperCase();
-		const nameB = b.name.toUpperCase();
+	legacy = legacy.sort(legacyRulesSorter);
 
-		/* eslint-disable no-nested-ternary */
-		return nameA < nameB ? -1 : nameA > nameB ? 1 : 0;
-	});
+	const legacyConfigName = 'disable-legacy';
+	const legacyConfigRules = legacy
+		.filter((rule) => rule.plugin !== pluginNames.stylistic)
+		.reduce((all, item) => {
+			const name =
+				item.plugin === pluginNames.import
+					? `${item.plugin}/${item.name}`
+					: item.name;
+			return Object.assign(all, {
+				[name]: 0,
+			});
+		}, {});
 
-	configs['disable-legacy'] = createDisableLegacyConfig(legacy);
-	configs['disable-legacy-stylistic'] =
-		createDisableLegacyStylisticConfig(legacy);
-	configs.stylistic = createStylisticConfig(legacy);
+	configs[legacyConfigName] = {
+		name: `${prefix}:${legacyConfigName}`,
+		rules: legacyConfigRules,
+	};
 
-	legacy = legacy.reduce((all, rule) => {
-		const { replacedIn } = rule;
-		const tmp = { ...all };
-		if (replacedIn) {
-			if (!tmp[replacedIn]) tmp[replacedIn] = [];
-			tmp[replacedIn].push(rule);
-		} else {
-			if (!tmp.missing) tmp.missing = [];
-			tmp.missing.push(rule);
-		}
+	const stylisticConfigRules = legacy
+		.filter((rule) => rule.plugin === pluginNames.stylistic)
+		.reduce(
+			(all, item) =>
+				Object.assign(all, {
+					[`${pluginNames.stylistic}/${item.name}`]: item.value,
+				}),
+			{}
+		);
 
-		return tmp;
-	}, {});
+	configs[pluginNames.stylistic] = {
+		name: `${prefix}:${pluginNames.stylistic}`,
+		rules: stylisticConfigRules,
+	};
 
 	return [configs, legacy];
 };

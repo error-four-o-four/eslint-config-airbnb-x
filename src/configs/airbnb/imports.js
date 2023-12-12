@@ -107,5 +107,6 @@ export default {
 		],
 		'import/no-import-module-exports': ['error', { exceptions: [] }],
 		'import/no-relative-packages': 'error',
+		'import/imports-first': 'off',
 	},
 };

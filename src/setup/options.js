@@ -1,6 +1,6 @@
 import { ECMA_VERSION, SOURCE_TYPE } from './constants.js';
 
-import configNode from '../configs/node.js';
+import configNode from '../configs/airbnb/node.js';
 
 export const baseOptions = {
 	sourceType: SOURCE_TYPE,
