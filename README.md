@@ -26,19 +26,21 @@ Typescript Example:
 
 ## Adjustments
 
-* replaced 'eslint-plugin-import' with 'eslint-plugin-i'
-* added 'eslint-plugin-n'
-* filtered and removed deprecated rules
-* added '@stylistic/eslint-plugin'
+- replaced 'eslint-plugin-import' with 'eslint-plugin-i'
+- added 'eslint-plugin-n'
+- filtered and removed deprecated rules
+- added '@stylistic/eslint-plugin'
 
 ## Todo
 
-* [x] replace plugin 'imports'
-* [x] filter deprecated 'imports' rules
-* [x] ~~'node' rules are empty~~ converted
-* [x] implement 'eslint-plugin-n'
-* [x] do something with 'es6' rules
-* [x] rewrite plugin rules ('n' => 'node', '@typescript-eslint' => 'ts')
-* [ ] support React (jsx, tsx)
-* [ ] type declerations
-* [ ] bundle (rollup (?))
+- [x] replace plugin 'imports'
+- [x] filter deprecated 'imports' rules
+- [x] ~~'node' rules are empty~~ converted
+- [x] implement 'eslint-plugin-n'
+- [ ] n/no-hide-core-modules
+- [ ] n/no-unsupported-features
+- [x] do something with 'es6' rules
+- [x] rewrite plugin rules ('n' => 'node', '@typescript-eslint' => 'ts')
+- [ ] support React (jsx, tsx)
+- [ ] type declerations
+- [ ] bundle (rollup (?))

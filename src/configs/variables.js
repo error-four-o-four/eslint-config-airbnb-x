@@ -4,7 +4,6 @@ export default {
 	name: 'airbnb:variables',
 	rules: {
 		'init-declarations': 'off',
-		'no-catch-shadow': 'off',
 		'no-delete-var': 'error',
 		'no-label-var': 'error',
 		'no-restricted-globals': [

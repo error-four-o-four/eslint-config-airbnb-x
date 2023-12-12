@@ -2,8 +2,8 @@ import parser from '@typescript-eslint/parser';
 
 import rules from './rules.js';
 
-import { pluginNames, plugins } from './plugins.js';
-import { baseOptions, baseSettings } from './options.js';
+import { pluginNames, plugins } from './setup/plugins.js';
+import { baseOptions, baseSettings } from './setup/options.js';
 
 /**
  *

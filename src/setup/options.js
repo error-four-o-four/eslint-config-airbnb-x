@@ -1,5 +1,7 @@
 import { ECMA_VERSION, SOURCE_TYPE } from './constants.js';
 
+import configNode from '../configs/node.js';
+
 export const baseOptions = {
 	sourceType: SOURCE_TYPE,
 	ecmaVersion: ECMA_VERSION,
@@ -12,6 +14,10 @@ export const baseOptions = {
 	},
 };
 
+export const globalsNode = {
+	globals: configNode.languageOptions.globals,
+};
+
 /** @type {import('eslint').Linter.FlatConfig.settings} */
 export const baseSettings = {
 	'import/core-modules': [],
@@ -21,5 +27,8 @@ export const baseSettings = {
 	'import/parsers': {
 		'@typescript-eslint/parser': ['.mjs', '.js'],
 	},
-	'import/resolver': { node: { extensions: ['.mjs', '.js', '.json'] } },
+	'import/resolver': {
+		node: { extensions: ['.mjs', '.js', '.json'] },
+		typescript: {},
+	},
 };

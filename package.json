@@ -30,10 +30,12 @@
 		"write:deprecated": "node ./scripts/writeDeprecated.js",
 		"write:ts": "node ./scripts/writeTypescript.js",
 		"prettier:check": "prettier . --check --ignore-unknown",
+		"prettier": "prettier . --write --ignore-unknown",
 		"lint:check": "eslint ."
 	},
 	"dependencies": {
-		"eslint": "^8.55.0"
+		"eslint": "^8.55.0",
+		"eslint-import-resolver-typescript": "^3.6.1"
 	},
 	"peerDependencies": {
 		"@stylistic/eslint-plugin": "^1.5.0",
