@@ -2,7 +2,7 @@
 	"name": "@custom-bits/eslint-config-airbnb-flat",
 	"type": "module",
 	"version": "0.0.0",
-	"description": "Unofficial port of eslint airbnb styleguide to eslint-flat-config",
+	"description": "Unofficial port of airbnb styleguide eslintrc files to flat config file format",
 	"author": "error-four-o-four",
 	"license": "MIT",
 	"keywords": [
@@ -13,12 +13,18 @@
 		"styleguide",
 		"unofficial"
 	],
+	"files": [
+		"src"
+	],
 	"exports": {
-		".": {
+		"./base": {
 			"default": "./src/base.js"
 		},
+		"./stylistic": {
+			"default": "./src/stylistic.js"
+		},
 		"./compat": {
-			"default": "./src/configs/index.js"
+			"import": "./src/configs/airbnb/index.js"
 		}
 	},
 	"engines": {
@@ -31,15 +37,13 @@
 		"lint:check": "eslint .",
 		"lint": "eslint . --fix"
 	},
-	"dependencies": {
-		"@stylistic/eslint-plugin-js": "^1.5.1",
-		"eslint": "^8.55.0",
-		"eslint-import-resolver-typescript": "^3.6.1"
-	},
 	"peerDependencies": {
 		"@stylistic/eslint-plugin": "^1.5.0",
+		"@stylistic/eslint-plugin-js": "^1.5.1",
 		"@typescript-eslint/eslint-plugin": "^6.13.2",
 		"@typescript-eslint/parser": "^6.13.2",
+		"eslint": "^8.55.0",
+		"eslint-import-resolver-typescript": "^3.6.1",
 		"eslint-plugin-i": "^2.29.0",
 		"eslint-plugin-n": "^16.3.1"
 	},

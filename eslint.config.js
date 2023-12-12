@@ -4,7 +4,7 @@ import defineBaseConfig from './src/base.js';
 const message = 'linting ...';
 console.log(`\u001b[33m${message}\u001b[0m`);
 
-export default defineBaseConfig([
+export default defineBaseConfig(
 	{
 		name: 'custom:prettier',
 		plugins: {
@@ -33,5 +33,5 @@ export default defineBaseConfig([
 			'no-use-before-define': 0,
 			'import/no-extraneous-dependencies': 0,
 		},
-	},
-]);
+	}
+);

@@ -22,24 +22,22 @@ const configs = [
  * @param {import('eslint').Linter.FlatConfig[]} overrides
  * @returns {import('eslint').Linter.FlatConfig[]}
  */
-export default (overrides = []) => [
-	{
-		name: 'airbnb:setup',
-		languageOptions: {
-			// use typescript parser by default
-			// to support 'imports/exports' field in package.json
-			parser,
-			...baseOptions,
-			...globalsNode,
+export default function defineBaseConfig(...overrides) {
+	return [
+		{
+			name: 'airbnb:setup',
+			languageOptions: {
+				parser,
+				...baseOptions,
+				...globalsNode,
+			},
+			plugins: {
+				[pluginNames.import]: plugins[pluginNames.import],
+				[pluginNames.node]: plugins[pluginNames.node],
+			},
+			settings: baseSettings,
 		},
-		plugins: {
-			// import
-			[pluginNames.import]: plugins[pluginNames.import],
-			// node
-			[pluginNames.node]: plugins[pluginNames.node],
-		},
-		settings: baseSettings,
-	},
-	...configs,
-	...overrides,
-];
+		...configs,
+		...overrides,
+	];
+}
