@@ -48,7 +48,7 @@ import style from './style.js';
 import stylistic from './stylistic.js';
 import variables from './variables.js';
 
-export const configs = {
+export const all = {
 	'disable-legacy': disableLegacy,
 	'disable-legacy-stylistic': disableLegacyStylistic,
 	bestPractice,
@@ -63,7 +63,7 @@ export const configs = {
 };
 
 /** @type {import('eslint').Linter.FlatConfig[]} */
-export default Object.values(configs);`;
+export default Object.values(all);`;
 
 	const url = `${configsDir}/index.js`;
 	writeFile(url, data);
@@ -85,7 +85,7 @@ const run = async (entries) => {
 };
 
 const resolvedConfigEntries = await Promise.all(
-	airbnb.extends.map(promiseBaseConfig),
+	airbnb.extends.map(promiseBaseConfig)
 );
 
 run(resolvedConfigEntries);

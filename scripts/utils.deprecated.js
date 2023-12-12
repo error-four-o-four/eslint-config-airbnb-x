@@ -1,6 +1,6 @@
 import { Linter } from 'eslint';
 
-import { pluginNames, plugins } from '../src/plugins.js';
+import { pluginNames, plugins } from '../src/setup/plugins.js';
 
 const rulesImport = plugins[pluginNames.i].rules;
 
@@ -73,7 +73,7 @@ export const findReplacedIn = (ruleName) => {
 			if (rules.includes(ruleName)) return name;
 			return null;
 		},
-		null,
+		null
 	);
 
 	return pluginName;

@@ -47,13 +47,12 @@ const prefix = 'airbnb';
  * @returns {import('eslint').Linter.FlatConfig}
  */
 export const convertBaseToFlat = (name, config) =>
-	compat.config(config).reduce((all, data) =>
-		Object.assign(all, data), {
+	compat.config(config).reduce((all, data) => Object.assign(all, data), {
 		name: `${prefix}:${name}`,
 	});
 
 const prettierBaseOptions = await prettier.resolveConfig(
-	new URL('../.prettierrc.json', import.meta.url),
+	new URL('../.prettierrc.json', import.meta.url)
 );
 
 /**

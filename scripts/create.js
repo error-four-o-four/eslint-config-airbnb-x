@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url';
 
 import { FlatCompat } from '@eslint/eslintrc';
 
-import { pluginNames } from '../src/plugins.js';
+import { pluginNames } from '../src/setup/plugins.js';
 
 import { findRawRule, findReplacedIn } from './utils.deprecated.js';
 
@@ -23,8 +23,7 @@ const prefix = 'airbnb';
  * @returns {import('eslint').Linter.FlatConfig}
  */
 const convertBaseToFlat = (name, config) =>
-	compat.config(config).reduce((all, data) =>
-		Object.assign(all, data), {
+	compat.config(config).reduce((all, data) => Object.assign(all, data), {
 		name: `${prefix}:${name}`,
 	});
 
@@ -48,12 +47,15 @@ const convertBaseToFlat = (name, config) =>
  * @returns {import('./utils.js').CustomConfig}
  */
 const createDisableLegacyConfig = (deprecated) => {
-	const rules = deprecated.filter((item) =>
-		item.replacedIn !== pluginNames.s).reduce((all, item) =>
-		Object.assign(all, {
-			[item.name]: 'off',
-		}), {
-	});
+	const rules = deprecated
+		.filter((item) => item.replacedIn !== pluginNames.s)
+		.reduce(
+			(all, item) =>
+				Object.assign(all, {
+					[item.name]: 'off',
+				}),
+			{}
+		);
 
 	return {
 		name: 'airbnb:disable-legacy',
@@ -67,12 +69,15 @@ const createDisableLegacyConfig = (deprecated) => {
  * @returns {import('./utils.js').CustomConfig}
  */
 const createDisableLegacyStylisticConfig = (deprecated) => {
-	const rules = deprecated.filter((item) =>
-		item.replacedIn === pluginNames.s).reduce((all, item) =>
-		Object.assign(all, {
-			[item.name]: 'off',
-		}), {
-	});
+	const rules = deprecated
+		.filter((item) => item.replacedIn === pluginNames.s)
+		.reduce(
+			(all, item) =>
+				Object.assign(all, {
+					[item.name]: 'off',
+				}),
+			{}
+		);
 
 	return {
 		name: 'airbnb:disable-legacy-stylistic',
@@ -86,12 +91,15 @@ const createDisableLegacyStylisticConfig = (deprecated) => {
  * @returns {import('./utils.js').CustomConfig}
  */
 const createStylisticConfig = (deprecated) => {
-	const rules = deprecated.filter((item) =>
-		item.replacedIn === pluginNames.s).reduce((all, item) =>
-		Object.assign(all, {
-			[`${pluginNames.s}/${item.name}`]: item.value,
-		}), {
-	});
+	const rules = deprecated
+		.filter((item) => item.replacedIn === pluginNames.s)
+		.reduce(
+			(all, item) =>
+				Object.assign(all, {
+					[`${pluginNames.s}/${item.name}`]: item.value,
+				}),
+			{}
+		);
 
 	return {
 		name: 'airbnb:stylistic',
@@ -113,7 +121,7 @@ export default (entries) => {
 	/**
 	 * @type {DeprecatedRule[]}
 	 */
-	const deprecatedRules = [];
+	let legacy = [];
 
 	// iterate over each config
 	entries.forEach(([configName, baseConfig]) => {
@@ -140,7 +148,7 @@ export default (entries) => {
 
 				// @todo const createLegacyRule = () => {}
 				// create meta
-				deprecatedRules.push({
+				legacy.push({
 					name: ruleName,
 					value: ruleValue,
 					config: configName,
@@ -151,6 +159,7 @@ export default (entries) => {
 
 				// turn off deprecated rule
 				// flatConfig.rules[ruleName] = 'off';
+				delete flatConfig.rules[ruleName];
 
 				// set plugin scope 'import' | 'node'
 				if (pluginName && pluginName !== pluginNames.s) {
@@ -163,11 +172,21 @@ export default (entries) => {
 		configs[configName] = flatConfig;
 	});
 
-	configs['disable-legacy'] = createDisableLegacyConfig(deprecatedRules);
-	configs['disable-legacy-stylistic'] = createDisableLegacyStylisticConfig(deprecatedRules);
-	configs.stylistic = createStylisticConfig(deprecatedRules);
+	// @todo refactor
+	legacy = legacy.sort((a, b) => {
+		const nameA = a.name.toUpperCase();
+		const nameB = b.name.toUpperCase();
 
-	const deprecated = deprecatedRules.reduce((all, rule) => {
+		/* eslint-disable no-nested-ternary */
+		return nameA < nameB ? -1 : nameA > nameB ? 1 : 0;
+	});
+
+	configs['disable-legacy'] = createDisableLegacyConfig(legacy);
+	configs['disable-legacy-stylistic'] =
+		createDisableLegacyStylisticConfig(legacy);
+	configs.stylistic = createStylisticConfig(legacy);
+
+	legacy = legacy.reduce((all, rule) => {
 		const { replacedIn } = rule;
 		const tmp = { ...all };
 		if (replacedIn) {
@@ -181,20 +200,5 @@ export default (entries) => {
 		return tmp;
 	}, {});
 
-	Object.entries(deprecated).forEach(([key, value]) => {
-		const sorted = value.sort((a, b) => {
-			const nameA = a.name.toUpperCase();
-			const nameB = b.name.toUpperCase();
-
-			/* eslint-disable no-nested-ternary */
-			return nameA < nameB ? -1 : nameA > nameB ? 1 : 0;
-		});
-
-		deprecated[key] = sorted;
-	});
-
-	return [
-		configs,
-		deprecated,
-	];
+	return [configs, legacy];
 };
