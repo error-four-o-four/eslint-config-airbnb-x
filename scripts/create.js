@@ -1,141 +1,125 @@
-import { dirname, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
-
-import { FlatCompat } from '@eslint/eslintrc';
-
 import { pluginNames } from '../src/setup/plugins.js';
 
-import { prefix } from './utils.js';
-
 import {
-	createLegacyRule,
+	prefix,
+	convertConfig,
 	findRawRule,
-	findReplacedIn,
-	legacyRulesSorter,
-} from './utils.deprecated.js';
-
-const filename = fileURLToPath(import.meta.url);
-const root = dirname(resolve(filename, '..'));
-
-const compat = new FlatCompat({
-	baseDirectory: root,
-});
+	getDeprecatedRule,
+	rulesSorter,
+} from './utils.js';
 
 /**
  *
- * @param {string} name
- * @param {import('eslint').Linter.BaseConfig} config
- * @returns {import('eslint').Linter.FlatConfig}
+ * @param {[string, import('./utils.js').BaseConfig]} entries
+ * @returns {[import('./utils.js').CustomConfigDict, import('./utils.js').DeprecatedRule[]]}
  */
-const convertBaseToFlat = (name, config) =>
-	compat.config(config).reduce((all, data) => Object.assign(all, data), {
-		name: `${prefix}:${name}`,
-	});
+export default function createConfigs(entries) {
+	// remove plugins from base config
+	// remove and collect deprecated rules
+	// replace deprecated rules
+	// convert base to flat config
+	const [processedEntries, deprecatedRules] = processEntries(entries);
+	const processedConfigs = Object.fromEntries(processedEntries);
 
-// @todo single responsibility!
+	// create a config which turns all deprecated rules off
+	const legacyConfigName = 'disable-legacy';
+	processedConfigs[legacyConfigName] = createLegacyConfig(
+		legacyConfigName,
+		deprecatedRules
+	);
 
-/**
- *
- * @param {[string, Linter.BaseConfig<Linter.RulesRecord, Linter.RulesRecord>][]} entries
- * @returns {[import('./utils.js').CustomConfigDict, import('./utils.deprecated.js').LegacyRule[]]}
- */
-export default (entries) => {
-	/**
-	 * @type {import('./utils.js').CustomConfigDict}
-	 */
-	const configs = {};
+	// create a config which uses the values of the deprecated rules
+	processedConfigs[pluginNames.stylistic] = createStylisticConfig(
+		pluginNames.stylistic,
+		deprecatedRules
+	);
 
-	/**
-	 * @type {import('./utils.deprecated.js').LegacyRule[]}
-	 */
-	let legacy = [];
+	return [processedConfigs, deprecatedRules];
+}
 
-	// iterate over each config
-	entries.forEach(([configName, baseConfig]) => {
-		const flatConfig = convertBaseToFlat(configName, baseConfig);
+function processEntries(entries) {
+	const deprecatedRules = [];
+	const processedEntries = [];
 
-		// remove plugins
-		if (Object.hasOwn(flatConfig, 'plugins')) {
-			delete flatConfig.plugins;
-		}
+	entries.forEach(([configName, configBase]) => {
+		const processedRules = [];
 
-		// search for deprecated rules
-		Object.entries(flatConfig.rules).forEach(([ruleName, ruleValue]) => {
+		Object.entries(configBase.rules).forEach(([ruleName, ruleValue]) => {
 			const rawRule = findRawRule(ruleName);
 
 			if (!rawRule) {
-				// delete rule
-				delete flatConfig.rules[ruleName];
 				console.log(`Could not find rule '${ruleName}'`);
 				return;
 			}
 
-			if (rawRule && rawRule.meta.deprecated) {
-				const strippedRuleName = ruleName.includes('/')
-					? ruleName.split('/')[1]
-					: ruleName;
-
-				const pluginName = findReplacedIn(strippedRuleName);
-
-				// create meta
-				const legacyRule = createLegacyRule(
-					strippedRuleName,
-					ruleValue,
-					configName,
-					pluginName,
-					rawRule
-				);
-
-				legacy.push(legacyRule);
-
-				// remove deprecated rule
-				delete flatConfig.rules[ruleName];
-
-				// copy value and set plugin scope 'import' | 'node' in flatConfig
-				if (pluginName && pluginName !== pluginNames.stylistic) {
-					flatConfig.rules[`${pluginName}/${strippedRuleName}`] = ruleValue;
-				}
+			if (!rawRule.meta.deprecated) {
+				processedRules.push([ruleName, ruleValue]);
+				return;
 			}
+
+			const deprecatedRule = getDeprecatedRule(
+				configName,
+				ruleName,
+				ruleValue,
+				rawRule
+			);
+
+			if (
+				deprecatedRule.plugin &&
+				deprecatedRule.plugin !== pluginNames.stylistic
+			) {
+				processedRules.push([
+					`${deprecatedRule.plugin}/${deprecatedRule.name}`,
+					deprecatedRule.value,
+				]);
+			}
+
+			deprecatedRules.push(deprecatedRule);
 		});
 
-		// create entry
-		configs[configName] = flatConfig;
+		processedEntries.push([
+			configName,
+			convertConfig(configName, configBase, processedRules),
+		]);
 	});
 
-	legacy = legacy.sort(legacyRulesSorter);
+	return [processedEntries, deprecatedRules];
+}
 
-	const legacyConfigName = 'disable-legacy';
-	const legacyConfigRules = legacy
+function createLegacyConfig(name, deprecated) {
+	const rules = deprecated
 		.filter((rule) => rule.plugin !== pluginNames.stylistic)
+		.sort(rulesSorter)
 		.reduce((all, item) => {
-			const name =
+			const ruleName =
 				item.plugin === pluginNames.import
 					? `${item.plugin}/${item.name}`
 					: item.name;
 			return Object.assign(all, {
-				[name]: 0,
+				[ruleName]: 0,
 			});
 		}, {});
 
-	configs[legacyConfigName] = {
-		name: `${prefix}:${legacyConfigName}`,
-		rules: legacyConfigRules,
+	return {
+		name: `${prefix}:${name}`,
+		rules,
 	};
+}
 
-	const stylisticConfigRules = legacy
-		.filter((rule) => rule.plugin === pluginNames.stylistic)
+function createStylisticConfig(name, deprecated) {
+	const rules = deprecated
+		.filter((rule) => rule.plugin === name)
+		.sort(rulesSorter)
 		.reduce(
 			(all, item) =>
 				Object.assign(all, {
-					[`${pluginNames.stylistic}/${item.name}`]: item.value,
+					[`${name}/${item.name}`]: item.value,
 				}),
 			{}
 		);
 
-	configs[pluginNames.stylistic] = {
-		name: `${prefix}:${pluginNames.stylistic}`,
-		rules: stylisticConfigRules,
+	return {
+		name: `${prefix}:${name}`,
+		rules,
 	};
-
-	return [configs, legacy];
-};
+}

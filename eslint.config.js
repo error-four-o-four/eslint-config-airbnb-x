@@ -16,15 +16,22 @@ export default defineBaseConfig([
 	},
 	{
 		name: 'custom:overrides',
+		linterOptions: {
+			reportUnusedDisableDirectives: true,
+		},
 		rules: {
 			'import/extensions': ['error', 'ignorePackages', { js: 'always' }],
 		},
 	},
 	{
+		name: 'custom:overrides-node',
 		files: ['scripts/**/*.js', 'eslint.config.js'],
 		rules: {
-			'no-console': 'off',
-			'import/no-extraneous-dependencies': 'off',
+			'no-console': 0,
+			'no-nested-ternary': 0,
+			'no-param-reassign': 0,
+			'no-use-before-define': 0,
+			'import/no-extraneous-dependencies': 0,
 		},
 	},
 ]);

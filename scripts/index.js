@@ -5,41 +5,41 @@ import { fileURLToPath } from 'node:url';
 import airbnb from 'eslint-config-airbnb-base';
 
 import { pluginNames } from '../src/setup/plugins.js';
-import { NOTICE, promiseBaseConfig, prettify } from './utils.js';
+import { NOTICE, promiseBaseConfig, prettify, rulesSorter } from './utils.js';
 
 import createConfigs from './create.js';
 
-const ensureFolder = (url) => {
+function ensureFolder(url) {
 	const folder = url.endsWith(sep) ? url : dirname(url);
 	if (!existsSync(folder)) mkdirSync(folder);
-};
+}
 
-const writeFile = async (url, input, parser = 'espree') => {
+async function writeFile(url, input, parser = 'espree') {
 	const file = fileURLToPath(new URL(url, import.meta.url));
 	const output = await prettify(input, parser);
 	ensureFolder(file);
 	writeFileSync(file, output, { flag: 'w+' });
 	console.log('Written data to', file);
-};
+}
 
-const writeConfigToFile = async (file, config) => {
+async function writeConfigToFile(file, config) {
 	const data = `${NOTICE}
 /** @type {import('eslint').Linter.FlatConfig} */
 export default ${JSON.stringify(config)}`;
 
 	await writeFile(file, data);
-};
+}
 
-const writeConfigs = async (folder, entries) => {
+async function writeConfigs(folder, entries) {
 	await entries.reduce(async (chain, entry) => {
 		await chain;
 		const [name, data] = entry;
 		const file = `${folder}/${name}.js`;
 		return writeConfigToFile(file, data);
 	}, Promise.resolve());
-};
+}
 
-const writeConfigsEntryFile = async (file, entries) => {
+async function writeConfigsEntryFile(file, entries) {
 	const toCamelCase = (str) => {
 		const s =
 			str &&
@@ -76,7 +76,6 @@ const writeConfigsEntryFile = async (file, entries) => {
 	// import strict from './strict.js';
 	// import style from './style.js';
 	// import variables from './variables.js';
-
 	// export const all = {
 	// 	bestPractice,
 	// 	errors,
@@ -87,17 +86,35 @@ const writeConfigsEntryFile = async (file, entries) => {
 	// 	style,
 	// 	variables,
 	// };
-
 	// /** @type {import('eslint').Linter.FlatConfig[]} */
 	// export default Object.values(all);`;
-
 	writeFile(file, data);
-};
+}
+
+function createLogFileData(rules) {
+	return JSON.stringify(
+		rules.sort(rulesSorter).reduce((all, rule) => {
+			const { plugin } = rule;
+
+			delete rule.plugin;
+
+			if (plugin) {
+				if (!all[plugin]) all[plugin] = [];
+				all[plugin].push(rule);
+			} else {
+				if (!all.legacy) all.legacy = [];
+				all.legacy.push(rule);
+			}
+
+			return all;
+		}, {})
+	);
+}
 
 // run
 
 const run = async (entries) => {
-	const [configs, legacy] = createConfigs(entries);
+	const [configs, deprecated] = createConfigs(entries);
 
 	const configEntriesAirbnb = Object.entries(configs).filter(
 		(entry) =>
@@ -126,26 +143,7 @@ const run = async (entries) => {
 	await writeConfigToFile(legacyFile, configLegacy);
 
 	const logFile = `../legacy.json`;
-	const logData = JSON.stringify(
-		legacy.reduce((all, rule) => {
-			const { plugin } = rule;
-
-			// eslint-disable-next-line no-param-reassign
-			delete rule.plugin;
-
-			if (plugin) {
-				// eslint-disable-next-line no-param-reassign
-				if (!all[plugin]) all[plugin] = [];
-				all[plugin].push(rule);
-			} else {
-				// eslint-disable-next-line no-param-reassign
-				if (!all.legacy) all.legacy = [];
-				all.legacy.push(rule);
-			}
-
-			return all;
-		}, {})
-	);
+	const logData = createLogFileData(deprecated);
 
 	writeFile(logFile, logData, 'json');
 
