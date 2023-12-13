@@ -1,10 +1,13 @@
 import pluginPrettier from 'eslint-plugin-prettier';
-import defineBaseConfig from './src/base.js';
+import defineBaseConfig from './tmp/base.min.js';
 
 const message = 'linting ...';
 console.log(`\u001b[33m${message}\u001b[0m`);
 
 export default defineBaseConfig(
+	{
+		ignores: ['**/tmp/*'],
+	},
 	{
 		name: 'custom:prettier',
 		plugins: {
