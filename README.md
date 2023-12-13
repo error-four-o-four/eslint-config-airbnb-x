@@ -1,6 +1,6 @@
 # eslint-config-airbnb-flat
 
-Unofficial port of airbnb styleguide eslintrc files to flat config file format.
+Unofficial port of the airbnb styleguide from eslintrc format to flat config file format.
 
 ## Setup
 
@@ -13,6 +13,8 @@ npm i -D @custom-bits/eslint-config-airbnb-flat
 ### Configure
 
 #### Base Example:
+
+With [`"type": "module"`](https://nodejs.org/api/packages.html#type) in `package.json` (recommended):
 
 ```js
 import defineBaseConfig from '@custom-bits/eslint-config-airbnb-flat/base';
@@ -64,10 +66,10 @@ These are just the plain converted configs (use at your own risk).
 
 ### Roadmap
 
-- [ ] bundle (with rollup (?))
-- [ ] convert codebase to typescript
-- [ ] type declerations
-- [ ] utilize rule tester
-- [ ] test: import/no-unresolved
-- [ ] deprecated: n/no-hide-core-modules, n/no-unsupported-features
-- [ ] support React (jsx, tsx)
+- ✅ bundle (with ~~rollup~~ esbuild (to esm))
+- 🔳 convert codebase to typescript
+- 🔳 type declerations
+- 🔳 utilize rule tester
+- 🔳 test: import/no-unresolved
+- 🔳 deprecated: n/no-hide-core-modules, n/no-unsupported-features
+- 🔳 support React (jsx, tsx)
