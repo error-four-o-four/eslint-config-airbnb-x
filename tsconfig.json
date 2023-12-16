@@ -7,6 +7,5 @@
 		"allowJs": true,
 		"allowImportingTsExtensions": true
 	},
-	"include": ["scripts/**/*"],
-	"references": [{ "path": "tsconfig.build.json" }]
+	"include": ["scripts/**/*.ts", "src/**/*.js", "eslint.config.js"]
 }

@@ -65,15 +65,15 @@ async function run() {
 
 	const airbnbDir = `${baseDir}/airbnb`;
 	await writeConfigs(airbnbDir, configEntriesAirbnb);
-	await writeConfigsEntryFile(`${airbnbDir}/index.js`, configEntriesAirbnb);
+	await writeConfigsEntryFile(`${baseDir}/compat.js`, configEntriesAirbnb);
 
-	const legacyFile = `${baseDir}/legacy/index.js`;
+	const legacyFile = `${baseDir}/custom/${configEntryLegacy[0]}.js`;
 	await writeConfigToFile(legacyFile, configEntryLegacy[1]);
 
-	const typescriptFile = `${baseDir}/typescript/index.js`;
+	const typescriptFile = `${baseDir}/custom/${configEntryTypescript[0]}.js`;
 	await writeConfigToFile(typescriptFile, configEntryTypescript[1]);
 
-	const stylisticFile = `${baseDir}/${configEntryStylistic[0]}/index.js`;
+	const stylisticFile = `${baseDir}/custom/${configEntryStylistic[0]}.js`;
 	await writeConfigToFile(stylisticFile, configEntryStylistic[1]);
 
 	const logFile = `../legacy.json`;
@@ -85,8 +85,9 @@ async function run() {
 function findConfig(entries: NamedConfigEntry[], name: ConfigNames) {
 	const config = entries.find((entry) => entry[0] === name);
 
-	if (!config)
+	if (!config) {
 		throw new Error(`Oops. Something went wrong. Could not find '${name}'`);
+	}
 
 	return config;
 }
@@ -123,16 +124,16 @@ async function writeConfigsEntryFile(
 	let data = `${NOTICE}\n`;
 
 	data += names
-		.map(([camel, kebap]) => `import ${camel} from './${kebap}.js';`)
+		.map(([camel, kebap]) => `import ${camel} from './airbnb/${kebap}.js';`)
 		.join('\n');
 
-	data += `/** @type {{ [x: import('${pathToShared}').AirbnbNames]: import('${pathToShared}').NamedFlatConfig}} */\n`;
-	data += '\n\nexport const all = {\n';
+	data += `\n\n/** @type {{ [x: import('${pathToShared}').AirbnbNames]: import('${pathToShared}').NamedFlatConfig}} */\n`;
+	data += 'export const configs = {\n';
 	data += names.map(([pascal]) => `${pascal},`).join('\n');
 	data += '\n};\n\n';
 
 	data += `${getJSDocType('NamedFlatConfig[]')}\n`;
-	data += 'export default Object.values(all);';
+	data += 'export default Object.values(configs);';
 
 	writeFile(metaUrl, file, data);
 }
