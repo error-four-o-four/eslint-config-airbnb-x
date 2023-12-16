@@ -53,7 +53,7 @@ export function processConfigEntries(
 	const [processedEntries, deprecatedRules] = processEntries(prefix, entries);
 
 	processedEntries.push(
-		createLegacyConfig(prefix, configNames.disableLegacy, deprecatedRules),
+		createLegacyConfig(prefix, configNames.disableLegacy, deprecatedRules)
 	);
 
 	processedEntries.push(
@@ -212,7 +212,7 @@ function createTypescriptConfig(
 
 	const config = {
 		name: getPrefixedName(prefix, name),
-		rules
+		rules,
 	};
 
 	return [name, config];

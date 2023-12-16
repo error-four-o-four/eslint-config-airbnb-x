@@ -128,7 +128,7 @@ export function getTypescriptRuleName(ruleName: string) {
 export function getSortedRulesFromEntries(entries: NamedConfigEntry[]) {
 	const all: ApprovedRuleEntry[] = [];
 
-	entries.forEach(entry => {
+	entries.forEach((entry) => {
 		const { rules } = entry[1];
 
 		if (!rules) {
@@ -141,7 +141,10 @@ export function getSortedRulesFromEntries(entries: NamedConfigEntry[]) {
 	return all.sort(sortRulesByEntryName);
 }
 
-export function sortRulesByEntryName(a: ApprovedRuleEntry, b: ApprovedRuleEntry) {
+export function sortRulesByEntryName(
+	a: ApprovedRuleEntry,
+	b: ApprovedRuleEntry
+) {
 	const nameA = a[0].toUpperCase();
 	const nameB = b[0].toUpperCase();
 

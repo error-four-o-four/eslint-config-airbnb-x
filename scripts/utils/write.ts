@@ -33,8 +33,8 @@ export function toCamelCase(input: string) {
 
 	const s = Array.isArray(m)
 		? m
-			.map((x) => x.slice(0, 1).toUpperCase() + x.slice(1).toLowerCase())
-			.join('')
+				.map((x) => x.slice(0, 1).toUpperCase() + x.slice(1).toLowerCase())
+				.join('')
 		: input;
 
 	return s.slice(0, 1).toLowerCase() + s.slice(1);

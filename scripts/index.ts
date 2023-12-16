@@ -11,7 +11,12 @@ import {
 	writeFile,
 } from './utils/write.ts';
 
-import type { AirbnbNames, ConfigNames, NamedConfigEntry, NamedFlatConfig } from './types.ts';
+import type {
+	AirbnbNames,
+	ConfigNames,
+	NamedConfigEntry,
+	NamedFlatConfig,
+} from './types.ts';
 
 // EXECUTE
 
@@ -38,13 +43,22 @@ async function run() {
 	// best-practices
 	// errors
 	// ...
-	const configEntriesAirbnb = processedEntries.filter(
-		(entry) => Object.values(airbnbNames).includes(entry[0] as AirbnbNames)
+	const configEntriesAirbnb = processedEntries.filter((entry) =>
+		Object.values(airbnbNames).includes(entry[0] as AirbnbNames)
 	);
 
-	const configEntryLegacy = findConfig(processedEntries, configNames.disableLegacy);
-	const configEntryStylistic = findConfig(processedEntries, configNames.stylistic);
-	const configEntryTypescript = findConfig(processedEntries, configNames.typescript);
+	const configEntryLegacy = findConfig(
+		processedEntries,
+		configNames.disableLegacy
+	);
+	const configEntryStylistic = findConfig(
+		processedEntries,
+		configNames.stylistic
+	);
+	const configEntryTypescript = findConfig(
+		processedEntries,
+		configNames.typescript
+	);
 
 	const baseDir = '../src/configs';
 	ensureFolder(fileURLToPath(new URL(`${baseDir}/`, import.meta.url)));
@@ -69,11 +83,10 @@ async function run() {
 }
 
 function findConfig(entries: NamedConfigEntry[], name: ConfigNames) {
-	const config = entries.find(
-		(entry) => entry[0] === name
-	);
+	const config = entries.find((entry) => entry[0] === name);
 
-	if (!config) throw new Error(`Oops. Something went wrong. Could not find '${name}'`);
+	if (!config)
+		throw new Error(`Oops. Something went wrong. Could not find '${name}'`);
 
 	return config;
 }
