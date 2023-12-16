@@ -35,8 +35,8 @@
 		"prettier": "prettier . --write --ignore-unknown",
 		"lint:check": "eslint .",
 		"lint": "eslint . --fix",
-		"extract": "node --no-warnings=ExperimentalWarning --loader ts-node/esm scripts/extract.ts",
-		"run": "node --no-warnings=ExperimentalWarning --loader ts-node/esm scripts/index.ts",
+		"generate:names": "node --no-warnings=ExperimentalWarning --loader ts-node/esm scripts/generateNames.ts",
+		"generate:configs": "node --no-warnings=ExperimentalWarning --loader ts-node/esm scripts/generateConfigs.ts",
 		"clean": "rimraf dist/",
 		"// build:test": "tsup-node scripts/test.ts --format esm,cjs --legacy-output --dts --minify"
 	},
