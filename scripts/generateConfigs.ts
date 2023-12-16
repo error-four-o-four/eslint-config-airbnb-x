@@ -67,14 +67,14 @@ async function run() {
 	await writeConfigs(airbnbDir, configEntriesAirbnb);
 	await writeConfigsEntryFile(`${airbnbDir}/index.js`, configEntriesAirbnb);
 
-	const stylisticFile = `${baseDir}/${configEntryStylistic[0]}/index.js`;
-	await writeConfigToFile(stylisticFile, configEntryStylistic[1]);
-
 	const legacyFile = `${baseDir}/legacy/index.js`;
 	await writeConfigToFile(legacyFile, configEntryLegacy[1]);
 
 	const typescriptFile = `${baseDir}/typescript/index.js`;
 	await writeConfigToFile(typescriptFile, configEntryTypescript[1]);
+
+	const stylisticFile = `${baseDir}/${configEntryStylistic[0]}/index.js`;
+	await writeConfigToFile(stylisticFile, configEntryStylistic[1]);
 
 	const logFile = `../legacy.json`;
 	const logData = createLogFileData(deprecatedRules);
@@ -100,10 +100,16 @@ async function writeConfigs(folder: string, entries: NamedConfigEntry[]) {
 	}, Promise.resolve());
 }
 
+// @todo jsdoc path is hardcoded
+const pathToShared = '../../../shared/types.d.ts';
+
+const getJSDocType = (type: string) =>
+	`/** @type {import('${pathToShared}').${type}} */`;
+
 async function writeConfigToFile(file: string, config: NamedFlatConfig) {
-	const data = `${NOTICE}
-/** @type {import('eslint').Linter.FlatConfig} */
-export default ${JSON.stringify(config)}`;
+	let data = `${NOTICE}\n`;
+	data += `${getJSDocType('NamedFlatConfig')}\n`;
+	data += `export default ${JSON.stringify(config)}`;
 
 	await writeFile(metaUrl, file, data);
 }
@@ -120,33 +126,13 @@ async function writeConfigsEntryFile(
 		.map(([camel, kebap]) => `import ${camel} from './${kebap}.js';`)
 		.join('\n');
 
+	data += `/** @type {{ [x: import('${pathToShared}').AirbnbNames]: import('${pathToShared}').NamedFlatConfig}} */\n`;
 	data += '\n\nexport const all = {\n';
 	data += names.map(([pascal]) => `${pascal},`).join('\n');
 	data += '\n};\n\n';
 
-	data += "/** @type {import('eslint').Linter.FlatConfig[]} */\n";
+	data += `${getJSDocType('NamedFlatConfig[]')}\n`;
 	data += 'export default Object.values(all);';
 
-	// const data = `${NOTICE}
-	// import bestPractice from './best-practices.js';
-	// import errors from './errors.js';
-	// import es6 from './es6.js';
-	// import imports from './imports.js';
-	// import node from './node.js';
-	// import strict from './strict.js';
-	// import style from './style.js';
-	// import variables from './variables.js';
-	// export const all = {
-	// 	bestPractice,
-	// 	errors,
-	// 	es6,
-	// 	imports,
-	// 	node,
-	// 	strict,
-	// 	style,
-	// 	variables,
-	// };
-	// /** @type {import('eslint').Linter.FlatConfig[]} */
-	// export default Object.values(all);`;
 	writeFile(metaUrl, file, data);
 }

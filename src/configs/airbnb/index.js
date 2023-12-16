@@ -8,6 +8,8 @@ import es6 from './es6.js';
 import imports from './imports.js';
 import strict from './strict.js';
 
+/** @type {{ [x: import('../../../shared/types.d.ts').AirbnbNames]: import('../../../shared/types.d.ts').NamedFlatConfig}} */
+
 export const all = {
 	bestPractices,
 	errors,
@@ -19,5 +21,5 @@ export const all = {
 	strict,
 };
 
-/** @type {import('eslint').Linter.FlatConfig[]} */
+/** @type {import('../../../shared/types.d.ts').NamedFlatConfig[]} */
 export default Object.values(all);

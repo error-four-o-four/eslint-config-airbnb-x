@@ -1,6 +1,15 @@
 import { Linter } from 'eslint';
 
-import { pluginNames, plugins } from '../../src/setup/plugins.js';
+// @ts-expect-error missing types
+import * as pluginImport from 'eslint-plugin-i';
+
+// @ts-expect-error missing types
+import pluginNode from 'eslint-plugin-n';
+
+import pluginStylistic from '@stylistic/eslint-plugin';
+import pluginTypescript from '@typescript-eslint/eslint-plugin';
+
+import { pluginNames } from './names.ts';
 
 import type {
 	ApprovedRuleEntry,
@@ -13,7 +22,23 @@ import type {
 } from '../types.ts';
 
 const rulesEslint = new Linter().getRules();
-const rulesImport = plugins[pluginNames.import].rules;
+
+const plugins = {
+	[pluginNames.import]: pluginImport,
+	[pluginNames.node]: pluginNode,
+	[pluginNames.stylistic]: pluginStylistic,
+	[pluginNames.typescript]: pluginTypescript,
+} as const;
+
+const pluginKeys = Object.values(pluginNames);
+
+const pluginRules = pluginKeys.reduce(
+	(all, plugin) =>
+		Object.assign(all, {
+			[plugin]: Object.keys(plugins[plugin].rules),
+		}),
+	{} as { [K in keyof typeof plugins]: string[] }
+);
 
 // Airbnb config uses eslint-plugin-import
 // therefore some rules are prefixed with 'import'
@@ -21,7 +46,9 @@ export function findRawRule(name: string): RawRule | null {
 	const isImportRule = name.startsWith('import');
 
 	const key = isImportRule ? name.split('/')[1] : name;
-	const raw = isImportRule ? rulesImport[key] : rulesEslint.get(key);
+	const raw = isImportRule
+		? plugins[pluginNames.import].rules[key]
+		: rulesEslint.get(key);
 
 	return raw || null;
 }
@@ -41,30 +68,11 @@ export function handleApprovedRule(
 }
 
 function findReplacedIn(ruleName: string) {
-	const pluginKeys = [
+	const replacedIn: string = [
 		pluginNames.import,
 		pluginNames.node,
 		pluginNames.stylistic,
-	];
-
-	const [pluginImportKeys, pluginNodeKeys, pluginStylisticKeys] =
-		pluginKeys.map((name) => {
-			const { rules } = plugins[name];
-
-			if (!rules) {
-				throw Error(`Could not find any rules in plugin '${name}'`);
-			}
-
-			return Object.keys(rules);
-		});
-
-	const map = {
-		[pluginNames.import]: pluginImportKeys,
-		[pluginNames.node]: pluginNodeKeys,
-		[pluginNames.stylistic]: pluginStylisticKeys,
-	};
-
-	const replacedIn: string = Object.values(pluginKeys).reduce(
+	].reduce(
 		// (result, [name, rules]) => result !== null ? result : rules.includes(ruleName) ? name : result,
 		// (result, name) => {
 		// 	if (result) return result;
@@ -73,15 +81,11 @@ function findReplacedIn(ruleName: string) {
 		// 	return result;
 		// },
 		(result, pluginName) =>
-			Boolean(result)
-				? result
-				: map[pluginName].includes(ruleName)
-					? pluginName
-					: '',
+			result || (pluginRules[pluginName].includes(ruleName) ? pluginName : ''),
 		''
 	);
 
-	return Boolean(replacedIn) ? replacedIn : undefined;
+	return replacedIn || undefined;
 }
 
 export function handleDeprecatedRule(
@@ -116,8 +120,7 @@ export function handleDeprecatedRule(
 }
 
 export function isTypescriptRule(ruleName: string) {
-	const pluginRules = Object.keys(plugins[pluginNames.typescript].rules);
-	return pluginRules.includes(ruleName);
+	return pluginRules[pluginNames.typescript].includes(ruleName);
 }
 
 export function getTypescriptRuleName(ruleName: string) {

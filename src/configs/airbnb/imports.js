@@ -1,5 +1,5 @@
 // FILE GENERATED WITH SCRIPT
-/** @type {import('eslint').Linter.FlatConfig} */
+/** @type {import('../../../shared/types.d.ts').NamedFlatConfig} */
 export default {
 	name: 'airbnb:imports',
 	languageOptions: { ecmaVersion: 6, sourceType: 'module' },

@@ -36,6 +36,7 @@
 		"lint:check": "eslint .",
 		"lint": "eslint . --fix",
 		"generate:names": "node --no-warnings=ExperimentalWarning --loader ts-node/esm scripts/generateNames.ts",
+		"generate:shared": "tsup-node scripts/types.ts --format esm --dts --dts-only -d ./shared",
 		"generate:configs": "node --no-warnings=ExperimentalWarning --loader ts-node/esm scripts/generateConfigs.ts",
 		"clean": "rimraf dist/",
 		"// build:test": "tsup-node scripts/test.ts --format esm,cjs --legacy-output --dts --minify"
