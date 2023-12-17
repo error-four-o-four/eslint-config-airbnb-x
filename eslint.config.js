@@ -1,9 +1,8 @@
 import pluginPrettier from 'eslint-plugin-prettier';
 // import defineBaseConfig from './tmp/base.min.js';
 
-// import { GLOB_ALL } from './src/setup/constants.js';
-// import { assignFiles } from './src/setup/utils.js';
-import { optionsMixed } from './src/setup/options.js';
+import { GLOBS } from './src/setup/constants.js';
+import { assignFiles } from './src/setup/utils.js';
 
 import bestPractices from './src/configs/airbnb/best-practices.js';
 import errors from './src/configs/airbnb/errors.js';
@@ -13,15 +12,18 @@ import es6 from './src/configs/airbnb/es6.js';
 import strict from './src/configs/airbnb/strict.js';
 
 import legacy from './src/configs/custom/disable-legacy.js';
-
 import node from './src/configs/node.js';
+import imports from './src/configs/imports.js';
 import typescript from './src/configs/typescript.js';
-import { importsMixed } from './src/configs/imports.js';
+import setup from './src/setup/index.js';
 
 const message = 'linting ...';
+/* eslint-disable no-console */
 console.log(`\u001b[33m${message}\u001b[0m`);
 
-export default [
+/* eslint-disable no-console */
+
+const configs = [
 	legacy,
 	bestPractices,
 	errors,
@@ -34,27 +36,24 @@ export default [
 		rules: es6.rules,
 	},
 	strict,
+	setup,
+	imports,
 	typescript,
-	optionsMixed,
-	importsMixed,
+].map((config) => assignFiles(config, GLOBS));
+
+export default [
+	...configs,
 	{
 		ignores: ['**/dist/*', '**/tmp/*'],
 	},
 	{
-		name: 'custom:prettier',
+		name: 'custom',
 		plugins: {
 			prettier: pluginPrettier,
 		},
+		files: GLOBS,
 		rules: {
 			'prettier/prettier': 'warn',
-		},
-	},
-	{
-		name: 'custom:overrides',
-		linterOptions: {
-			reportUnusedDisableDirectives: true,
-		},
-		rules: {
 			'import/extensions': [
 				'error',
 				'ignorePackages',
@@ -64,7 +63,7 @@ export default [
 	},
 	{
 		name: 'custom:overrides-node',
-		files: ['scripts/**/*.ts', 'eslint.config.js'],
+		files: ['scripts/**/*.ts'],
 		rules: {
 			'no-console': 0,
 			'no-nested-ternary': 0,
@@ -74,42 +73,3 @@ export default [
 		},
 	},
 ];
-
-// export default defineConfig(
-// 	{
-// 		ignores: ['**/dist/*', '**/tmp/*'],
-// 	},
-// 	{
-// 		name: 'custom:prettier',
-// 		plugins: {
-// 			prettier: pluginPrettier,
-// 		},
-// 		rules: {
-// 			'prettier/prettier': 'warn',
-// 		},
-// 	},
-// 	{
-// 		name: 'custom:overrides',
-// 		linterOptions: {
-// 			reportUnusedDisableDirectives: true,
-// 		},
-// 		rules: {
-// 			'import/extensions': [
-// 				'error',
-// 				'ignorePackages',
-// 				{ js: 'always', ts: 'always' },
-// 			],
-// 		},
-// 	},
-// 	{
-// 		name: 'custom:overrides-node',
-// 		files: ['scripts/**/*.ts', 'eslint.config.js'],
-// 		rules: {
-// 			'no-console': 0,
-// 			'no-nested-ternary': 0,
-// 			'no-param-reassign': 0,
-// 			'typescript/no-use-before-define': 0,
-// 			'import/no-extraneous-dependencies': 0,
-// 		},
-// 	}
-// );

@@ -1,16 +1,20 @@
-export const ECMA_VERSION = 2022;
+import { isPackageExists } from 'local-pkg';
 
+export const ECMA_VERSION = 2022;
 export const SOURCE_TYPE = 'module';
 
-// @todo get extensions based on installed package typescript
-export const EXT_JS = ['.js', '.mjs'];
-export const GLOB_JS = EXT_JS.map((ext) => `**/*${ext}`);
+export const tsExists = isPackageExists('typescript');
 
-export const EXT_TS = ['.ts', '.mts'];
-export const GLOB_TS = EXT_TS.map((ext) => `**/*${ext}`);
+const EXT_JS = ['.js', '.mjs'];
+const EXT_TS = ['.ts', '.mts'];
+const EXT_ALL = [...EXT_JS, ...EXT_TS];
 
-export const EXT_ALL = [...EXT_JS, ...EXT_TS];
-export const GLOB_ALL = [...GLOB_JS, ...GLOB_TS];
+export const EXTS = tsExists ? EXT_ALL : EXT_JS;
+export const GLOBS = EXTS.map((ext) => `**/*${ext}`);
+
+// console.log(tsExists, EXTS);
+
+// @todo check if react exists
 
 export const pluginNames = {
 	import: 'import',
