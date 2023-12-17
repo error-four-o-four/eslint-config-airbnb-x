@@ -1,6 +1,6 @@
 import plugin from '@typescript-eslint/eslint-plugin';
 
-import { pluginNames } from '../setup/constants.js';
+import { GLOB_TS, pluginNames } from '../setup/constants.js';
 
 import typescript from './custom/typescript.js';
 
@@ -10,5 +10,6 @@ export default {
 	plugins: {
 		[pluginNames.typescript]: plugin,
 	},
+	files: GLOB_TS,
 	rules: typescript.rules,
 };

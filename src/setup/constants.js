@@ -12,6 +12,8 @@ const EXT_ALL = [...EXT_JS, ...EXT_TS];
 export const EXTS = tsExists ? EXT_ALL : EXT_JS;
 export const GLOBS = EXTS.map((ext) => `**/*${ext}`);
 
+export const GLOB_TS = EXT_TS.map((ext) => `**/*${ext}`);
+
 // console.log(tsExists, EXTS);
 
 // @todo check if react exists

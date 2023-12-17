@@ -2,7 +2,7 @@
 	"name": "eslint-config-airbnb-flat",
 	"type": "module",
 	"version": "0.0.0",
-	"description": "Unofficial port of the airbnb styleguide from eslintrc format to flat config file format",
+	"description": "Unofficial migration of the airbnb styleguide from eslintrc format to flat config file format",
 	"author": "error-four-o-four",
 	"license": "MIT",
 	"keywords": [
@@ -11,6 +11,7 @@
 		"eslint-flat-config",
 		"airbnb",
 		"styleguide",
+		"style-guide",
 		"unofficial"
 	],
 	"files": [
@@ -20,11 +21,8 @@
 		"./base": {
 			"default": "./src/base.js"
 		},
-		"./stylistic": {
-			"default": "./src/stylistic.js"
-		},
 		"./compat": {
-			"import": "./src/configs/airbnb/index.js"
+			"import": "./src/configs/compat.js"
 		}
 	},
 	"engines": {
@@ -67,7 +65,6 @@
 		"typescript": "^5.3.3"
 	},
 	"dependencies": {
-		"@stylistic/eslint-plugin-js": "^1.5.1",
 		"globals": "^13.24.0",
 		"local-pkg": "^0.5.0"
 	}

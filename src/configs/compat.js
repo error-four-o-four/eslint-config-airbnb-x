@@ -9,7 +9,10 @@ import imports from './airbnb/imports.js';
 import strict from './airbnb/strict.js';
 
 /** @type {{ [x: import('../../../shared/types.d.ts').AirbnbNames]: import('../../../shared/types.d.ts').NamedFlatConfig}} */
-export const configs = {
+export { bestPractices, errors, node, style, variables, es6, imports, strict };
+
+/** @type {import('../../../shared/types.d.ts').NamedFlatConfig[]} */
+export default [
 	bestPractices,
 	errors,
 	node,
@@ -18,7 +21,4 @@ export const configs = {
 	es6,
 	imports,
 	strict,
-};
-
-/** @type {import('../../../shared/types.d.ts').NamedFlatConfig[]} */
-export default Object.values(configs);
+];
