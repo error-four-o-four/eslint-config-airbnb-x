@@ -1,21 +1,20 @@
-import { dirname, sep } from 'node:path';
+import { dirname, isAbsolute, sep } from 'node:path';
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 import type { BuiltInParserName, Options } from 'prettier';
 import prettier from 'prettier';
 
-import { DeprecatedRule } from '../types.ts';
-import { sortRules } from './rules.ts';
+// import { DeprecatedRule } from '../types.ts';
+// import { sortRules } from './rules.ts';
 
 const prettierBaseOptions = await prettier.resolveConfig(
 	new URL('../../.prettierrc.json', import.meta.url)
 );
 
-export async function prettify(
-	input: string,
-	parser: BuiltInParserName = 'espree'
-) {
+export const NOTICE = '// FILE GENERATED WITH SCRIPT';
+
+async function prettify(input: string, parser: BuiltInParserName = 'espree') {
 	const options: Options = {
 		...prettierBaseOptions,
 		parser,
@@ -40,7 +39,15 @@ export function toCamelCase(input: string) {
 	return s.slice(0, 1).toLowerCase() + s.slice(1);
 }
 
-export function ensureFolder(path: string) {
+export function ensureFolder(pathOrUrl: string, meta?: string) {
+	if (!isAbsolute(pathOrUrl) && !meta) {
+		throw new Error("param 'import.meta.url' is required");
+	}
+
+	const path = isAbsolute(pathOrUrl)
+		? pathOrUrl
+		: fileURLToPath(new URL(pathOrUrl, meta));
+
 	const folder = path.endsWith(sep) ? path : dirname(path);
 	if (!existsSync(folder)) mkdirSync(folder);
 }
@@ -53,34 +60,34 @@ export async function writeFile(
 ) {
 	const path = fileURLToPath(new URL(file, meta));
 	const output = await prettify(data, parser);
-	ensureFolder(path);
+	ensureFolder(path, meta);
 	writeFileSync(path, output, { flag: 'w+' });
 	console.log('Written data to', path);
 }
 
 // DEPRECATED LOG
 
-export function createLogFileData(rules: DeprecatedRule[]) {
-	return JSON.stringify(
-		rules.sort(sortRules).reduce(
-			(all, rule) => {
-				const { plugin } = rule;
+// export function createLogFileData(rules: DeprecatedRule[]) {
+// 	return JSON.stringify(
+// 		rules.sort(sortRules).reduce(
+// 			(all, rule) => {
+// 				const { plugin } = rule;
 
-				delete rule.plugin;
+// 				delete rule.plugin;
 
-				if (plugin) {
-					if (!all[plugin]) all[plugin] = [];
-					all[plugin].push(rule);
-				} else {
-					if (!all.legacy) all.legacy = [];
-					all.legacy.push(rule);
-				}
+// 				if (plugin) {
+// 					if (!all[plugin]) all[plugin] = [];
+// 					all[plugin].push(rule);
+// 				} else {
+// 					if (!all.legacy) all.legacy = [];
+// 					all.legacy.push(rule);
+// 				}
 
-				return all;
-			},
-			{} as {
-				[x: string]: DeprecatedRule[];
-			}
-		)
-	);
-}
+// 				return all;
+// 			},
+// 			{} as {
+// 				[x: string]: DeprecatedRule[];
+// 			}
+// 		)
+// 	);
+// }
