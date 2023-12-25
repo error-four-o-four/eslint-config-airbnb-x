@@ -3,6 +3,9 @@
 export default {
 	name: 'airbnb:node',
 	languageOptions: {
+		ecmaVersion: 2022,
+		sourceType: 'module',
+		parserOptions: { ecmaFeatures: { globalReturn: true } },
 		globals: {
 			AggregateError: false,
 			Array: false,
@@ -141,8 +144,6 @@ export default {
 			WritableStreamDefaultController: false,
 			WritableStreamDefaultWriter: false,
 		},
-		parserOptions: { ecmaFeatures: { globalReturn: true } },
-		ecmaVersion: 2022,
 	},
 	rules: {
 		'node/callback-return': 'off',

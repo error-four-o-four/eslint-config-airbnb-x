@@ -187,6 +187,8 @@ function disableDeprecatedPluginRules(
 
 			target.rules[`${plugin}/${entry[0]}`] = 0;
 		});
+
+	// @todo sort by name
 }
 
 function overwriteImportsRules(target: FlatConfig) {
@@ -205,7 +207,7 @@ function overwriteImportsRules(target: FlatConfig) {
 
 	const [severity, dependants] = noExtraneousDepsVals;
 
-	target.rules['import/named'] = 0;
+	// target.rules['import/named'] = 0;
 	target.rules[noExtraneousDepsKey] = [
 		severity,
 		{
@@ -256,7 +258,7 @@ export function copyTypescriptRules(
 	target.rules = rules;
 }
 
-function isTypescriptRule(name: string) {
+export function isTypescriptRule(name: string) {
 	return name in pluginRules[pluginNames.typescript];
 }
 

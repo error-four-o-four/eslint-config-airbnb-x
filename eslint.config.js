@@ -1,7 +1,7 @@
 import pluginPrettier from 'eslint-plugin-prettier';
 
 import { GLOBS } from './src/setup/constants.js';
-import defineConfig from './src/base.js';
+import defineConfig from './tmp/defineBase.min.js';
 
 const message = 'linting ...';
 /* eslint-disable no-console */

@@ -33,10 +33,12 @@
 		"prettier": "prettier . --write --ignore-unknown",
 		"lint:check": "eslint .",
 		"lint": "eslint . --fix",
+		"// generate:shared": "tsup-node scripts/types.ts --format esm --dts --dts-only -d ./shared",
 		"generate:names": "node --no-warnings=ExperimentalWarning --loader ts-node/esm scripts/generateNames.ts",
-		"generate:shared": "tsup-node scripts/types.ts --format esm --dts --dts-only -d ./shared",
 		"generate:configs": "node --no-warnings=ExperimentalWarning --loader ts-node/esm scripts/generateConfigs.ts",
-		"clean": "rimraf dist/",
+		"merge": "node --no-warnings=ExperimentalWarning --loader ts-node/esm scripts/mergeConfigs.ts",
+		"// clean": "rimraf dist/",
+		"// build:tmp": "esbuild src/defineBase.js --bundle --minify --platform=node --target=node18 --format=esm --packages=external --outfile=tmp/defineBase.min.js",
 		"// build:test": "tsup-node scripts/test.ts --format esm,cjs --legacy-output --dts --minify"
 	},
 	"peerDependencies": {
@@ -54,6 +56,7 @@
 		"@types/eslint": "^8.44.9",
 		"@types/eslint__eslintrc": "^2.1.1",
 		"@types/node": "^20.10.4",
+		"esbuild": "^0.19.9",
 		"eslint-config-airbnb-base": "^15.0.0",
 		"eslint-flat-config-viewer": "^0.1.3",
 		"eslint-plugin-prettier": "^5.0.1",

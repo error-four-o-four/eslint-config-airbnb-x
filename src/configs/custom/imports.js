@@ -2,18 +2,23 @@
 /** @type {{ name: string } & import('eslint').Linter.FlatConfig} */
 export default {
 	name: 'airbnb:imports',
-	languageOptions: { ecmaVersion: 2022, sourceType: 'module' },
+	languageOptions: {
+		ecmaVersion: 2022,
+		sourceType: 'module',
+		parserOptions: { ecmaVersion: 2022, sourceType: 'module' },
+	},
 	settings: {
 		'import/resolver': {
-			node: {},
-			typescript: { extensions: ['.js', '.mjs', '.json'] },
+			node: { extensions: ['.json'] },
+			typescript: { extensions: ['.js', '.mjs'] },
 		},
-		'import/extensions': ['.js', '.mjs'],
+		'import/extensions': ['.js', '.mjs', '.jsx'],
 		'import/core-modules': [],
 		'import/ignore': [
 			'node_modules',
 			'\\.(coffee|scss|css|less|hbs|svg|json)$',
 		],
+		'import/extenstions': ['.js', '.mjs'],
 		'import/parsers': { espree: ['.js', '.mjs'] },
 	},
 	rules: {
@@ -33,7 +38,7 @@ export default {
 		'import/group-exports': 'off',
 		'import/imports-first': 'off',
 		'import/max-dependencies': ['off', { max: 10 }],
-		'import/named': 0,
+		'import/named': 'error',
 		'import/namespace': 'off',
 		'import/newline-after-import': 'error',
 		'import/no-absolute-path': 'error',

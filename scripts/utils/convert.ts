@@ -9,7 +9,7 @@ import globals from 'globals';
 
 import names from './names.ts';
 
-import { configHasPlugin } from './plugins.ts';
+import { configHasPlugin, pluginNames } from './plugins.ts';
 
 import {
 	getRules,
@@ -70,17 +70,17 @@ function getConverted(entries: BaseConfigEntry[]): AirbnbConfigs {
 		baseDirectory: root,
 	});
 
-	const convertBase2Flat = (base: BaseConfig): FlatConfig =>
-		compat.config(base).reduce((all, data) => Object.assign(all, data), {});
+	const convertBase2Flat = (base: BaseConfig): FlatConfig => compat.config(base)
+		.reduce((all, data) => Object.assign(all, data), {});
 
 	return Object.fromEntries(
-		entries.map(([name, base]) => [name, convertBase2Flat(base)])
+		entries.map(([name, base]) => [name, convertBase2Flat(base)]),
 	) as AirbnbConfigs;
 }
 
 function getProcessed(
 	source: AirbnbConfigs,
-	rules: ProcessedRule[]
+	rules: ProcessedRule[],
 ): CustomConfigs {
 	const approvedRules = getApprovedRules(rules);
 	const pluginRules = getPluginRules(rules);
@@ -89,7 +89,7 @@ function getProcessed(
 
 	const temp = Object.values(names.config).reduce(
 		(all, name) => Object.assign(all, { [name]: {} }),
-		{} as TempConfigs
+		{} as TempConfigs,
 	);
 
 	type TempConfigs = Omit<CustomConfigs, 'es2022'> & { es6: FlatConfig; };
@@ -103,6 +103,7 @@ function getProcessed(
 
 			// overwrite imports settings
 			if (source[name].settings) {
+				// @todo tests !!!
 				customizeSettings(source[name], temp[name]);
 			}
 
@@ -131,6 +132,8 @@ function getProcessed(
 			}
 
 			if (name === 'typescript') {
+				customizeTypescriptLanguageOptions(temp[name]);
+				customizeTypescriptSettings(source.imports, temp[name]);
 				copyTypescriptRules(approvedRules, temp[name]);
 			}
 		}
@@ -141,7 +144,7 @@ function getProcessed(
 		Object.entries(temp).map(([name, value]) => [
 			name === 'es6' ? 'es2022' : name,
 			value,
-		])
+		]),
 	) as CustomConfigs;
 }
 
@@ -153,36 +156,111 @@ function isCustom(name: string): name is CustomNames {
 	return Object.values(names.custom).includes(name as CustomNames);
 }
 
+const ECMA_VERSION = 2022;
+const SOURCE_TYPE = 'module';
+
 // applies to es6, node, imports
 function customizeLanguageOptions(
 	name: AirbnbNames,
 	source: FlatConfig,
-	target: FlatConfig
+	target: FlatConfig,
 ) {
-	const globalsNode = {
-		...globals.es2021,
-		...globals.node,
-		...globals.nodeBuiltin,
-	};
+	const languageOptions = { ...source.languageOptions };
+
+	delete languageOptions.ecmaVersion;
+	delete languageOptions.sourceType;
 
 	target.languageOptions = {
-		...source.languageOptions,
-		ecmaVersion: 2022,
-		globals: name === 'node' ? globalsNode : undefined,
+		ecmaVersion: ECMA_VERSION,
+		sourceType: SOURCE_TYPE,
+	};
+
+	if (name === 'es6') {
+		const ecmaFeatures = {
+			...languageOptions.parserOptions?.ecmaFeatures,
+			jsx: false,
+		};
+
+		target.languageOptions.parserOptions = {
+			...languageOptions.parserOptions,
+			ecmaFeatures,
+		};
+	}
+
+	if (name === 'node') {
+		target.languageOptions.parserOptions = languageOptions.parserOptions;
+		target.languageOptions.globals = {
+			...globals.es2021,
+			...globals.node,
+			...globals.nodeBuiltin,
+		};
+	}
+
+	if (name === 'imports') {
+		target.languageOptions.parserOptions = {
+			...target.languageOptions.parserOptions,
+			// required to satisfy 'import/no-named-as-default'
+			ecmaVersion: ECMA_VERSION,
+			sourceType: SOURCE_TYPE,
+		};
+	}
+}
+
+// applies to typescript config
+function customizeTypescriptLanguageOptions(target: FlatConfig) {
+	target.languageOptions = {
+		ecmaVersion: ECMA_VERSION,
+		sourceType: SOURCE_TYPE,
+		parserOptions: {
+			// required to satisfy 'import/no-named-as-default'
+			ecmaVersion: ECMA_VERSION,
+			sourceType: SOURCE_TYPE,
+			project: true,
+		},
 	};
 }
 
+const importsKeys = {
+	extensions: `${pluginNames.import}/extenstions`,
+	resolver: `${pluginNames.import}/resolver`,
+	parsers: `${pluginNames.import}/parsers`,
+};
+
 // only applies to 'imports'
+// @todo tests !!!
 function customizeSettings(source: FlatConfig, target: FlatConfig) {
 	const exts = ['.js', '.mjs'];
 	const custom = {
-		'import/extensions': exts,
-		'import/parsers': {
+		[importsKeys.extensions]: exts,
+		[importsKeys.resolver]: {
+			node: { extensions: ['.json'] },
+			typescript: { extensions: exts },
+		},
+		[importsKeys.parsers]: {
 			espree: exts,
 		},
-		'import/resolver': {
-			node: {},
-			typescript: { extensions: [...exts, '.json'] },
+	};
+
+	target.settings = {
+		...source.settings,
+		...custom,
+	};
+}
+
+// only applies to 'typescript'
+// @todo tests !!!
+function customizeTypescriptSettings(source: FlatConfig, target: FlatConfig) {
+	const extsJs = ['.js', '.mjs'];
+	const extsTs = ['.ts', '.mts'];
+	const exts = [...extsJs, ...extsTs];
+	const custom = {
+		[importsKeys.extensions]: exts,
+		[importsKeys.resolver]: {
+			node: { extensions: ['.json'] },
+			typescript: { extensions: exts },
+		},
+		[importsKeys.parsers]: {
+			'@typescript-eslint/parser': extsTs,
 		},
 	};
 

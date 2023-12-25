@@ -3,14 +3,15 @@
 export default {
 	name: 'airbnb:es2022',
 	languageOptions: {
+		ecmaVersion: 2022,
+		sourceType: 'module',
 		parserOptions: {
 			ecmaFeatures: {
 				generators: false,
 				objectLiteralDuplicateProperties: false,
+				jsx: false,
 			},
 		},
-		ecmaVersion: 2022,
-		sourceType: 'module',
 	},
 	rules: {
 		'arrow-body-style': [
