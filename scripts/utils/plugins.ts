@@ -28,23 +28,22 @@ const plugins = {
 } as const;
 
 const rules = keys.reduce(
-	(all, plugin) =>
-		Object.assign(all, {
-			[plugin]: plugins[plugin].rules,
-		}),
-	{} as { [K in keyof typeof plugins]: Record<string, Rule.RuleModule> }
+	(all, plugin) => Object.assign(all, {
+		[plugin]: plugins[plugin].rules,
+	}),
+	{} as { [K in keyof typeof plugins]: Record<string, Rule.RuleModule> },
 );
 
 export { map as pluginNames, rules as pluginRules };
 
 // 'imports' vs 'import' !!!
-const configPluginMap = {
+const configPluginMap: {
+	[K in ConfigWithPlugin]: string;
+} = {
 	[names.config.node]: map.node,
 	[names.config.imports]: map.import,
 	[names.config.stylistic]: map.stylistic,
 	[names.config.typescript]: map.typescript,
-} as {
-	[K in ConfigWithPlugin]: string;
 };
 
 export function configHasPlugin(name: string): name is ConfigWithPlugin {

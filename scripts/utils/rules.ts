@@ -33,7 +33,7 @@ export function getRules(configs: AirbnbConfigs) {
 
 export function getApprovedRules(rules: ProcessedRule[]) {
 	return rules.filter(
-		(rule: ProcessedRule) => !rule.meta.deprecated && !rule.meta.plugin
+		(rule: ProcessedRule) => !rule.meta.deprecated && !rule.meta.plugin,
 	);
 }
 
@@ -53,12 +53,11 @@ export function getLegacyRules(rules: ProcessedRule[]) {
 export function getProcessedRule(
 	config: string,
 	name: string,
-	value: Linter.RuleEntry
+	value: Linter.RuleEntry,
 ): ProcessedRule {
 	// Airbnb config uses eslint-plugin-import
 	// therefore some rules are prefixed with 'import'
-	const isImportsRule =
-		name.includes('/') && name.startsWith(pluginNames.import);
+	const isImportsRule = name.includes('/') && name.startsWith(pluginNames.import);
 
 	const key = isImportsRule ? name.split('/')[1] : name;
 	const raw = findRawRule(key, isImportsRule);
@@ -85,7 +84,7 @@ export function getProcessedRule(
 
 function findRawRule(
 	name: string,
-	isImportsRule: boolean
+	isImportsRule: boolean,
 ): Rule.RuleModule | null {
 	const raw = isImportsRule
 		? pluginRules[pluginNames.import][name]
@@ -116,7 +115,7 @@ function findPlugin(ruleName: string) {
 
 	const isReplacedIn = (
 		plugin: PluginNotTypescript,
-		name: string
+		name: string,
 	): plugin is PluginNotTypescript => name in pluginRules[plugin];
 
 	let replacedIn: PluginNotTypescript | undefined;
@@ -133,33 +132,31 @@ function findPlugin(ruleName: string) {
 export function copyRules(
 	name: AirbnbNames,
 	rules: ProcessedRule[],
-	target: FlatConfig
+	target: FlatConfig,
 ) {
 	target.rules = rules
 		.filter((rule) => rule.meta.config === name)
 		.reduce(
-			(all, rule) =>
-				Object.assign(all, {
-					[rule.name]: rule.value,
-				}),
-			{}
+			(all, rule) => Object.assign(all, {
+				[rule.name]: rule.value,
+			}),
+			{},
 		);
 }
 
 export function copyPluginRules(
 	name: ConfigWithPlugin,
 	rules: ProcessedRule[],
-	target: FlatConfig
+	target: FlatConfig,
 ) {
 	const plugin = getPlugin(name);
 	target.rules = rules
 		.filter((rule) => rule.meta.plugin === plugin)
 		.reduce(
-			(all, rule) =>
-				Object.assign(all, {
-					[`${plugin}/${rule.name}`]: rule.value,
-				}),
-			{}
+			(all, rule) => Object.assign(all, {
+				[`${plugin}/${rule.name}`]: rule.value,
+			}),
+			{},
 		);
 
 	if (name === 'node') {
@@ -173,7 +170,7 @@ export function copyPluginRules(
 
 function disableDeprecatedPluginRules(
 	name: ConfigWithPlugin,
-	target: FlatConfig
+	target: FlatConfig,
 ) {
 	const plugin = getPlugin(name);
 	Object.entries(pluginRules[plugin])
@@ -181,7 +178,7 @@ function disableDeprecatedPluginRules(
 		.forEach((entry) => {
 			if (!target.rules) {
 				throw new Error(
-					`This shouldn't happen! Expected config '${name}' to have rules!`
+					`This shouldn't happen! Expected config '${name}' to have rules!`,
 				);
 			}
 
@@ -194,7 +191,7 @@ function disableDeprecatedPluginRules(
 function overwriteImportsRules(target: FlatConfig) {
 	if (!target.rules) {
 		throw new Error(
-			`This shouldn't happen! Expected config 'imports' to have rules!`
+			'This shouldn\'t happen! Expected config \'imports\' to have rules!',
 		);
 	}
 
@@ -230,7 +227,7 @@ export function copyLegacyRules(source: ProcessedRule[], target: FlatConfig) {
 		.forEach((rule) => {
 			if (!rule.meta.deprecated) {
 				throw new Error(
-					`This shouldn't happen! Expected ${rule.name} to be deprecated`
+					`This shouldn't happen! Expected ${rule.name} to be deprecated`,
 				);
 			}
 			rules[rule.name] = 0;
@@ -241,7 +238,7 @@ export function copyLegacyRules(source: ProcessedRule[], target: FlatConfig) {
 
 export function copyTypescriptRules(
 	source: ProcessedRule[],
-	target: FlatConfig
+	target: FlatConfig,
 ) {
 	const filtered = source.filter((rule) => isTypescriptRule(rule.name));
 	const rules: Linter.RulesRecord = {};

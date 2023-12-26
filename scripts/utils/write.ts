@@ -9,7 +9,7 @@ import prettier from 'prettier';
 // import { sortRules } from './rules.ts';
 
 const prettierBaseOptions = await prettier.resolveConfig(
-	new URL('../../.prettierrc.json', import.meta.url)
+	new URL('../../.prettierrc.json', import.meta.url),
 );
 
 export const NOTICE = '// FILE GENERATED WITH SCRIPT';
@@ -24,16 +24,15 @@ async function prettify(input: string, parser: BuiltInParserName = 'espree') {
 }
 
 export function toCamelCase(input: string) {
-	const r =
-		/[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+/g;
+	const r = /[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+/g;
 	const m = input.match(r);
 
 	if (!m) return input;
 
 	const s = Array.isArray(m)
 		? m
-				.map((x) => x.slice(0, 1).toUpperCase() + x.slice(1).toLowerCase())
-				.join('')
+			.map((x) => x.slice(0, 1).toUpperCase() + x.slice(1).toLowerCase())
+			.join('')
 		: input;
 
 	return s.slice(0, 1).toLowerCase() + s.slice(1);
@@ -56,7 +55,7 @@ export async function writeFile(
 	meta: string,
 	file: string,
 	data: string,
-	parser: BuiltInParserName = 'espree'
+	parser: BuiltInParserName = 'espree',
 ) {
 	const path = fileURLToPath(new URL(file, meta));
 	const output = await prettify(data, parser);

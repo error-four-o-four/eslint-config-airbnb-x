@@ -4,7 +4,7 @@ import names from './utils/names.ts';
 
 const modified = {
 	...Object.fromEntries(
-		Object.entries(names.airbnb).filter(([name]) => name !== 'es6')
+		Object.entries(names.airbnb).filter(([name]) => name !== 'es6'),
 	),
 	es2022: 'es2022',
 } as ModifiedNamesType;

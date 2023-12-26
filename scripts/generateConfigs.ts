@@ -1,5 +1,7 @@
 import { importBaseConfigs, processEntries } from './utils/convert.ts';
-import { NOTICE, ensureFolder, toCamelCase, writeFile } from './utils/write.ts';
+import {
+	NOTICE, ensureFolder, toCamelCase, writeFile,
+} from './utils/write.ts';
 
 import type {
 	FlatConfig,
@@ -14,8 +16,7 @@ run();
 async function run() {
 	const baseConfigEntries = await importBaseConfigs();
 
-	const { convertedConfigs, processedConfigs } =
-		processEntries(baseConfigEntries);
+	const { convertedConfigs, processedConfigs } = processEntries(baseConfigEntries);
 
 	const baseDir = '../src/configs';
 	ensureFolder(`${baseDir}/`, import.meta.url);
@@ -91,15 +92,15 @@ async function writeIndexFile(url: string, file: string, names: string[]) {
 		.map((camel, i) => `import ${camel} from './${names[i]}.js';`)
 		.join('\n')}\n\n`;
 
-	data += `const configs = {\n`;
+	data += 'const configs = {\n';
 	data += `${camelCaseNames.map((camel) => `\t${camel},`).join('\n')}\n`;
-	data += `};\n\n`;
+	data += '};\n\n';
 
-	data += `export {\n`;
+	data += 'export {\n';
 	data += `${camelCaseNames.map((camel) => `\t${camel},`).join('\n')}\n`;
-	data += `};\n\n`;
+	data += '};\n\n';
 
-	data += `export default configs;`;
+	data += 'export default configs;';
 
 	await writeFile(url, file, data);
 }
