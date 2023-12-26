@@ -5,12 +5,14 @@ import type { Rule } from 'eslint';
 import { pluginNames, pluginRules, getPlugin } from './plugins.ts';
 
 import type {
+	AirbnbConfigs,
+	AirbnbNames,
 	ConfigWithPlugin,
-	PluginImport,
 	PluginNotTypescript,
-} from './plugins.ts';
-
-import type { AirbnbConfigs, AirbnbNames, FlatConfig } from '../types.ts';
+	ProcessedRule,
+	ApprovedMeta,
+	DeprecatedMeta,
+} from './types.ts';
 
 const rulesEslint = new Linter().getRules();
 
@@ -32,9 +34,19 @@ export function getRules(configs: AirbnbConfigs) {
 }
 
 export function getApprovedRules(rules: ProcessedRule[]) {
-	return rules.filter(
-		(rule: ProcessedRule) => !rule.meta.deprecated && !rule.meta.plugin,
+	const isApprovedRule = (rule: ProcessedRule): rule is ProcessedRule<ApprovedMeta> => (
+		!rule.meta.deprecated && !rule.meta.plugin
 	);
+
+	const filtered: ProcessedRule<ApprovedMeta>[] = [];
+
+	rules.forEach((rule) => {
+		if (isApprovedRule(rule)) {
+			filtered.push(rule);
+		}
+	});
+
+	return filtered;
 }
 
 export function getPluginRules(rules: ProcessedRule[]) {
@@ -42,7 +54,19 @@ export function getPluginRules(rules: ProcessedRule[]) {
 }
 
 export function getLegacyRules(rules: ProcessedRule[]) {
-	return rules.filter((rule: ProcessedRule) => rule.meta.deprecated);
+	const isDeprecatedRule = (rule: ProcessedRule): rule is ProcessedRule<DeprecatedMeta> => (
+		rule.meta.deprecated
+	);
+
+	const filtered: ProcessedRule<DeprecatedMeta>[] = [];
+
+	rules.forEach((rule) => {
+		if (isDeprecatedRule(rule)) {
+			filtered.push(rule);
+		}
+	});
+
+	return filtered;
 }
 
 // @todo filter replacedBy rules
@@ -131,10 +155,10 @@ function findPlugin(ruleName: string) {
 
 export function copyRules(
 	name: AirbnbNames,
-	rules: ProcessedRule[],
-	target: FlatConfig,
+	source: ProcessedRule[],
+	target: Linter.FlatConfig,
 ) {
-	target.rules = rules
+	target.rules = source
 		.filter((rule) => rule.meta.config === name)
 		.reduce(
 			(all, rule) => Object.assign(all, {
@@ -146,11 +170,28 @@ export function copyRules(
 
 export function copyPluginRules(
 	name: ConfigWithPlugin,
-	rules: ProcessedRule[],
-	target: FlatConfig,
+	source: ProcessedRule[],
+	target: Linter.FlatConfig,
 ) {
+	const rules = getScopedRules(name, source);
+
+	if (name === 'node') {
+		disableDeprecatedPluginRules(name, rules);
+	}
+
+	if (name === 'imports') {
+		overwriteImportsRules(rules);
+	}
+
+	target.rules = rules;
+}
+
+function getScopedRules(
+	name: ConfigWithPlugin,
+	source: ProcessedRule[],
+): Linter.RulesRecord {
 	const plugin = getPlugin(name);
-	target.rules = rules
+	return source
 		.filter((rule) => rule.meta.plugin === plugin)
 		.reduce(
 			(all, rule) => Object.assign(all, {
@@ -158,54 +199,34 @@ export function copyPluginRules(
 			}),
 			{},
 		);
-
-	if (name === 'node') {
-		disableDeprecatedPluginRules(name, target);
-	}
-
-	if (name === 'imports') {
-		overwriteImportsRules(target);
-	}
 }
 
 function disableDeprecatedPluginRules(
 	name: ConfigWithPlugin,
-	target: FlatConfig,
+	target: Linter.RulesRecord,
 ) {
 	const plugin = getPlugin(name);
 	Object.entries(pluginRules[plugin])
 		.filter((entry) => entry[1].meta?.deprecated)
 		.forEach((entry) => {
-			if (!target.rules) {
-				throw new Error(
-					`This shouldn't happen! Expected config '${name}' to have rules!`,
-				);
-			}
-
-			target.rules[`${plugin}/${entry[0]}`] = 0;
+			target[`${plugin}/${entry[0]}`] = 0;
 		});
 
 	// @todo sort by name
 }
 
-function overwriteImportsRules(target: FlatConfig) {
-	if (!target.rules) {
-		throw new Error(
-			'This shouldn\'t happen! Expected config \'imports\' to have rules!',
-		);
-	}
-
+function overwriteImportsRules(target: Linter.RulesRecord) {
 	// @todo types
 
 	const noExtraneousDepsKey = 'import/no-extraneous-dependencies';
-	const noExtraneousDepsVals = target.rules[
+	const noExtraneousDepsVals = target[
 		noExtraneousDepsKey
 	] as Linter.RuleLevelAndOptions; // ??
 
 	const [severity, dependants] = noExtraneousDepsVals;
 
 	// target.rules['import/named'] = 0;
-	target.rules[noExtraneousDepsKey] = [
+	target[noExtraneousDepsKey] = [
 		severity,
 		{
 			devDependencies: [
@@ -219,17 +240,15 @@ function overwriteImportsRules(target: FlatConfig) {
 	];
 }
 
-export function copyLegacyRules(source: ProcessedRule[], target: FlatConfig) {
+export function copyLegacyRules(
+	source: ProcessedRule<DeprecatedMeta>[],
+	target: Linter.FlatConfig,
+) {
 	const rules: Linter.RulesRecord = {};
 
 	source
 		.filter((rule) => rule.meta.plugin !== 'import')
 		.forEach((rule) => {
-			if (!rule.meta.deprecated) {
-				throw new Error(
-					`This shouldn't happen! Expected ${rule.name} to be deprecated`,
-				);
-			}
 			rules[rule.name] = 0;
 		});
 
@@ -238,7 +257,7 @@ export function copyLegacyRules(source: ProcessedRule[], target: FlatConfig) {
 
 export function copyTypescriptRules(
 	source: ProcessedRule[],
-	target: FlatConfig,
+	target: Linter.FlatConfig,
 ) {
 	const filtered = source.filter((rule) => isTypescriptRule(rule.name));
 	const rules: Linter.RulesRecord = {};
@@ -275,23 +294,3 @@ export function sortRules(a: ProcessedRule, b: ProcessedRule) {
 
 	return nameA < nameB ? -1 : nameA > nameB ? 1 : 0;
 }
-
-type ApprovedMeta = {
-	deprecated: false;
-	config: string;
-	plugin?: PluginImport;
-};
-
-type DeprecatedMeta = {
-	deprecated: true;
-	config: string;
-	plugin?: PluginNotTypescript;
-	replacedBy?: string;
-	url?: string;
-};
-
-export type ProcessedRule = {
-	meta: ApprovedMeta | DeprecatedMeta;
-	name: string;
-	value: Linter.RuleEntry;
-};

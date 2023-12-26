@@ -2,8 +2,8 @@ import { dirname, isAbsolute, sep } from 'node:path';
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
-import type { BuiltInParserName, Options } from 'prettier';
 import prettier from 'prettier';
+import type { BuiltInParserName, Options } from 'prettier';
 
 // import { DeprecatedRule } from '../types.ts';
 // import { sortRules } from './rules.ts';

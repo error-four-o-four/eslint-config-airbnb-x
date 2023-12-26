@@ -1,15 +1,18 @@
+import { Linter } from 'eslint';
+
 import { importBaseConfigs, processEntries } from './utils/convert.ts';
+
 import {
 	NOTICE, ensureFolder, toCamelCase, writeFile,
 } from './utils/write.ts';
 
 import type {
-	FlatConfig,
 	AirbnbConfigs,
 	AirbnbNames,
 	ConfigNames,
 	CustomConfigs,
-} from './types.ts';
+	NamedFlatConfig,
+} from './utils/types.ts';
 
 run();
 
@@ -33,7 +36,7 @@ async function writeConvertedConfigs(folder: string, configs: AirbnbConfigs) {
 	const { url } = import.meta;
 	ensureFolder(`${folder}/`, url);
 
-	const toData = (config: FlatConfig) => `${NOTICE}
+	const toData = (config: Linter.FlatConfig) => `${NOTICE}
 /** @type {import('eslint').Linter.FlatConfig} */
 export default ${JSON.stringify(config)}
 `;
@@ -59,8 +62,8 @@ async function writeProcessedConfigs(folder: string, configs: CustomConfigs) {
 	const { url } = import.meta;
 	ensureFolder(`${folder}/`, url);
 
-	const toData = (config: FlatConfig) => `${NOTICE}
-/** @type {{ name: string } & import('eslint').Linter.FlatConfig} */
+	const toData = (config: NamedFlatConfig) => `${NOTICE}
+/** @type import('../../shared/types.d.ts').NamedFlatConfig} */
 export default ${JSON.stringify(config)}
 `;
 

@@ -11,6 +11,10 @@ import pluginTypescript from '@typescript-eslint/eslint-plugin';
 
 import names from './names.ts';
 
+import type {
+	PluginNames, ConfigWithPlugin,
+} from './types.ts';
+
 const map = {
 	import: 'import',
 	node: 'node',
@@ -53,17 +57,3 @@ export function configHasPlugin(name: string): name is ConfigWithPlugin {
 export function getPlugin(name: ConfigWithPlugin) {
 	return configPluginMap[name] as PluginNames;
 }
-
-export type ConfigWithPlugin = keyof Pick<
-	typeof names.config,
-	'node' | 'imports' | 'stylistic' | 'typescript'
->;
-
-export type PluginNames = (typeof keys)[number];
-
-export type PluginImport = keyof Pick<typeof map, 'import'>;
-
-export type PluginNotTypescript = keyof Pick<
-	typeof map,
-	'node' | 'import' | 'stylistic'
->;

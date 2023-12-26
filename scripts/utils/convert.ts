@@ -1,6 +1,7 @@
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
+import { Linter } from 'eslint';
 import { FlatCompat } from '@eslint/eslintrc';
 
 // @ts-expect-error missing types
@@ -22,17 +23,14 @@ import {
 	copyTypescriptRules,
 } from './rules.ts';
 
-import type { ProcessedRule } from './rules.ts';
-
 import type {
-	BaseConfig,
 	BaseConfigEntry,
-	FlatConfig,
 	AirbnbConfigs,
 	CustomConfigs,
 	AirbnbNames,
 	CustomNames,
-} from '../types.ts';
+	ProcessedRule,
+} from './types.ts';
 
 export async function importBaseConfigs(): Promise<BaseConfigEntry[]> {
 	const promiseBaseConfig = (item: string): Promise<BaseConfigEntry> => {
@@ -70,7 +68,7 @@ function getConverted(entries: BaseConfigEntry[]): AirbnbConfigs {
 		baseDirectory: root,
 	});
 
-	const convertBase2Flat = (base: BaseConfig): FlatConfig => compat.config(base)
+	const convertBase2Flat = (base: Linter.BaseConfig): Linter.FlatConfig => compat.config(base)
 		.reduce((all, data) => Object.assign(all, data), {});
 
 	return Object.fromEntries(
@@ -92,7 +90,7 @@ function getProcessed(
 		{} as TempConfigs,
 	);
 
-	type TempConfigs = Omit<CustomConfigs, 'es2022'> & { es6: FlatConfig; };
+	type TempConfigs = Omit<CustomConfigs, 'es2022'> & { es6: Linter.FlatConfig; };
 
 	Object.keys(temp).forEach((name) => {
 		if (isAirbnb(name)) {
@@ -133,8 +131,9 @@ function getProcessed(
 
 			if (name === 'typescript') {
 				customizeTypescriptLanguageOptions(temp[name]);
-				customizeTypescriptSettings(source.imports, temp[name]);
 				copyTypescriptRules(approvedRules, temp[name]);
+
+				customizeSettings(source.imports, temp[name], true);
 			}
 		}
 	});
@@ -162,8 +161,8 @@ const SOURCE_TYPE = 'module';
 // applies to es6, node, imports
 function customizeLanguageOptions(
 	name: AirbnbNames,
-	source: FlatConfig,
-	target: FlatConfig,
+	source: Linter.FlatConfig,
+	target: Linter.FlatConfig,
 ) {
 	const languageOptions = { ...source.languageOptions };
 
@@ -207,7 +206,7 @@ function customizeLanguageOptions(
 }
 
 // applies to typescript config
-function customizeTypescriptLanguageOptions(target: FlatConfig) {
+function customizeTypescriptLanguageOptions(target: Linter.FlatConfig) {
 	target.languageOptions = {
 		ecmaVersion: ECMA_VERSION,
 		sourceType: SOURCE_TYPE,
@@ -226,42 +225,27 @@ const importsKeys = {
 	parsers: `${pluginNames.import}/parsers`,
 };
 
-// only applies to 'imports'
 // @todo tests !!!
-function customizeSettings(source: FlatConfig, target: FlatConfig) {
-	const exts = ['.js', '.mjs'];
-	const custom = {
-		[importsKeys.extensions]: exts,
-		[importsKeys.resolver]: {
-			node: { extensions: ['.json'] },
-			typescript: { extensions: exts },
-		},
-		[importsKeys.parsers]: {
-			espree: exts,
-		},
-	};
-
-	target.settings = {
-		...source.settings,
-		...custom,
-	};
-}
-
-// only applies to 'typescript'
-// @todo tests !!!
-function customizeTypescriptSettings(source: FlatConfig, target: FlatConfig) {
+function customizeSettings(source: Linter.FlatConfig, target: Linter.FlatConfig, ts = false) {
 	const extsJs = ['.js', '.mjs'];
 	const extsTs = ['.ts', '.mts'];
-	const exts = [...extsJs, ...extsTs];
+	const exts = ts ? [...extsJs, ...extsTs] : extsJs;
+
+	const resolver = {
+		node: { extensions: ['.json'] },
+		typescript: { extensions: exts },
+	};
+
+	const parser = ts ? ({
+		'@typescript-eslint/parser': extsTs,
+	}) : {
+		espree: extsJs,
+	};
+
 	const custom = {
 		[importsKeys.extensions]: exts,
-		[importsKeys.resolver]: {
-			node: { extensions: ['.json'] },
-			typescript: { extensions: exts },
-		},
-		[importsKeys.parsers]: {
-			'@typescript-eslint/parser': extsTs,
-		},
+		[importsKeys.resolver]: resolver,
+		[importsKeys.parsers]: parser,
 	};
 
 	target.settings = {

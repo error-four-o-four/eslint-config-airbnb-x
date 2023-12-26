@@ -11,11 +11,9 @@ const EXT_TS = ['.ts', '.mts'];
 export const GLOBS_JS = EXT_JS.map((ext) => `**/*${ext}`);
 export const GLOBS_TS = EXT_TS.map((ext) => `**/*${ext}`);
 
-// console.log(tsExists, EXTS);
-
 // @todo check if react exists
 
-// @todo get typed plugin names
+/** @type {import('../shared/types.d.ts').PluginNames} */
 export const pluginNames = {
 	import: 'import',
 	node: 'node',
