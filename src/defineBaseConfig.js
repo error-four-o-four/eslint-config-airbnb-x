@@ -15,6 +15,10 @@ baseMixed.plugins = {
 	[pluginNames.stylistic]: pluginStylistic,
 };
 
+/**
+ * @param {import('eslint').Linter.FlatConfig[]} overrides
+ * @returns {[import('../shared/types.d.ts').NamedFlatConfig | import('eslint').Linter.FlatConfig]}
+ */
 export default async (...overrides) => {
 	if (!tsExists) {
 		const baseJS = (await import('./configs/merged/base-js.js')).default;

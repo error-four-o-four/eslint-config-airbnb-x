@@ -1,6 +1,6 @@
 # eslint-config-airbnb-flat
 
-Unofficial migration of the airbnb styleguide from eslintrc format to flat config file format.
+Unofficial migration of the airbnb styleguide from eslintrc format to [flat config ](https://eslint.org/docs/latest/use/configure/configuration-files-new) file format.
 
 ## Setup
 
@@ -22,53 +22,62 @@ import defineConfig from 'eslint-config-airbnb-flat/base';
 export default defineConfig({
 	files: ['path/**/*.js'],
 	rules: {
-		// add custom overrides
+		// add custom rules
 	},
 });
 ```
 
-The function `defineConfig` accepts multiple arguments.
+The default export is a function which accepts custom overrides and returns an optimized version of the [eslint-config-airbnb-base](https://github.com/airbnb/javascript/tree/master/packages/eslint-config-airbnb-base) config.
+* All [deprecated rules](./legacy.json) are disabled.
+* [eslint-plugin-import](https://github.com/import-js/eslint-plugin-import) was replaced by [eslint-plugin-i](https://github.com/un-es/eslint-plugin-i)
+* [eslint-import-resolver-typescript](https://www.npmjs.com/package/eslint-import-resolver-typescript) is used by default to support ['imports' and 'exports' fields in package.json](https://github.com/import-js/eslint-plugin-import/issues/1868)
+ * [eslint-plugin-n](https://github.com/eslint-community/eslint-plugin-n) and [eslint-stylistic](https://github.com/eslint-stylistic/eslint-stylistic) were added.
+ * [typescript](https://www.typescriptlang.org/) is auto-detected and works out-of-box (heavily inspired by [Anthony Fu](https://github.com/antfu)s [config](https://github.com/antfu/eslint-config/tree/main)).
 
-This is an optimized version of the [eslint-config-airbnb-base](https://github.com/airbnb/javascript/tree/master/packages/eslint-config-airbnb-base) config. It uses the typescript [parser](https://www.npmjs.com/package/@typescript-eslint/parser) and [resolver](https://www.npmjs.com/package/eslint-import-resolver-typescript) by default and it disables all [deprecated rules](./legacy.json).
 
-When [typescript](https://www.typescriptlang.org/) is installed as a dependency the corresponding [overrides](./src/configs/custom/typescript.js) are applied automagically (heavily inspired by the [config](https://github.com/antfu/eslint-config/tree/main) of [Anthony Fu](https://github.com/antfu)).
+### Customize
 
-[eslint-plugin-import](https://github.com/import-js/eslint-plugin-import) was replaced by [eslint-plugin-i](https://github.com/un-es/eslint-plugin-i) and additionally [eslint-plugin-n](https://github.com/eslint-community/eslint-plugin-n) was added.
+If you want to override one of the rules of the added plugins, make sure to use the corresponding prefix:
 
-### Customization
+ | Original Prefix        | New prefix 			|
+ | ---------------------- | --------------- |
+ | `i/*`                  | `import/*`			|
+ | `n/*`                  | `node/*`				|
+ | `@typescript-eslint/*` | `typescript/*`	|
+ | `@stylistic/*`         | `stylistic/*`		|
 
-If you want to override one of the rules of these plugins, make sure to use the `import`, `node` or `typescript`.
-
-To pick and use only specific configuration files, use the default export:
+You can also use only specific configuration files ((at the moment) you will have to add the plugins by yourself):
 
 ```js
-import * as airbnb from 'eslint-config-airbnb-flat/base';
+import pluginNode from 'eslint-plugin-n';
+import { node as configNode } from 'eslint-config-airbnb-flat/configs';
 
-console.log(Object.keys(airbnb));
+configNode.plugins = {
+	node: pluginNode ,
+}
 
-export default [airbnb.bestPractices, airbnb.errors];
+export default [
+	configNode
+];
 ```
 
 #### Plain Compat
 
-These are just the plain, unomptimized converted configs (use at your own risk).
+These are just the plain, unomptimized converted configs (use them at your own risk).
 
 ```js
-// An array of the configs
 import airbnb from 'eslint-config-airbnb-flat/compat';
 
-// Or an object with the configs
-import * as airbnb from 'eslint-config-airbnb-flat/compat';
-console.log(airbnb.bestPractices);
+console.log(Object.keys(configs));
 ```
 
 ### Roadmap
 
 - 🔳 bundle (with ~~rollup~~ esbuild (to esm))
 - 🔳 convert (whole) codebase to typescript
-- 🔳 export type declarations
-- 🔳 add stylistic plugin and rules
+- 🔳 ~~export~~ create type declarations (defineBaseConfig)
+- ✅ add stylistic plugin and rules
 - 🔳 add tests (esp. import/no-unresolved)
-- 🔳 deprecated: node/no-hide-core-modules, node/no-unsupported-features
+- ✅ deprecated: node/no-hide-core-modules, node/no-unsupported-features
 - 🔳 node: differentiate esm and cjs globals (?)
 - 🔳 support React (jsx, tsx)

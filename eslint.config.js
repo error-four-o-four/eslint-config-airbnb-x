@@ -1,7 +1,6 @@
 // import pluginPrettier from 'eslint-plugin-prettier';
 
-// import defineConfig from './tmp/defineBase.min.js';
-import defineConfig from './src/defineBase.js';
+import defineConfig from './src/defineBaseConfig.js';
 
 const message = 'linting ...';
 /* eslint-disable no-console */
@@ -24,20 +23,10 @@ export default defineConfig(
 				'ignorePackages',
 				{ js: 'always', ts: 'always' },
 			],
-			// 'stylistic/comma-dangle': ['error', {
-			// 	functions: 'never'
-			// }],
 			'stylistic/indent': ['warn', 'tab'],
 			'stylistic/linebreak-style': ['warn', 'windows'],
 			'stylistic/no-tabs': 0,
 		},
-		// settings: {
-		// 	'import/resolver': {
-		// 		node: {
-		// 			map: [['@typescript-eslint', './node_modules/@typescript-eslint']],
-		// 		},
-		// 	},
-		// },
 	},
 	{
 		name: 'custom:overrides-node',

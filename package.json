@@ -19,10 +19,13 @@
 	],
 	"exports": {
 		"./base": {
-			"default": "./src/base.js"
+			"default": "./src/defineBaseConfig.js"
+		},
+		"./configs": {
+			"import": "./src/configs/custom/index.js"
 		},
 		"./compat": {
-			"import": "./src/configs/compat.js"
+			"import": "./src/configs/airbnb/index.js"
 		}
 	},
 	"engines": {
