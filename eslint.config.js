@@ -31,13 +31,13 @@ export default defineConfig(
 			'stylistic/linebreak-style': ['warn', 'windows'],
 			'stylistic/no-tabs': 0,
 		},
-		settings: {
-			'import/resolver': {
-				node: {
-					map: [['@typescript-eslint', './node_modules/@typescript-eslint']],
-				},
-			},
-		},
+		// settings: {
+		// 	'import/resolver': {
+		// 		node: {
+		// 			map: [['@typescript-eslint', './node_modules/@typescript-eslint']],
+		// 		},
+		// 	},
+		// },
 	},
 	{
 		name: 'custom:overrides-node',

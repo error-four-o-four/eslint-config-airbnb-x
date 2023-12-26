@@ -1,5 +1,5 @@
 // FILE GENERATED WITH SCRIPT
-/** @type {{ name: string } & import('eslint').Linter.FlatConfig} */
+/** @type {import('../../../shared/types.d.ts').NamedFlatConfig} */
 export default {
 	name: 'airbnb:variables',
 	rules: {

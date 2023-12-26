@@ -63,7 +63,7 @@ async function writeProcessedConfigs(folder: string, configs: CustomConfigs) {
 	ensureFolder(`${folder}/`, url);
 
 	const toData = (config: NamedFlatConfig) => `${NOTICE}
-/** @type import('../../shared/types.d.ts').NamedFlatConfig} */
+/** @type {import('../../../shared/types.d.ts').NamedFlatConfig} */
 export default ${JSON.stringify(config)}
 `;
 

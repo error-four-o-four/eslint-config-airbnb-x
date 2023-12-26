@@ -247,7 +247,9 @@ export default {
 		],
 		'max-lines-per-function': [
 			'off',
-			{ max: 50, skipBlankLines: true, skipComments: true, IIFEs: true },
+			{
+				max: 50, skipBlankLines: true, skipComments: true, IIFEs: true,
+			},
 		],
 		'max-nested-callbacks': 'off',
 		'max-statements': ['off', 10],
@@ -314,7 +316,9 @@ export default {
 		'no-global-assign': ['error', { exceptions: [] }],
 		'no-implicit-coercion': [
 			'off',
-			{ boolean: false, number: true, string: true, allow: [] },
+			{
+				boolean: false, number: true, string: true, allow: [],
+			},
 		],
 		'no-implicit-globals': 'off',
 		'no-import-assign': 'error',

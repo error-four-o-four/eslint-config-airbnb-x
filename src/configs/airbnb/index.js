@@ -19,6 +19,8 @@ const configs = {
 	strict,
 };
 
-export { bestPractices, errors, node, style, variables, es6, imports, strict };
+export {
+	bestPractices, errors, node, style, variables, es6, imports, strict,
+};
 
 export default configs;

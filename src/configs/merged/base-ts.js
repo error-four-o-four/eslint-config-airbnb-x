@@ -66,7 +66,9 @@ export default {
 		'import/extensions': [
 			'error',
 			'ignorePackages',
-			{ js: 'never', mjs: 'never', jsx: 'never', ts: 'never', tsx: 'never' },
+			{
+				js: 'never', mjs: 'never', jsx: 'never', ts: 'never', tsx: 'never',
+			},
 		],
 		'import/no-extraneous-dependencies': [
 			'error',

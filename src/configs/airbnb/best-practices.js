@@ -40,7 +40,9 @@ export default {
 		'no-native-reassign': 'off',
 		'no-implicit-coercion': [
 			'off',
-			{ boolean: false, number: true, string: true, allow: [] },
+			{
+				boolean: false, number: true, string: true, allow: [],
+			},
 		],
 		'no-implicit-globals': 'off',
 		'no-implied-eval': 'error',

@@ -1,5 +1,5 @@
 // FILE GENERATED WITH SCRIPT
-/** @type {{ name: string } & import('eslint').Linter.FlatConfig} */
+/** @type {import('../../../shared/types.d.ts').NamedFlatConfig} */
 export default {
 	name: 'airbnb:best-practices',
 	rules: {
@@ -38,7 +38,9 @@ export default {
 		'no-global-assign': ['error', { exceptions: [] }],
 		'no-implicit-coercion': [
 			'off',
-			{ boolean: false, number: true, string: true, allow: [] },
+			{
+				boolean: false, number: true, string: true, allow: [],
+			},
 		],
 		'no-implicit-globals': 'off',
 		'no-implied-eval': 'error',

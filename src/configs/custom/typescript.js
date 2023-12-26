@@ -1,25 +1,11 @@
 // FILE GENERATED WITH SCRIPT
-/** @type {{ name: string } & import('eslint').Linter.FlatConfig} */
+/** @type {import('../../../shared/types.d.ts').NamedFlatConfig} */
 export default {
 	name: 'airbnb:typescript',
 	languageOptions: {
 		ecmaVersion: 2022,
 		sourceType: 'module',
 		parserOptions: { ecmaVersion: 2022, sourceType: 'module', project: true },
-	},
-	settings: {
-		'import/resolver': {
-			node: { extensions: ['.json'] },
-			typescript: { extensions: ['.js', '.mjs', '.ts', '.mts'] },
-		},
-		'import/extensions': ['.js', '.mjs', '.jsx'],
-		'import/core-modules': [],
-		'import/ignore': [
-			'node_modules',
-			'\\.(coffee|scss|css|less|hbs|svg|json)$',
-		],
-		'import/extenstions': ['.js', '.mjs', '.ts', '.mts'],
-		'import/parsers': { '@typescript-eslint/parser': ['.ts', '.mts'] },
 	},
 	rules: {
 		'class-methods-use-this': 0,
@@ -99,5 +85,19 @@ export default {
 			{ enforceForRenamedProperties: false },
 		],
 		'typescript/require-await': 'off',
+	},
+	settings: {
+		'import/resolver': {
+			node: { extensions: ['.json'] },
+			typescript: { extensions: ['.js', '.mjs', '.ts', '.mts'] },
+		},
+		'import/extensions': ['.js', '.mjs', '.jsx'],
+		'import/core-modules': [],
+		'import/ignore': [
+			'node_modules',
+			'\\.(coffee|scss|css|less|hbs|svg|json)$',
+		],
+		'import/extenstions': ['.js', '.mjs', '.ts', '.mts'],
+		'import/parsers': { '@typescript-eslint/parser': ['.ts', '.mts'] },
 	},
 };

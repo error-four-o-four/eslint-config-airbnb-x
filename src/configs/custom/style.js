@@ -1,5 +1,5 @@
 // FILE GENERATED WITH SCRIPT
-/** @type {{ name: string } & import('eslint').Linter.FlatConfig} */
+/** @type {import('../../../shared/types.d.ts').NamedFlatConfig} */
 export default {
 	name: 'airbnb:style',
 	rules: {
@@ -42,7 +42,9 @@ export default {
 		],
 		'max-lines-per-function': [
 			'off',
-			{ max: 50, skipBlankLines: true, skipComments: true, IIFEs: true },
+			{
+				max: 50, skipBlankLines: true, skipComments: true, IIFEs: true,
+			},
 		],
 		'max-nested-callbacks': 'off',
 		'max-params': ['off', 3],

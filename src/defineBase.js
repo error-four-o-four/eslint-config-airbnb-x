@@ -1,5 +1,3 @@
-import { isPackageExists } from 'local-pkg';
-
 import pluginImport from 'eslint-plugin-i';
 import pluginNode from 'eslint-plugin-n';
 import pluginStylistic from '@stylistic/eslint-plugin';

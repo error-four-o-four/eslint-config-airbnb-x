@@ -27,7 +27,7 @@ export const configNames = {
 } as const;
 
 export default {
-	${['airbnb', 'custom', 'config', 'plugin']
+	${['airbnb', 'custom', 'config']
 		.map((name) => `${name}: ${name}Names,`)
 		.join('\n')}
 }
