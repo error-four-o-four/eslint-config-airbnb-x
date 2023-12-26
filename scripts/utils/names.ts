@@ -21,16 +21,8 @@ export const configNames = {
 	...customNames,
 } as const;
 
-export const pluginNames = {
-	import: 'import',
-	node: 'node',
-	stylistic: 'stylistic',
-	typescript: 'typescript',
-} as const;
-
 export default {
 	airbnb: airbnbNames,
 	custom: customNames,
 	config: configNames,
-	plugin: pluginNames,
 };

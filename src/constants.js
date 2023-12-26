@@ -7,15 +7,13 @@ export const tsExists = isPackageExists('typescript');
 
 const EXT_JS = ['.js', '.mjs'];
 const EXT_TS = ['.ts', '.mts'];
-const EXT_ALL = [...EXT_JS, ...EXT_TS];
 
-export const EXTS = tsExists ? EXT_ALL : EXT_JS;
-export const GLOBS = EXTS.map((ext) => `**/*${ext}`);
-
-// console.log(tsExists, EXTS);
+export const GLOBS_JS = EXT_JS.map((ext) => `**/*${ext}`);
+export const GLOBS_TS = EXT_TS.map((ext) => `**/*${ext}`);
 
 // @todo check if react exists
 
+/** @type {import('../shared/types.d.ts').PluginNames} */
 export const pluginNames = {
 	import: 'import',
 	node: 'node',

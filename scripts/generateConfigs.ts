@@ -1,139 +1,133 @@
-import { fileURLToPath } from 'node:url';
+import { Linter } from 'eslint';
 
-import { importBaseConfigs, processConfigEntries } from './utils/convert.ts';
-
-import { airbnbNames, configNames } from './utils/names.ts';
+import { importBaseConfigs, processEntries } from './utils/convert.ts';
 
 import {
-	createLogFileData,
-	ensureFolder,
-	toCamelCase,
-	writeFile,
+	NOTICE, ensureFolder, toCamelCase, writeFile,
 } from './utils/write.ts';
 
 import type {
+	AirbnbConfigs,
 	AirbnbNames,
 	ConfigNames,
-	NamedConfigEntry,
+	CustomConfigs,
 	NamedFlatConfig,
-} from './types.ts';
-
-// EXECUTE
-
-const NOTICE = '// FILE GENERATED WITH SCRIPT';
-
-const metaUrl = import.meta.url;
+} from './utils/types.ts';
 
 run();
 
 async function run() {
 	const baseConfigEntries = await importBaseConfigs();
 
-	// add prefixed property 'name' to FlatConfig
-	const prefix = 'airbnb';
-
-	// remove and collect deprecated rules
-	// replace deprecated rules
-	// convert base to flat config
-	const [processedEntries, deprecatedRules] = processConfigEntries(
-		prefix,
-		baseConfigEntries
-	);
-
-	// best-practices
-	// errors
-	// ...
-	const configEntriesAirbnb = processedEntries.filter((entry) =>
-		Object.values(airbnbNames).includes(entry[0] as AirbnbNames)
-	);
-
-	const configEntryLegacy = findConfig(
-		processedEntries,
-		configNames.disableLegacy
-	);
-	const configEntryStylistic = findConfig(
-		processedEntries,
-		configNames.stylistic
-	);
-	const configEntryTypescript = findConfig(
-		processedEntries,
-		configNames.typescript
-	);
+	const { convertedConfigs, processedConfigs } = processEntries(baseConfigEntries);
 
 	const baseDir = '../src/configs';
-	ensureFolder(fileURLToPath(new URL(`${baseDir}/`, import.meta.url)));
+	ensureFolder(`${baseDir}/`, import.meta.url);
 
-	const airbnbDir = `${baseDir}/airbnb`;
-	await writeConfigs(airbnbDir, configEntriesAirbnb);
-	await writeConfigsEntryFile(`${baseDir}/compat.js`, configEntriesAirbnb);
+	await writeConvertedConfigs(`${baseDir}/airbnb`, convertedConfigs);
+	await writeProcessedConfigs(`${baseDir}/custom`, processedConfigs);
 
-	const legacyFile = `${baseDir}/custom/${configEntryLegacy[0]}.js`;
-	await writeConfigToFile(legacyFile, configEntryLegacy[1]);
-
-	const typescriptFile = `${baseDir}/custom/${configEntryTypescript[0]}.js`;
-	await writeConfigToFile(typescriptFile, configEntryTypescript[1]);
-
-	const stylisticFile = `${baseDir}/custom/${configEntryStylistic[0]}.js`;
-	await writeConfigToFile(stylisticFile, configEntryStylistic[1]);
-
-	const logFile = `../legacy.json`;
-	const logData = createLogFileData(deprecatedRules);
-
-	writeFile(metaUrl, logFile, logData, 'json');
+	// const rulesDir = `${baseDir}/rules`;
+	// await writeRules(`${rulesDir}/approved.json`, approvedRules);
+	// await writeRules(`${rulesDir}/deprecated.json`, deprecatedRules);
 }
 
-function findConfig(entries: NamedConfigEntry[], name: ConfigNames) {
-	const config = entries.find((entry) => entry[0] === name);
+async function writeConvertedConfigs(folder: string, configs: AirbnbConfigs) {
+	const { url } = import.meta;
+	ensureFolder(`${folder}/`, url);
 
-	if (!config) {
-		throw new Error(`Oops. Something went wrong. Could not find '${name}'`);
-	}
+	const toData = (config: Linter.FlatConfig) => `${NOTICE}
+/** @type {import('eslint').Linter.FlatConfig} */
+export default ${JSON.stringify(config)}
+`;
 
-	return config;
-}
+	const names = Object.keys(configs) as AirbnbNames[];
 
-async function writeConfigs(folder: string, entries: NamedConfigEntry[]) {
-	await entries.reduce(async (chain, entry) => {
+	await names.reduce(async (chain, name) => {
 		await chain;
-		const [name, data] = entry;
+		const config = configs[name];
+
 		const file = `${folder}/${name}.js`;
-		return writeConfigToFile(file, data);
+		const data = toData(config);
+
+		await writeFile(url, file, data);
 	}, Promise.resolve());
+
+	await writeIndexFile(url, `${folder}/index.js`, names);
 }
 
-// @todo jsdoc path is hardcoded
-const pathToShared = '../../../shared/types.d.ts';
+async function writeProcessedConfigs(folder: string, configs: CustomConfigs) {
+	const prefix = 'airbnb';
 
-const getJSDocType = (type: string) =>
-	`/** @type {import('${pathToShared}').${type}} */`;
+	const { url } = import.meta;
+	ensureFolder(`${folder}/`, url);
 
-async function writeConfigToFile(file: string, config: NamedFlatConfig) {
+	const toData = (config: NamedFlatConfig) => `${NOTICE}
+/** @type {import('../../../shared/types.d.ts').NamedFlatConfig} */
+export default ${JSON.stringify(config)}
+`;
+
+	const names = Object.keys(configs) as ConfigNames[];
+
+	await names.reduce(async (chain, name) => {
+		await chain;
+
+		// create a config with a name
+		const config = {
+			name: `${prefix}:${name}`,
+			...configs[name],
+		};
+
+		const file = `${folder}/${name}.js`;
+		const data = toData(config);
+
+		await writeFile(url, file, data);
+	}, Promise.resolve());
+
+	await writeIndexFile(url, `${folder}/index.js`, names);
+}
+
+async function writeIndexFile(url: string, file: string, names: string[]) {
+	const camelCaseNames = names.map((name) => toCamelCase(name));
 	let data = `${NOTICE}\n`;
-	data += `${getJSDocType('NamedFlatConfig')}\n`;
-	data += `export default ${JSON.stringify(config)}`;
 
-	await writeFile(metaUrl, file, data);
+	data += `${camelCaseNames
+		.map((camel, i) => `import ${camel} from './${names[i]}.js';`)
+		.join('\n')}\n\n`;
+
+	data += 'const configs = {\n';
+	data += `${camelCaseNames.map((camel) => `\t${camel},`).join('\n')}\n`;
+	data += '};\n\n';
+
+	data += 'export {\n';
+	data += `${camelCaseNames.map((camel) => `\t${camel},`).join('\n')}\n`;
+	data += '};\n\n';
+
+	data += 'export default configs;';
+
+	await writeFile(url, file, data);
 }
 
-async function writeConfigsEntryFile(
-	file: string,
-	entries: NamedConfigEntry[]
-) {
-	const names = entries.map(([name]) => [toCamelCase(name), name]);
+// async function writeRules(file: string, rules: ProcessedRule[]) {
+// 	const { url } = import.meta;
+// 	ensureFolder(file, url);
 
-	let data = `${NOTICE}\n`;
+// 	const modified = rules.map(({ name, value, meta }) =>
+// 		meta.deprecated
+// 			? {
+// 				name,
+// 				foundIn: meta.config,
+// 				replacedIn: meta.plugin || null,
+// 				replacedBy: meta.replacedBy || null,
+// 				url: meta.url,
+// 				value,
+// 			}
+// 			: {
+// 				name,
+// 				foundIn: meta.config,
+// 				value,
+// 			}
+// 	);
 
-	data += names
-		.map(([camel, kebap]) => `import ${camel} from './airbnb/${kebap}.js';`)
-		.join('\n');
-
-	data += `\n\n/** @type {{ [x: import('${pathToShared}').AirbnbNames]: import('${pathToShared}').NamedFlatConfig}} */\n`;
-	data += 'export const configs = {\n';
-	data += names.map(([pascal]) => `${pascal},`).join('\n');
-	data += '\n};\n\n';
-
-	data += `${getJSDocType('NamedFlatConfig[]')}\n`;
-	data += 'export default Object.values(configs);';
-
-	writeFile(metaUrl, file, data);
-}
+// 	await writeFile(url, file, JSON.stringify(modified), 'json');
+// }

@@ -1,160 +1,294 @@
 import { Linter } from 'eslint';
 
-// @ts-expect-error missing types
-import * as pluginImport from 'eslint-plugin-i';
+import type { Rule } from 'eslint';
 
-// @ts-expect-error missing types
-import pluginNode from 'eslint-plugin-n';
-
-import pluginStylistic from '@stylistic/eslint-plugin';
-import pluginTypescript from '@typescript-eslint/eslint-plugin';
-
-import { pluginNames } from './names.ts';
+import { pluginNames, pluginRules, getPlugin } from './plugins.ts';
 
 import type {
-	ApprovedRuleEntry,
-	CustomNames,
-	DeprecatedRule,
-	NamedConfigEntry,
-	RawRule,
-	RuleEntry,
-	RuleMeta,
-} from '../types.ts';
+	AirbnbConfigs,
+	AirbnbNames,
+	ConfigWithPlugin,
+	PluginNotTypescript,
+	ProcessedRule,
+	ApprovedMeta,
+	DeprecatedMeta,
+} from './types.ts';
 
 const rulesEslint = new Linter().getRules();
 
-const plugins = {
-	[pluginNames.import]: pluginImport,
-	[pluginNames.node]: pluginNode,
-	[pluginNames.stylistic]: pluginStylistic,
-	[pluginNames.typescript]: pluginTypescript,
-} as const;
+export function getRules(configs: AirbnbConfigs) {
+	const rules: ProcessedRule[] = [];
+	const names = Object.keys(configs) as AirbnbNames[];
 
-const pluginKeys = Object.values(pluginNames);
+	names.forEach((configName) => {
+		const configFlat = configs[configName];
 
-const pluginRules = pluginKeys.reduce(
-	(all, plugin) =>
-		Object.assign(all, {
-			[plugin]: Object.keys(plugins[plugin].rules),
-		}),
-	{} as { [K in keyof typeof plugins]: string[] }
-);
+		if (!configFlat.rules) return;
 
-// Airbnb config uses eslint-plugin-import
-// therefore some rules are prefixed with 'import'
-export function findRawRule(name: string): RawRule | null {
-	const isImportRule = name.startsWith('import');
+		Object.entries(configFlat.rules).forEach(([ruleName, ruleValue]) => {
+			rules.push(getProcessedRule(configName, ruleName, ruleValue));
+		});
+	});
 
-	const key = isImportRule ? name.split('/')[1] : name;
-	const raw = isImportRule
-		? plugins[pluginNames.import].rules[key]
-		: rulesEslint.get(key);
+	return rules.sort(sortRules);
+}
+
+export function getApprovedRules(rules: ProcessedRule[]) {
+	const isApprovedRule = (rule: ProcessedRule): rule is ProcessedRule<ApprovedMeta> => (
+		!rule.meta.deprecated && !rule.meta.plugin
+	);
+
+	const filtered: ProcessedRule<ApprovedMeta>[] = [];
+
+	rules.forEach((rule) => {
+		if (isApprovedRule(rule)) {
+			filtered.push(rule);
+		}
+	});
+
+	return filtered;
+}
+
+export function getPluginRules(rules: ProcessedRule[]) {
+	return rules.filter((rule: ProcessedRule) => rule.meta.plugin);
+}
+
+export function getLegacyRules(rules: ProcessedRule[]) {
+	const isDeprecatedRule = (rule: ProcessedRule): rule is ProcessedRule<DeprecatedMeta> => (
+		rule.meta.deprecated
+	);
+
+	const filtered: ProcessedRule<DeprecatedMeta>[] = [];
+
+	rules.forEach((rule) => {
+		if (isDeprecatedRule(rule)) {
+			filtered.push(rule);
+		}
+	});
+
+	return filtered;
+}
+
+// @todo filter replacedBy rules
+// export function getReplacedRules(rules: ProcessedRule[]) {
+// return rules.filter((rule: ProcessedRule) => rule.meta.deprecated && rule.meta.replacedBy);
+// }
+
+export function getProcessedRule(
+	config: string,
+	name: string,
+	value: Linter.RuleEntry,
+): ProcessedRule {
+	// Airbnb config uses eslint-plugin-import
+	// therefore some rules are prefixed with 'import'
+	const isImportsRule = name.includes('/') && name.startsWith(pluginNames.import);
+
+	const key = isImportsRule ? name.split('/')[1] : name;
+	const raw = findRawRule(key, isImportsRule);
+
+	let meta: ApprovedMeta | DeprecatedMeta = {
+		deprecated: false,
+		config,
+		plugin: isImportsRule ? pluginNames.import : undefined,
+	};
+
+	if (!raw || (raw.meta && raw.meta.deprecated)) {
+		meta = Object.assign(meta, {
+			deprecated: true,
+			...getDeprecatedMeta(key, raw?.meta),
+		});
+	}
+
+	return {
+		name: key,
+		meta,
+		value,
+	};
+}
+
+function findRawRule(
+	name: string,
+	isImportsRule: boolean,
+): Rule.RuleModule | null {
+	const raw = isImportsRule
+		? pluginRules[pluginNames.import][name]
+		: rulesEslint.get(name);
 
 	return raw || null;
 }
 
-export function handleApprovedRule(
-	rawRule: RawRule,
-	ruleName: string,
-	ruleValue: RuleEntry,
-	rules: ApprovedRuleEntry[]
-) {
-	if (rawRule.meta && !rawRule.meta.deprecated) {
-		rules.push([ruleName, ruleValue]);
-		return true;
-	}
+function getDeprecatedMeta(name: string, meta: Rule.RuleMetaData | undefined) {
+	const plugin = findPlugin(name);
 
-	return false;
+	const replacedBy = meta && meta.replacedBy ? meta.replacedBy[0] : undefined;
+	const url = meta?.docs?.url;
+
+	return {
+		plugin,
+		replacedBy,
+		url,
+	};
 }
 
-function findReplacedIn(ruleName: string) {
-	const replacedIn: string = [
+function findPlugin(ruleName: string) {
+	const possiblePlugins: PluginNotTypescript[] = [
 		pluginNames.import,
 		pluginNames.node,
 		pluginNames.stylistic,
-	].reduce(
-		// (result, [name, rules]) => result !== null ? result : rules.includes(ruleName) ? name : result,
-		// (result, name) => {
-		// 	if (result) return result;
-		// 	const rules = map[name];
-		// 	if (rules.includes(ruleName)) return name;
-		// 	return result;
-		// },
-		(result, pluginName) =>
-			result || (pluginRules[pluginName].includes(ruleName) ? pluginName : ''),
-		''
-	);
+	];
 
-	return replacedIn || undefined;
-}
+	const isReplacedIn = (
+		plugin: PluginNotTypescript,
+		name: string,
+	): plugin is PluginNotTypescript => name in pluginRules[plugin];
 
-export function handleDeprecatedRule(
-	configName: string,
-	ruleName: string,
-	ruleValue: RuleEntry,
-	ruleMeta: RuleMeta | undefined,
-	deprecatedRules: DeprecatedRule[],
-	processedRules: ApprovedRuleEntry[]
-) {
-	const strippedName = ruleName.includes('/')
-		? ruleName.split('/')[1]
-		: ruleName;
-	const pluginName = findReplacedIn(strippedName);
+	let replacedIn: PluginNotTypescript | undefined;
 
-	const replacedBy =
-		ruleMeta && ruleMeta.replacedBy ? ruleMeta.replacedBy[0] : undefined;
-	const url = ruleMeta?.docs?.url;
+	possiblePlugins.forEach((pluginName) => {
+		if (replacedIn) return;
 
-	deprecatedRules.push({
-		name: strippedName,
-		value: ruleValue,
-		config: configName,
-		plugin: pluginName,
-		replacedBy,
-		url,
+		if (isReplacedIn(pluginName, ruleName)) replacedIn = pluginName;
 	});
 
-	if (pluginName && pluginName !== pluginNames.stylistic) {
-		processedRules.push([`${pluginName}/${strippedName}`, ruleValue]);
+	return replacedIn;
+}
+
+export function copyRules(
+	name: AirbnbNames,
+	source: ProcessedRule[],
+	target: Linter.FlatConfig,
+) {
+	target.rules = source
+		.filter((rule) => rule.meta.config === name)
+		.reduce(
+			(all, rule) => Object.assign(all, {
+				[rule.name]: rule.value,
+			}),
+			{},
+		);
+}
+
+export function copyPluginRules(
+	name: ConfigWithPlugin,
+	source: ProcessedRule[],
+	target: Linter.FlatConfig,
+) {
+	const rules = getScopedRules(name, source);
+
+	if (name === 'node') {
+		disableDeprecatedPluginRules(name, rules);
 	}
+
+	if (name === 'imports') {
+		overwriteImportsRules(rules);
+	}
+
+	target.rules = rules;
 }
 
-export function isTypescriptRule(ruleName: string) {
-	return pluginRules[pluginNames.typescript].includes(ruleName);
+function getScopedRules(
+	name: ConfigWithPlugin,
+	source: ProcessedRule[],
+): Linter.RulesRecord {
+	const plugin = getPlugin(name);
+	return source
+		.filter((rule) => rule.meta.plugin === plugin)
+		.reduce(
+			(all, rule) => Object.assign(all, {
+				[`${plugin}/${rule.name}`]: rule.value,
+			}),
+			{},
+		);
 }
 
-export function getTypescriptRuleName(ruleName: string) {
-	const scope: CustomNames = 'typescript';
-	return `${scope}/${ruleName}`;
+function disableDeprecatedPluginRules(
+	name: ConfigWithPlugin,
+	target: Linter.RulesRecord,
+) {
+	const plugin = getPlugin(name);
+	Object.entries(pluginRules[plugin])
+		.filter((entry) => entry[1].meta?.deprecated)
+		.forEach((entry) => {
+			target[`${plugin}/${entry[0]}`] = 0;
+		});
+
+	// @todo sort by name
 }
 
-export function getSortedRulesFromEntries(entries: NamedConfigEntry[]) {
-	const all: ApprovedRuleEntry[] = [];
+function overwriteImportsRules(target: Linter.RulesRecord) {
+	// @todo types
 
-	entries.forEach((entry) => {
-		const { rules } = entry[1];
+	const noExtraneousDepsKey = 'import/no-extraneous-dependencies';
+	const noExtraneousDepsVals = target[
+		noExtraneousDepsKey
+	] as Linter.RuleLevelAndOptions; // ??
 
-		if (!rules) {
-			throw Error(`Could not find any rules in plugin '${entry[0]}'`);
-		}
+	const [severity, dependants] = noExtraneousDepsVals;
 
-		all.push(...Object.entries(rules));
+	// target.rules['import/named'] = 0;
+	target[noExtraneousDepsKey] = [
+		severity,
+		{
+			devDependencies: [
+				...dependants.devDependencies,
+				'**/eslint.config.js',
+				'**/vite.config.js',
+				'**/vite.config.*.js',
+			],
+			optionalDependencies: dependants.optionalDependencies,
+		},
+	];
+}
+
+export function copyLegacyRules(
+	source: ProcessedRule<DeprecatedMeta>[],
+	target: Linter.FlatConfig,
+) {
+	const rules: Linter.RulesRecord = {};
+
+	source
+		.filter((rule) => rule.meta.plugin !== 'import')
+		.forEach((rule) => {
+			rules[rule.name] = 0;
+		});
+
+	target.rules = rules;
+}
+
+export function copyTypescriptRules(
+	source: ProcessedRule[],
+	target: Linter.FlatConfig,
+) {
+	const filtered = source.filter((rule) => isTypescriptRule(rule.name));
+	const rules: Linter.RulesRecord = {};
+
+	filtered.forEach((rule) => {
+		// console.log(`'${rule.name}' is replaced in @typescript-eslint`);
+		rules[rule.name] = 0;
 	});
 
-	return all.sort(sortRulesByEntryName);
+	filtered.forEach((rule) => {
+		rules[`${pluginNames.typescript}/${rule.name}`] = rule.value;
+	});
+
+	target.rules = rules;
 }
 
-export function sortRulesByEntryName(
-	a: ApprovedRuleEntry,
-	b: ApprovedRuleEntry
-) {
-	const nameA = a[0].toUpperCase();
-	const nameB = b[0].toUpperCase();
-
-	return nameA < nameB ? -1 : nameA > nameB ? 1 : 0;
+export function isTypescriptRule(name: string) {
+	return name in pluginRules[pluginNames.typescript];
 }
 
-export function sortRules(a: DeprecatedRule, b: DeprecatedRule) {
+// export function sortRulesByEntryName(
+// 	a: ApprovedRuleEntry,
+// 	b: ApprovedRuleEntry
+// ) {
+// 	const nameA = a[0].toUpperCase();
+// 	const nameB = b[0].toUpperCase();
+
+// 	return nameA < nameB ? -1 : nameA > nameB ? 1 : 0;
+// }
+
+export function sortRules(a: ProcessedRule, b: ProcessedRule) {
 	const nameA = a.name.toUpperCase();
 	const nameB = b.name.toUpperCase();
 

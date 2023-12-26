@@ -1,7 +1,6 @@
 // FILE GENERATED WITH SCRIPT
-/** @type {import('../../../shared/types.d.ts').NamedFlatConfig} */
+/** @type {import('eslint').Linter.FlatConfig} */
 export default {
-	name: 'airbnb:node',
 	languageOptions: {
 		globals: {
 			__dirname: false,
@@ -78,14 +77,16 @@ export default {
 		parserOptions: { ecmaFeatures: { globalReturn: true } },
 	},
 	rules: {
-		'node/callback-return': 'off',
-		'node/global-require': 'error',
-		'node/handle-callback-err': 'off',
-		'node/no-mixed-requires': ['off', false],
-		'node/no-new-require': 'error',
-		'node/no-path-concat': 'error',
-		'node/no-process-env': 'off',
-		'node/no-process-exit': 'off',
-		'node/no-sync': 'off',
+		'callback-return': 'off',
+		'global-require': 'error',
+		'handle-callback-err': 'off',
+		'no-buffer-constructor': 'error',
+		'no-mixed-requires': ['off', false],
+		'no-new-require': 'error',
+		'no-path-concat': 'error',
+		'no-process-env': 'off',
+		'no-process-exit': 'off',
+		'no-restricted-modules': 'off',
+		'no-sync': 'off',
 	},
 };

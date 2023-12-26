@@ -1,219 +1,255 @@
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
+import { Linter } from 'eslint';
 import { FlatCompat } from '@eslint/eslintrc';
 
 // @ts-expect-error missing types
 import airbnb from 'eslint-config-airbnb-base';
+import globals from 'globals';
 
-import type {
-	ApprovedRuleEntry,
-	BaseConfig,
-	BaseConfigEntry,
-	CustomNames,
-	DeprecatedRule,
-	NamedConfigEntry,
-	NamedFlatConfig,
-	RulesRecord,
-} from '../types.ts';
+import names from './names.ts';
+
+import { configHasPlugin, pluginNames } from './plugins.ts';
 
 import {
-	findRawRule,
-	handleApprovedRule,
-	handleDeprecatedRule,
-	sortRulesByEntryName,
-	sortRules,
-	getSortedRulesFromEntries,
-	isTypescriptRule,
-	getTypescriptRuleName,
+	getRules,
+	getApprovedRules,
+	getLegacyRules,
+	getPluginRules,
+	copyRules,
+	copyPluginRules,
+	copyLegacyRules,
+	copyTypescriptRules,
 } from './rules.ts';
 
-import { configNames, pluginNames } from './names.ts';
-
-function promiseBaseConfig(item: string): Promise<BaseConfigEntry> {
-	const name = path.basename(item, '.js');
-	const file = pathToFileURL(item).href;
-
-	return new Promise((resolve) => {
-		import(file).then((module) => {
-			const entry = [name, module.default] as BaseConfigEntry;
-			resolve(entry);
-		});
-	});
-}
+import type {
+	BaseConfigEntry,
+	AirbnbConfigs,
+	CustomConfigs,
+	AirbnbNames,
+	CustomNames,
+	ProcessedRule,
+} from './types.ts';
 
 export async function importBaseConfigs(): Promise<BaseConfigEntry[]> {
+	const promiseBaseConfig = (item: string): Promise<BaseConfigEntry> => {
+		const name = path.basename(item, '.js');
+		const file = pathToFileURL(item).href;
+
+		return new Promise((resolve) => {
+			import(file).then((module) => {
+				const entry = [name, module.default] as BaseConfigEntry;
+				resolve(entry);
+			});
+		});
+	};
+
 	return Promise.all(airbnb.extends.map(promiseBaseConfig));
 }
 
-export function processConfigEntries(
-	prefix: string,
-	entries: BaseConfigEntry[]
-): [NamedConfigEntry[], DeprecatedRule[]] {
-	const [processedEntries, deprecatedRules] = processEntries(prefix, entries);
+export function processEntries(baseEntries: BaseConfigEntry[]) {
+	const convertedConfigs = getConverted(baseEntries);
 
-	processedEntries.push(
-		createLegacyConfig(prefix, configNames.disableLegacy, deprecatedRules)
-	);
+	const processedRules = getRules(convertedConfigs);
+	const processedConfigs = getProcessed(convertedConfigs, processedRules);
 
-	processedEntries.push(
-		createStylisticConfig(prefix, configNames.stylistic, deprecatedRules)
-	);
-
-	processedEntries.push(
-		createTypescriptConfig(prefix, configNames.typescript, processedEntries)
-	);
-
-	return [processedEntries, deprecatedRules];
+	return {
+		convertedConfigs,
+		processedConfigs,
+	};
 }
 
-function processEntries(
-	prefix: string,
-	entries: BaseConfigEntry[]
-): [NamedConfigEntry[], DeprecatedRule[]] {
-	const processedEntries: NamedConfigEntry[] = [];
-	const deprecatedRules: DeprecatedRule[] = [];
+function getConverted(entries: BaseConfigEntry[]): AirbnbConfigs {
+	const filename = fileURLToPath(import.meta.url);
+	const root = path.dirname(path.resolve(filename, '../..'));
 
-	entries.forEach(([configName, configBase]) => {
-		const processedRules: ApprovedRuleEntry[] = [];
-
-		if (!configBase.rules) return;
-
-		Object.entries(configBase.rules).forEach(([ruleName, ruleValue]) => {
-			const rawRule = findRawRule(ruleName);
-
-			if (!rawRule || !ruleValue) {
-				console.error(`Could not find rule '${ruleName}'`);
-				return;
-			}
-
-			if (handleApprovedRule(rawRule, ruleName, ruleValue, processedRules)) {
-				console.info(`Approved rule '${ruleName}'`);
-				return;
-			}
-
-			const ruleMeta = rawRule.meta;
-			handleDeprecatedRule(
-				configName,
-				ruleName,
-				ruleValue,
-				ruleMeta,
-				deprecatedRules,
-				processedRules
-			);
-		});
-
-		processedEntries.push([
-			configName,
-			convertConfig(prefix, configName, configBase, processedRules),
-		]);
+	const compat = new FlatCompat({
+		baseDirectory: root,
 	});
 
-	return [processedEntries, deprecatedRules];
+	const convertBase2Flat = (base: Linter.BaseConfig): Linter.FlatConfig => compat.config(base)
+		.reduce((all, data) => Object.assign(all, data), {});
+
+	return Object.fromEntries(
+		entries.map(([name, base]) => [name, convertBase2Flat(base)]),
+	) as AirbnbConfigs;
 }
 
-const filename = fileURLToPath(import.meta.url);
-const root = path.dirname(path.resolve(filename, '../..'));
+function getProcessed(
+	source: AirbnbConfigs,
+	rules: ProcessedRule[],
+): CustomConfigs {
+	const approvedRules = getApprovedRules(rules);
+	const pluginRules = getPluginRules(rules);
+	const deprecatedRules = getLegacyRules(rules);
+	// @todo filter replacedBy rules
 
-const compat = new FlatCompat({
-	baseDirectory: root,
-});
+	const temp = Object.values(names.config).reduce(
+		(all, name) => Object.assign(all, { [name]: {} }),
+		{} as TempConfigs,
+	);
 
-function convertConfig(
-	prefix: string,
-	name: string,
-	base: BaseConfig,
-	approved: ApprovedRuleEntry[]
-): NamedFlatConfig {
-	const sorted = approved.sort(sortRulesByEntryName);
-	base.rules = Object.fromEntries(sorted);
+	type TempConfigs = Omit<CustomConfigs, 'es2022'> & { es6: Linter.FlatConfig; };
 
-	if (Object.hasOwn(base, 'plugins')) {
-		delete base.plugins;
+	Object.keys(temp).forEach((name) => {
+		if (isAirbnb(name)) {
+			// es6, node, imports have languageOptions
+			if (source[name].languageOptions) {
+				customizeLanguageOptions(name, source[name], temp[name]);
+			}
+
+			// overwrite imports settings
+			if (source[name].settings) {
+				// @todo tests !!!
+				customizeSettings(source[name], temp[name]);
+			}
+
+			// just copy the rules
+			if (!configHasPlugin(name)) {
+				copyRules(name, approvedRules, temp[name]);
+			}
+
+			// add plugin scope
+			// overwrite imports rules
+			if (configHasPlugin(name)) {
+				copyPluginRules(name, pluginRules, temp[name]);
+			}
+		}
+
+		if (isCustom(name)) {
+			// turn off all deprecated rules and
+			// rules which are replaced by node or stylistic
+			if (name === 'disable-legacy') {
+				copyLegacyRules(deprecatedRules, temp[name]);
+			}
+
+			// use airbnb rules wih stylistic plugin
+			if (name === 'stylistic') {
+				copyPluginRules(name, deprecatedRules, temp[name]);
+			}
+
+			if (name === 'typescript') {
+				customizeTypescriptLanguageOptions(temp[name]);
+				copyTypescriptRules(approvedRules, temp[name]);
+
+				customizeSettings(source.imports, temp[name], true);
+			}
+		}
+	});
+
+	// rename
+	return Object.fromEntries(
+		Object.entries(temp).map(([name, value]) => [
+			name === 'es6' ? 'es2022' : name,
+			value,
+		]),
+	) as CustomConfigs;
+}
+
+function isAirbnb(name: string): name is AirbnbNames {
+	return Object.values(names.airbnb).includes(name as AirbnbNames);
+}
+
+function isCustom(name: string): name is CustomNames {
+	return Object.values(names.custom).includes(name as CustomNames);
+}
+
+const ECMA_VERSION = 2022;
+const SOURCE_TYPE = 'module';
+
+// applies to es6, node, imports
+function customizeLanguageOptions(
+	name: AirbnbNames,
+	source: Linter.FlatConfig,
+	target: Linter.FlatConfig,
+) {
+	const languageOptions = { ...source.languageOptions };
+
+	delete languageOptions.ecmaVersion;
+	delete languageOptions.sourceType;
+
+	target.languageOptions = {
+		ecmaVersion: ECMA_VERSION,
+		sourceType: SOURCE_TYPE,
+	};
+
+	if (name === 'es6') {
+		const ecmaFeatures = {
+			...languageOptions.parserOptions?.ecmaFeatures,
+			jsx: false,
+		};
+
+		target.languageOptions.parserOptions = {
+			...languageOptions.parserOptions,
+			ecmaFeatures,
+		};
 	}
 
-	const named = { name: getPrefixedName(prefix, name) };
+	if (name === 'node') {
+		target.languageOptions.parserOptions = languageOptions.parserOptions;
+		target.languageOptions.globals = {
+			...globals.es2021,
+			...globals.node,
+			...globals.nodeBuiltin,
+		};
+	}
 
-	return compat
-		.config(base)
-		.reduce((all, data) => Object.assign(all, data), named);
+	if (name === 'imports') {
+		target.languageOptions.parserOptions = {
+			...target.languageOptions.parserOptions,
+			// required to satisfy 'import/no-named-as-default'
+			ecmaVersion: ECMA_VERSION,
+			sourceType: SOURCE_TYPE,
+		};
+	}
 }
 
-function getPrefixedName(prefix: string, name: string) {
-	return `${prefix}:${name}`;
+// applies to typescript config
+function customizeTypescriptLanguageOptions(target: Linter.FlatConfig) {
+	target.languageOptions = {
+		ecmaVersion: ECMA_VERSION,
+		sourceType: SOURCE_TYPE,
+		parserOptions: {
+			// required to satisfy 'import/no-named-as-default'
+			ecmaVersion: ECMA_VERSION,
+			sourceType: SOURCE_TYPE,
+			project: true,
+		},
+	};
 }
 
-function createLegacyConfig(
-	prefix: string,
-	name: CustomNames,
-	deprecated: DeprecatedRule[]
-): NamedConfigEntry {
-	const rules = deprecated
-		.filter((rule) => rule.plugin !== pluginNames.stylistic)
-		.sort(sortRules)
-		.reduce((all, item) => {
-			const ruleName =
-				item.plugin === pluginNames.import
-					? `${item.plugin}/${item.name}`
-					: item.name;
-			return Object.assign(all, {
-				[ruleName]: 0,
-			});
-		}, {});
+const importsKeys = {
+	extensions: `${pluginNames.import}/extenstions`,
+	resolver: `${pluginNames.import}/resolver`,
+	parsers: `${pluginNames.import}/parsers`,
+};
 
-	const config = {
-		name: getPrefixedName(prefix, name),
-		rules,
+// @todo tests !!!
+function customizeSettings(source: Linter.FlatConfig, target: Linter.FlatConfig, ts = false) {
+	const extsJs = ['.js', '.mjs'];
+	const extsTs = ['.ts', '.mts'];
+	const exts = ts ? [...extsJs, ...extsTs] : extsJs;
+
+	const resolver = {
+		node: { extensions: ['.json'] },
+		typescript: { extensions: exts },
 	};
 
-	return [name, config];
-}
-
-function createStylisticConfig(
-	prefix: string,
-	name: CustomNames,
-	deprecated: DeprecatedRule[]
-): NamedConfigEntry {
-	const rules = deprecated
-		.filter((rule) => rule.plugin === name)
-		.sort(sortRules)
-		.reduce(
-			(all, item) =>
-				Object.assign(all, {
-					[`${name}/${item.name}`]: item.value,
-				}),
-			{}
-		);
-
-	const config = {
-		name: getPrefixedName(prefix, name),
-		rules,
+	const parser = ts ? ({
+		'@typescript-eslint/parser': extsTs,
+	}) : {
+		espree: extsJs,
 	};
 
-	return [name, config];
-}
-
-function createTypescriptConfig(
-	prefix: string,
-	name: CustomNames,
-	entries: NamedConfigEntry[]
-): NamedConfigEntry {
-	const allRules = getSortedRulesFromEntries(entries);
-	const rules: RulesRecord = {};
-
-	allRules.forEach(([ruleName, ruleValue]) => {
-		if (!isTypescriptRule(ruleName)) return;
-
-		console.log(`'${ruleName}' is replaced in @typescript-eslint`);
-
-		rules[ruleName] = 0;
-		rules[getTypescriptRuleName(ruleName)] = ruleValue;
-	});
-
-	const config = {
-		name: getPrefixedName(prefix, name),
-		rules,
+	const custom = {
+		[importsKeys.extensions]: exts,
+		[importsKeys.resolver]: resolver,
+		[importsKeys.parsers]: parser,
 	};
 
-	return [name, config];
+	target.settings = {
+		...source.settings,
+		...custom,
+	};
 }
