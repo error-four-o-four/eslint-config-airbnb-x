@@ -1,7 +1,7 @@
 {
 	"name": "eslint-config-airbnb-flat",
 	"type": "module",
-	"version": "0.0.0",
+	"version": "0.0.1",
 	"description": "Unofficial migration of the airbnb styleguide from eslintrc format to flat config file format",
 	"author": "error-four-o-four",
 	"license": "MIT",
@@ -15,14 +15,15 @@
 		"unofficial"
 	],
 	"files": [
-		"src"
+		"dist",
+		"src/configs/airbnb"
 	],
 	"exports": {
 		"./base": {
-			"default": "./src/defineBaseConfig.js"
+			"import": "./dist/defineBaseConfig.min.js"
 		},
 		"./configs": {
-			"import": "./src/configs/custom/index.js"
+			"import": "./dist/configs.min.js"
 		},
 		"./compat": {
 			"import": "./src/configs/airbnb/index.js"
@@ -30,6 +31,9 @@
 	},
 	"engines": {
 		"node": ">=18"
+	},
+	"publishConfig": {
+		"access": "public"
 	},
 	"scripts": {
 		"prettier:check": "prettier . --check --ignore-unknown",
@@ -40,18 +44,22 @@
 		"generate:shared": "tsup-node --entry.types scripts/shared.ts --format esm --dts --dts-only -d ./shared",
 		"generate:configs": "node --no-warnings=ExperimentalWarning --loader ts-node/esm scripts/generateConfigs.ts",
 		"merge": "node --no-warnings=ExperimentalWarning --loader ts-node/esm scripts/mergeConfigs.ts",
-		"// clean": "rimraf dist/",
-		"// build:tmp": "esbuild src/defineBase.js --bundle --minify --platform=node --target=node18 --format=esm --packages=external --outfile=tmp/defineBase.min.js",
-		"// build:test": "tsup-node scripts/test.ts --format esm,cjs --legacy-output --dts --minify"
+		"clean": "rimraf dist/",
+		"build:base": "esbuild src/defineBaseConfig.js --bundle --minify --platform=node --target=node18 --format=esm --packages=external --outfile=dist/defineBaseConfig.min.js",
+		"build:configs": "esbuild src/configs.js --bundle --minify --platform=node --target=node18 --format=esm --packages=external --outfile=dist/configs.min.js",
+		"build": "npm run build:base && npm run build:configs",
+		"build:clean": "npm run clean && npm run build"
 	},
-	"peerDependencies": {
+	"dependencies": {
 		"@stylistic/eslint-plugin": "^1.5.1",
 		"@typescript-eslint/eslint-plugin": "^6.14.0",
 		"@typescript-eslint/parser": "^6.14.0",
 		"eslint": "^8.56.0",
 		"eslint-import-resolver-typescript": "^3.6.1",
 		"eslint-plugin-i": "^2.29.0",
-		"eslint-plugin-n": "^16.4.0"
+		"eslint-plugin-n": "^16.4.0",
+		"globals": "^13.24.0",
+		"local-pkg": "^0.5.0"
 	},
 	"devDependencies": {
 		"@eslint/eslintrc": "^2.1.4",
@@ -69,9 +77,5 @@
 		"tslib": "^2.6.2",
 		"tsup": "^8.0.1",
 		"typescript": "^5.3.3"
-	},
-	"dependencies": {
-		"globals": "^13.24.0",
-		"local-pkg": "^0.5.0"
 	}
 }

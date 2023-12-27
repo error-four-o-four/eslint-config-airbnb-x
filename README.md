@@ -46,7 +46,7 @@ If you want to override one of the rules of the added plugins, make sure to use 
  | `@typescript-eslint/*` | `typescript/*`	|
  | `@stylistic/*`         | `stylistic/*`		|
 
-You can also use only specific configuration files ((at the moment) you will have to add the plugins by yourself):
+You can also use only specific configuration files:
 
 ```js
 import pluginNode from 'eslint-plugin-n';
@@ -80,4 +80,5 @@ console.log(Object.keys(configs));
 - 🔳 add tests (esp. import/no-unresolved)
 - ✅ deprecated: node/no-hide-core-modules, node/no-unsupported-features
 - 🔳 node: differentiate esm and cjs globals (?)
+- 🔳 support typescript in monorepo (parserOptions.project is set to 'true')
 - 🔳 support React (jsx, tsx)
