@@ -3,6 +3,7 @@ import pluginNode from 'eslint-plugin-n';
 import pluginStylistic from '@stylistic/eslint-plugin';
 
 import baseMixed from './configs/merged/base-mixed.js';
+import baseJS from './configs/merged/base-js.js';
 
 import {
 	GLOBS_JS, GLOBS_TS, pluginNames, tsExists,
@@ -26,29 +27,31 @@ baseMixed.plugins = {
  */
 export default async (...overrides) => {
 	if (!tsExists) {
-		const baseJS = (await import('./configs/merged/base-js.js')).default;
 		return [baseMixed, baseJS, ...overrides];
 	}
 
 	const [
 		pluginTS,
 		parserTS,
-		baseTS,
 	] = await Promise.all([
 		'@typescript-eslint/eslint-plugin',
 		'@typescript-eslint/parser',
-		'./configs/merged/base-ts.js',
-	].map((value) => interopDefault(import(value))));
+	].map((src) => interopDefault(import(src))));
+
+	// https://esbuild.github.io/api/#glob !!!
+	const baseTS = await interopDefault(import('./configs/merged/base-ts.js'));
 
 	// apply files
 	baseMixed.files = [...GLOBS_JS, ...GLOBS_TS];
 
+	baseJS.files = GLOBS_JS;
 	baseTS.files = GLOBS_TS;
+
 	baseTS.plugins = {
 		[pluginNames.typescript]: pluginTS,
 	};
 
 	baseTS.languageOptions.parser = parserTS;
 
-	return [baseMixed, baseTS, ...overrides];
+	return [baseMixed, baseJS, baseTS, ...overrides];
 };
