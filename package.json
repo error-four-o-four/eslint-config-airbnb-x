@@ -23,8 +23,7 @@
 		"unofficial"
 	],
 	"files": [
-		"dist",
-		"src/configs/airbnb"
+		"dist"
 	],
 	"exports": {
 		"./base": {
@@ -34,7 +33,7 @@
 			"import": "./dist/configs.min.js"
 		},
 		"./compat": {
-			"import": "./src/configs/airbnb/index.js"
+			"import": "./dist/compat.min.js"
 		}
 	},
 	"engines": {
@@ -54,8 +53,9 @@
 		"merge": "node --no-warnings=ExperimentalWarning --loader ts-node/esm scripts/mergeConfigs.ts",
 		"clean": "rimraf dist/",
 		"build:base": "esbuild src/defineBaseConfig.js --bundle --minify --platform=node --target=node18 --format=esm --packages=external --outfile=dist/defineBaseConfig.min.js",
+		"build:compat": "esbuild src/configs/airbnb/index.js --bundle --minify --platform=node --target=node18 --format=esm --packages=external --outfile=dist/compat.min.js",
 		"build:configs": "esbuild src/configs.js --bundle --minify --platform=node --target=node18 --format=esm --packages=external --outfile=dist/configs.min.js",
-		"build": "npm run build:base && npm run build:configs",
+		"build": "npm run build:base && npm run build:compat && npm run build:configs",
 		"build:clean": "npm run clean && npm run build"
 	},
 	"dependencies": {
