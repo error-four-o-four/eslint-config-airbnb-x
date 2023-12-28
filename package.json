@@ -1,7 +1,7 @@
 {
 	"name": "eslint-config-airbnb-flat",
 	"type": "module",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"description": "Unofficial migration of the airbnb styleguide from eslintrc format to flat config file format",
 	"author": "error-four-o-four",
 	"license": "MIT",
