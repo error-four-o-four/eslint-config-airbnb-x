@@ -49,15 +49,10 @@ If you want to override one of the rules of the added plugins, make sure to use 
 You can also use only specific configuration files:
 
 ```js
-import pluginNode from 'eslint-plugin-n';
-import { node as configNode } from 'eslint-config-airbnb-flat/configs';
-
-configNode.plugins = {
-	node: pluginNode ,
-}
+import { node } from 'eslint-config-airbnb-flat/configs';
 
 export default [
-	configNode
+	node
 ];
 ```
 

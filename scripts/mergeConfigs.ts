@@ -42,6 +42,10 @@ function mergeConfigs() {
 		}
 	});
 
+	// @todo compare import rules
+	// import/named, import/no-named-as-default-member
+	// => base-js
+
 	// add plugin rules (to js and ts)
 	configs['base-mixed'].rules = {
 		...configs['base-mixed'].rules,
