@@ -12,13 +12,12 @@ export default {
 			node: { extensions: ['.json'] },
 			typescript: { extensions: ['.js', '.mjs'] },
 		},
-		'import/extensions': ['.js', '.mjs', '.jsx'],
+		'import/extensions': ['.js', '.mjs'],
 		'import/core-modules': [],
 		'import/ignore': [
 			'node_modules',
 			'\\.(coffee|scss|css|less|hbs|svg|json)$',
 		],
-		'import/extenstions': ['.js', '.mjs'],
 		'import/parsers': { espree: ['.js', '.mjs'] },
 	},
 	rules: {

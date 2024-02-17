@@ -220,7 +220,7 @@ function customizeTypescriptLanguageOptions(target: Linter.FlatConfig) {
 }
 
 const importsKeys = {
-	extensions: `${pluginNames.import}/extenstions`,
+	extensions: `${pluginNames.import}/extensions`,
 	resolver: `${pluginNames.import}/resolver`,
 	parsers: `${pluginNames.import}/parsers`,
 };

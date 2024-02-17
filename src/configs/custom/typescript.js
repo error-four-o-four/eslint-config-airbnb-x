@@ -91,13 +91,12 @@ export default {
 			node: { extensions: ['.json'] },
 			typescript: { extensions: ['.js', '.mjs', '.ts', '.mts'] },
 		},
-		'import/extensions': ['.js', '.mjs', '.jsx'],
+		'import/extensions': ['.js', '.mjs', '.ts', '.mts'],
 		'import/core-modules': [],
 		'import/ignore': [
 			'node_modules',
 			'\\.(coffee|scss|css|less|hbs|svg|json)$',
 		],
-		'import/extenstions': ['.js', '.mjs', '.ts', '.mts'],
 		'import/parsers': { '@typescript-eslint/parser': ['.ts', '.mts'] },
 	},
 };
