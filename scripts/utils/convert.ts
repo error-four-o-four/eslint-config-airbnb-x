@@ -68,7 +68,10 @@ function getConverted(entries: BaseConfigEntry[]): AirbnbConfigs {
 		baseDirectory: root,
 	});
 
-	const convertBase2Flat = (base: Linter.BaseConfig): Linter.FlatConfig => compat.config(base)
+	const convertBase2Flat = (
+		base: Linter.BaseConfig,
+	): Linter.FlatConfig => compat
+		.config(base)
 		.reduce((all, data) => Object.assign(all, data), {});
 
 	return Object.fromEntries(
@@ -226,7 +229,11 @@ const importsKeys = {
 };
 
 // @todo tests !!!
-function customizeSettings(source: Linter.FlatConfig, target: Linter.FlatConfig, ts = false) {
+function customizeSettings(
+	source: Linter.FlatConfig,
+	target: Linter.FlatConfig,
+	ts = false,
+) {
 	const extsJs = ['.js', '.mjs'];
 	const extsTs = ['.ts', '.mts'];
 	const exts = ts ? [...extsJs, ...extsTs] : extsJs;
@@ -236,11 +243,13 @@ function customizeSettings(source: Linter.FlatConfig, target: Linter.FlatConfig,
 		typescript: { extensions: exts },
 	};
 
-	const parser = ts ? ({
-		'@typescript-eslint/parser': extsTs,
-	}) : {
-		espree: extsJs,
-	};
+	const parser = ts
+		? {
+			'@typescript-eslint/parser': extsTs,
+		}
+		: {
+			espree: extsJs,
+		};
 
 	const custom = {
 		[importsKeys.extensions]: exts,

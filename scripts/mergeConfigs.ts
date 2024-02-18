@@ -65,14 +65,12 @@ function mergeConfigs() {
 function createConfigs() {
 	const languageOptionsJS = getMergedLanguageOptions();
 
-	const {
-		settings: settingsJS,
-	} = imports as PartiallyRequired<Linter.FlatConfig, 'settings'>;
+	const { settings: settingsJS } = imports as PartiallyRequired<
+	Linter.FlatConfig,
+	'settings'
+	>;
 
-	const {
-		languageOptions: languageOptionsTS,
-		settings: settingsTS,
-	} = typescript as PartiallyRequired<Linter.FlatConfig, 'settings'>;
+	const { languageOptions: languageOptionsTS, settings: settingsTS } = typescript as PartiallyRequired<Linter.FlatConfig, 'settings'>;
 
 	return {
 		[mergedKeys[0]]: {

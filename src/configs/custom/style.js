@@ -43,7 +43,10 @@ export default {
 		'max-lines-per-function': [
 			'off',
 			{
-				max: 50, skipBlankLines: true, skipComments: true, IIFEs: true,
+				max: 50,
+				skipBlankLines: true,
+				skipComments: true,
+				IIFEs: true,
 			},
 		],
 		'max-nested-callbacks': 'off',

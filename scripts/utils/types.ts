@@ -27,8 +27,8 @@ export type AirbnbNames = (typeof airbnbNameValues)[number];
 export type CustomNames = (typeof customNameValues)[number];
 export type ConfigNames = (typeof configNameValues)[number];
 
-export type AirbnbConfigs = { [K in AirbnbNames]: Linter.FlatConfig; };
-export type CustomConfigs = { [K in ConfigNames]: Linter.FlatConfig; };
+export type AirbnbConfigs = { [K in AirbnbNames]: Linter.FlatConfig };
+export type CustomConfigs = { [K in ConfigNames]: Linter.FlatConfig };
 
 export type BaseConfigEntry = [AirbnbNames, Linter.BaseConfig];
 

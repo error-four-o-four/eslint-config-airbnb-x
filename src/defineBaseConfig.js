@@ -11,7 +11,7 @@ import {
 
 const interopDefault = async (m) => {
 	const resolved = await m;
-	return (resolved).default || resolved;
+	return resolved.default || resolved;
 };
 
 // add plugins
@@ -30,13 +30,11 @@ export default async (...overrides) => {
 		return [baseMixed, baseJS, ...overrides];
 	}
 
-	const [
-		pluginTS,
-		parserTS,
-	] = await Promise.all([
-		'@typescript-eslint/eslint-plugin',
-		'@typescript-eslint/parser',
-	].map((src) => interopDefault(import(src))));
+	const [pluginTS, parserTS] = await Promise.all(
+		['@typescript-eslint/eslint-plugin', '@typescript-eslint/parser'].map(
+			(src) => interopDefault(import(src)),
+		),
+	);
 
 	// https://esbuild.github.io/api/#glob !!!
 	const baseTS = await interopDefault(import('./configs/merged/base-ts.js'));

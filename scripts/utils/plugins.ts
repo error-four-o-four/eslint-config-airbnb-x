@@ -11,9 +11,7 @@ import pluginTypescript from '@typescript-eslint/eslint-plugin';
 
 import names from './names.ts';
 
-import type {
-	PluginNames, ConfigWithPlugin,
-} from './types.ts';
+import type { PluginNames, ConfigWithPlugin } from './types.ts';
 
 const map = {
 	import: 'import',

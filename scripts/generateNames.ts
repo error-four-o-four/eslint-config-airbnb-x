@@ -5,11 +5,9 @@ import airbnb from 'eslint-config-airbnb-base';
 
 import { NOTICE, toCamelCase, writeFile } from './utils/write.ts';
 
-const airbnbNames: string[] = airbnb.extends
-	.map((item: string) => basename(item, '.js'));
+const airbnbNames: string[] = airbnb.extends.map((item: string) => basename(item, '.js'));
 
-const toKeyValuePair = (array: string[]) => array
-	.map((name: string) => `${toCamelCase(name)}: '${name}',`).join('\n');
+const toKeyValuePair = (array: string[]) => array.map((name: string) => `${toCamelCase(name)}: '${name}',`).join('\n');
 
 const file = './utils/names.ts';
 const data = `${NOTICE}

@@ -34,9 +34,9 @@ export function getRules(configs: AirbnbConfigs) {
 }
 
 export function getApprovedRules(rules: ProcessedRule[]) {
-	const isApprovedRule = (rule: ProcessedRule): rule is ProcessedRule<ApprovedMeta> => (
-		!rule.meta.deprecated && !rule.meta.plugin
-	);
+	const isApprovedRule = (
+		rule: ProcessedRule,
+	): rule is ProcessedRule<ApprovedMeta> => !rule.meta.deprecated && !rule.meta.plugin;
 
 	const filtered: ProcessedRule<ApprovedMeta>[] = [];
 
@@ -54,9 +54,9 @@ export function getPluginRules(rules: ProcessedRule[]) {
 }
 
 export function getLegacyRules(rules: ProcessedRule[]) {
-	const isDeprecatedRule = (rule: ProcessedRule): rule is ProcessedRule<DeprecatedMeta> => (
-		rule.meta.deprecated
-	);
+	const isDeprecatedRule = (
+		rule: ProcessedRule,
+	): rule is ProcessedRule<DeprecatedMeta> => rule.meta.deprecated;
 
 	const filtered: ProcessedRule<DeprecatedMeta>[] = [];
 
