@@ -1,7 +1,7 @@
 {
 	"name": "eslint-config-airbnb-flat",
 	"type": "module",
-	"version": "0.0.12",
+	"version": "0.0.13",
 	"description": "Unofficial migration of the airbnb styleguide from eslintrc format to flat config file format",
 	"author": "error-four-o-four",
 	"license": "MIT",
@@ -22,13 +22,24 @@
 		"style-guide",
 		"unofficial"
 	],
+	"main": "./dist/configs.min.js",
+	"types": "./dist/configs.d.ts",
 	"files": [
 		"dist"
 	],
 	"exports": {
-		"./base": "./dist/defineBaseConfig.min.js",
-		"./configs": "./dist/configs.min.js",
-		"./compat": "./dist/compat.min.js"
+		".": {
+			"types": "./dist/configs.d.ts",
+			"import": "./dist/configs.min.js"
+		},
+		"./base": {
+			"types": "./dist/defineBaseConfig.d.ts",
+			"import": "./dist/defineBaseConfig.min.js"
+		},
+		"./compat": {
+			"types": "./dist/compat.d.ts",
+			"import": "./dist/compat.min.js"
+		}
 	},
 	"engines": {
 		"node": ">=18"
@@ -47,9 +58,12 @@
 		"merge": "node --no-warnings=ExperimentalWarning --loader ts-node/esm scripts/mergeConfigs.ts",
 		"clean": "rimraf dist/",
 		"build:base": "esbuild src/defineBaseConfig.js --bundle --minify --platform=node --target=node18 --format=esm --packages=external --outfile=dist/defineBaseConfig.min.js",
+		"build:base:dts": "tsup-node --entry.defineBaseConfig src/defineBaseConfig.js --format esm --dts --dts-only -d ./dist",
 		"build:compat": "esbuild src/configs/airbnb/index.js --bundle --minify --platform=node --target=node18 --format=esm --packages=external --outfile=dist/compat.min.js",
+		"build:compat:dts": "tsup-node --entry.compat src/configs/airbnb/index.js --format esm --dts --dts-only -d ./dist",
 		"build:configs": "esbuild src/configs.js --bundle --minify --platform=node --target=node18 --format=esm --packages=external --outfile=dist/configs.min.js",
-		"build": "npm run build:base && npm run build:compat && npm run build:configs",
+		"build:configs:dts": "tsup-node --entry.configs src/configs.js --format esm --dts --dts-only -d ./dist",
+		"build": "npm run build:base && npm run build:base:dts && npm run build:compat && npm run build:compat:dts && npm run build:configs && npm run build:configs:dts",
 		"build:clean": "npm run clean && npm run build"
 	},
 	"dependencies": {

@@ -49,7 +49,7 @@ If you want to override one of the rules of the added plugins, make sure to use 
 You can also use only specific configuration files:
 
 ```js
-import { node } from 'eslint-config-airbnb-flat/configs';
+import { node } from 'eslint-config-airbnb-flat';
 
 export default [node];
 ```
@@ -68,7 +68,7 @@ console.log(Object.keys(configs));
 
 - ✅ bundle (with esbuild to esm)
 - 🔳 convert (whole) codebase to typescript
-- 🔳 ~~export~~ create type declarations (defineBaseConfig)
+- ✅ ~~export~~ create type declarations (defineBaseConfig)
 - ✅ add stylistic plugin and rules
 - 🔳 add tests (esp. import/no-unresolved)
 - ✅ deprecated: node/no-hide-core-modules, node/no-unsupported-features
