@@ -21,9 +21,12 @@ baseMixed.plugins = {
 	[pluginNames.stylistic]: pluginStylistic,
 };
 
+/** @typedef {import('../shared/types.d.ts').FlatConfig} FlatConfig */
+/** @typedef {import('../shared/types.d.ts').NamedFlatConfig} NamedFlatConfig */
+
 /**
- * @param {import('eslint').Linter.FlatConfig[]} overrides
- * @returns {[import('../shared/types.d.ts').NamedFlatConfig | import('eslint').Linter.FlatConfig]}
+ * @param {FlatConfig[]} overrides
+ * @returns {[NamedFlatConfig | FlatConfig]}
  */
 export default async (...overrides) => {
 	if (!tsExists) {

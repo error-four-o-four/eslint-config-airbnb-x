@@ -1,5 +1,5 @@
 // FILE GENERATED WITH SCRIPT
-/** @type {import('eslint').Linter.FlatConfig} */
+/** @type {import('../../../shared/types.d.ts').FlatConfig} */
 export default {
 	rules: {
 		'accessor-pairs': 'off',
@@ -41,10 +41,7 @@ export default {
 		'no-implicit-coercion': [
 			'off',
 			{
-				boolean: false,
-				number: true,
-				string: true,
-				allow: [],
+				boolean: false, number: true, string: true, allow: [],
 			},
 		],
 		'no-implicit-globals': 'off',

@@ -1,6 +1,8 @@
 import { Linter } from 'eslint';
 
-interface NamedFlatConfig extends Linter.FlatConfig {
+interface FlatConfig extends Linter.FlatConfig {
+}
+interface NamedFlatConfig extends FlatConfig {
     name: string;
 }
 
@@ -13,4 +15,4 @@ declare const map: {
 
 type PluginNames = typeof map;
 
-export type { NamedFlatConfig, PluginNames };
+export type { FlatConfig, NamedFlatConfig, PluginNames };

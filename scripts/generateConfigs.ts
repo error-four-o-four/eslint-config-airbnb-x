@@ -37,7 +37,7 @@ async function writeConvertedConfigs(folder: string, configs: AirbnbConfigs) {
 	ensureFolder(`${folder}/`, url);
 
 	const toData = (config: Linter.FlatConfig) => `${NOTICE}
-/** @type {import('eslint').Linter.FlatConfig} */
+/** @type {import('../../../shared/types.d.ts').FlatConfig} */
 export default ${JSON.stringify(config)}
 `;
 

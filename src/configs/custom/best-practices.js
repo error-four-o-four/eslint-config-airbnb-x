@@ -39,10 +39,7 @@ export default {
 		'no-implicit-coercion': [
 			'off',
 			{
-				boolean: false,
-				number: true,
-				string: true,
-				allow: [],
+				boolean: false, number: true, string: true, allow: [],
 			},
 		],
 		'no-implicit-globals': 'off',

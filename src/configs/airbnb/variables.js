@@ -1,5 +1,5 @@
 // FILE GENERATED WITH SCRIPT
-/** @type {import('eslint').Linter.FlatConfig} */
+/** @type {import('../../../shared/types.d.ts').FlatConfig} */
 export default {
 	rules: {
 		'init-declarations': 'off',

@@ -32,7 +32,9 @@ export type CustomConfigs = { [K in ConfigNames]: Linter.FlatConfig };
 
 export type BaseConfigEntry = [AirbnbNames, Linter.BaseConfig];
 
-export interface NamedFlatConfig extends Linter.FlatConfig {
+export interface FlatConfig extends Linter.FlatConfig { }
+
+export interface NamedFlatConfig extends FlatConfig {
 	name: string;
 }
 

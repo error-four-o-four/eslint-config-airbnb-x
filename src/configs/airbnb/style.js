@@ -1,5 +1,5 @@
 // FILE GENERATED WITH SCRIPT
-/** @type {import('eslint').Linter.FlatConfig} */
+/** @type {import('../../../shared/types.d.ts').FlatConfig} */
 export default {
 	rules: {
 		'array-bracket-newline': ['off', 'consistent'],
@@ -152,10 +152,7 @@ export default {
 		'max-lines-per-function': [
 			'off',
 			{
-				max: 50,
-				skipBlankLines: true,
-				skipComments: true,
-				IIFEs: true,
+				max: 50, skipBlankLines: true, skipComments: true, IIFEs: true,
 			},
 		],
 		'max-nested-callbacks': 'off',

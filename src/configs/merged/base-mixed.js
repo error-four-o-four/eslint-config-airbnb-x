@@ -1,5 +1,5 @@
 // FILE GENERATED WITH SCRIPT
-/** @type {import('eslint').Linter.FlatConfig} */
+/** @type {import('../../../shared/types.d.ts').FlatConfig} */
 export default {
 	languageOptions: {
 		ecmaVersion: 2022,
@@ -247,10 +247,7 @@ export default {
 		'max-lines-per-function': [
 			'off',
 			{
-				max: 50,
-				skipBlankLines: true,
-				skipComments: true,
-				IIFEs: true,
+				max: 50, skipBlankLines: true, skipComments: true, IIFEs: true,
 			},
 		],
 		'max-nested-callbacks': 'off',
@@ -319,10 +316,7 @@ export default {
 		'no-implicit-coercion': [
 			'off',
 			{
-				boolean: false,
-				number: true,
-				string: true,
-				allow: [],
+				boolean: false, number: true, string: true, allow: [],
 			},
 		],
 		'no-implicit-globals': 'off',
