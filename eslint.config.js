@@ -1,31 +1,74 @@
-// import pluginPrettier from 'eslint-plugin-prettier';
-
-import defineConfig from './src/defineBaseConfig.js';
+import defineConfig from './dist/base/index.js';
 
 const message = 'linting ...';
+
 /* eslint-disable no-console */
 console.log(`\u001b[33m${message}\u001b[0m`);
 
 export default defineConfig(
 	{
-		ignores: ['**/dist/*', '**/tmp/*', '**/shared/*'],
+		ignores: [
+			'**/dist/*',
+			'**/tmp/*',
+			'**/shared/*',
+		],
 	},
 	{
 		name: 'custom',
-		// plugins: {
-		// 	prettier: pluginPrettier,
-		// },
-		files: ['**/*.js', '**/*.ts'],
+		files: [
+			'**/*.js', '**/*.ts',
+		],
 		rules: {
-			// 'prettier/prettier': 'warn',
 			'import/extensions': [
 				'error',
 				'ignorePackages',
-				{ js: 'always', ts: 'always' },
+				{
+					js: 'always',
+					ts: 'always',
+				},
 			],
-			'stylistic/indent': ['warn', 'tab'],
-			'stylistic/linebreak-style': ['warn', 'windows'],
+			'stylistic/indent': [
+				'warn', 'tab',
+			],
+			'stylistic/linebreak-style': [
+				'warn', 'windows',
+			],
+			'stylistic/max-len': [
+				'warn', {
+					ignoreStrings: true,
+					ignoreComments: true,
+				},
+			],
 			'stylistic/no-tabs': 0,
+			'stylistic/array-bracket-newline': [
+				'warn', { minItems: 2 },
+			],
+			'stylistic/array-element-newline': [
+				'warn', { minItems: 3 },
+			],
+			'stylistic/object-curly-newline': [
+				'warn', {
+					ObjectExpression: {
+						multiline: true,
+						minProperties: 2,
+					},
+					ObjectPattern: {
+						multiline: true,
+						minProperties: 3,
+					},
+					ImportDeclaration: {
+						multiline: true,
+						minProperties: 3,
+					},
+					ExportDeclaration: {
+						multiline: true,
+						minProperties: 3,
+					},
+				},
+			],
+			'stylistic/object-property-newline': [
+				'warn', { allowAllPropertiesOnSameLine: false },
+			],
 		},
 	},
 	{

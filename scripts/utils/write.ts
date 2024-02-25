@@ -1,29 +1,24 @@
-import { dirname, isAbsolute, sep } from 'node:path';
-import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
+import {
+	existsSync, mkdirSync, writeFileSync,
+} from 'node:fs';
+import {
+	dirname, isAbsolute, sep,
+} from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import prettier from 'prettier';
-import type { BuiltInParserName, Options } from 'prettier';
+import { Linter } from 'eslint';
 
-// import { DeprecatedRule } from '../types.ts';
-// import { sortRules } from './rules.ts';
+// @ts-ignore tmp
+import promisedConfig from '../../eslint.config.js';
 
-const prettierBaseOptions = await prettier.resolveConfig(
-	new URL('../../.prettierrc.json', import.meta.url),
-);
+const linter = new Linter({ configType: 'flat' });
+
+const config = await promisedConfig;
 
 export const NOTICE = '// FILE GENERATED WITH SCRIPT';
 
-async function prettify(input: string, parser: BuiltInParserName = 'espree') {
-	const options: Options = {
-		...prettierBaseOptions,
-		parser,
-	};
-
-	return await prettier.format(input, options);
-}
-
 export function toCamelCase(input: string) {
+	/* eslint-disable-next-line stylistic/max-len */
 	const r = /[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+/g;
 	const m = input.match(r);
 
@@ -51,17 +46,39 @@ export function ensureFolder(pathOrUrl: string, meta?: string) {
 	if (!existsSync(folder)) mkdirSync(folder);
 }
 
-export async function writeFile(
-	meta: string,
-	file: string,
-	data: string,
-	parser: BuiltInParserName = 'espree',
-) {
-	const path = fileURLToPath(new URL(file, meta));
-	const output = await prettify(data, parser);
-	ensureFolder(path, meta);
-	writeFileSync(path, output, { flag: 'w+' });
-	console.log('Written data to', path);
+export function getPath(path: string, meta: string) {
+	return fileURLToPath(new URL(path, meta));
+}
+
+export async function createFile(filePath: string, fileData: string) {
+	const dirPath = dirname(filePath);
+
+	if (!existsSync(dirPath)) mkdirSync(dirPath);
+
+	console.log('\nwriting data to file:');
+	console.log(`${filePath.replace(process.cwd(), '')}`);
+	writeFileSync(filePath, fileData, { flag: 'w+' });
+
+	const result = linter.verifyAndFix(fileData, config, filePath);
+
+	console.log('fixed:', result.fixed);
+
+	if (result.messages.length > 0) {
+		console.log(
+			result.messages.length,
+			`issue${result.messages.length > 1 ? 's' : ''} remaining:`,
+		);
+
+		result.messages.forEach(
+			(message) => console.log(`* ${message.message}`),
+		);
+	}
+
+	if (result.fixed && result.output) {
+		writeFileSync(filePath, result.output, { flag: 'w+' });
+	}
+
+	console.log('done');
 }
 
 // DEPRECATED LOG

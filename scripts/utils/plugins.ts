@@ -1,57 +1,27 @@
-import { Rule } from 'eslint';
+import type { ConfigWithPluginKeys } from '../types/configs.ts';
 
-// @ts-expect-error missing types
-import * as pluginImport from 'eslint-plugin-i';
+import { pluginPrefix } from '../../src/plugins.ts';
 
-// @ts-expect-error missing types
-import pluginNode from 'eslint-plugin-n';
+import {
+	configWithPluginKeys,
+	configWithPluginKeyValues,
+} from './constants.ts';
 
-import pluginStylistic from '@stylistic/eslint-plugin';
-import pluginTypescript from '@typescript-eslint/eslint-plugin';
-
-import names from './names.ts';
-
-import type { PluginNames, ConfigWithPlugin } from './types.ts';
+export function configHasPlugin(key: string): key is ConfigWithPluginKeys {
+	return configWithPluginKeyValues.includes(key as ConfigWithPluginKeys);
+}
 
 const map = {
-	import: 'import',
-	node: 'node',
-	stylistic: 'stylistic',
-	typescript: 'typescript',
-} as const;
-
-const keys = Object.values(map);
-
-const plugins = {
-	[map.import]: pluginImport,
-	[map.node]: pluginNode,
-	[map.stylistic]: pluginStylistic,
-	[map.typescript]: pluginTypescript,
-} as const;
-
-const rules = keys.reduce(
-	(all, plugin) => Object.assign(all, {
-		[plugin]: plugins[plugin].rules,
-	}),
-	{} as { [K in keyof typeof plugins]: Record<string, Rule.RuleModule> },
-);
-
-export { map as pluginNames, rules as pluginRules };
-
-// 'imports' vs 'import' !!!
-const configPluginMap: {
-	[K in ConfigWithPlugin]: string;
-} = {
-	[names.config.node]: map.node,
-	[names.config.imports]: map.import,
-	[names.config.stylistic]: map.stylistic,
-	[names.config.typescript]: map.typescript,
+	[configWithPluginKeys.imports]: pluginPrefix.import,
+	[configWithPluginKeys.node]: pluginPrefix.node,
+	[configWithPluginKeys.stylistic]: pluginPrefix.stylistic,
+	[configWithPluginKeys.typescript]: pluginPrefix.typescript,
 };
 
-export function configHasPlugin(name: string): name is ConfigWithPlugin {
-	return Object.keys(configPluginMap).includes(name);
+export function getPluginPrefix(key: ConfigWithPluginKeys) {
+	return map[key];
 }
 
-export function getPlugin(name: ConfigWithPlugin) {
-	return configPluginMap[name] as PluginNames;
-}
+// export function getPlugin(name: PluginKey) {
+// 	return configPluginMap[name] as PluginNames;
+// }

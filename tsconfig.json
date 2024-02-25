@@ -4,8 +4,7 @@
 		"importHelpers": true,
 		"noEmit": true,
 		"emitDeclarationOnly": false,
-		"allowJs": true,
-		"allowImportingTsExtensions": true
+		"allowImportingTsExtensions": true,
 	},
-	"include": ["scripts/**/*.ts", "src/**/*.js", "eslint.config.js"]
+	"include": ["scripts/**/*.ts", "src/**/*.ts", "eslint.config.js"]
 }

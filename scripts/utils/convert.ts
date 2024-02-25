@@ -1,16 +1,30 @@
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
-import { Linter } from 'eslint';
 import { FlatCompat } from '@eslint/eslintrc';
 
 // @ts-expect-error missing types
 import airbnb from 'eslint-config-airbnb-base';
 import globals from 'globals';
 
-import names from './names.ts';
+import { pluginPrefix } from '../../src/plugins.ts';
 
-import { configHasPlugin, pluginNames } from './plugins.ts';
+import type {
+	BaseConfig,
+	BaseConfigEntry,
+	FlatConfig,
+	AirbnbConfigs,
+	CustomConfigs,
+	AirbnbConfigKeys,
+	CustomConfigKeys,
+} from '../types/configs.ts';
+
+import type { ProcessedRule } from '../types/rules.ts';
+
+import {
+	airbnbConfigKeyValues,
+	customConfigKeyValues,
+} from './constants.ts';
 
 import {
 	getRules,
@@ -23,14 +37,7 @@ import {
 	copyTypescriptRules,
 } from './rules.ts';
 
-import type {
-	BaseConfigEntry,
-	AirbnbConfigs,
-	CustomConfigs,
-	AirbnbNames,
-	CustomNames,
-	ProcessedRule,
-} from './types.ts';
+import { configHasPlugin } from './plugins.ts';
 
 export async function importBaseConfigs(): Promise<BaseConfigEntry[]> {
 	const promiseBaseConfig = (item: string): Promise<BaseConfigEntry> => {
@@ -39,7 +46,9 @@ export async function importBaseConfigs(): Promise<BaseConfigEntry[]> {
 
 		return new Promise((resolve) => {
 			import(file).then((module) => {
-				const entry = [name, module.default] as BaseConfigEntry;
+				const entry = [
+					name, module.default,
+				] as BaseConfigEntry;
 				resolve(entry);
 			});
 		});
@@ -64,18 +73,26 @@ function getConverted(entries: BaseConfigEntry[]): AirbnbConfigs {
 	const filename = fileURLToPath(import.meta.url);
 	const root = path.dirname(path.resolve(filename, '../..'));
 
-	const compat = new FlatCompat({
-		baseDirectory: root,
-	});
+	const compat = new FlatCompat({ baseDirectory: root });
 
 	const convertBase2Flat = (
-		base: Linter.BaseConfig,
-	): Linter.FlatConfig => compat
+		base: BaseConfig,
+	): FlatConfig => compat
 		.config(base)
-		.reduce((all, data) => Object.assign(all, data), {});
+		.reduce(
+			(all, data) => {
+				if (data.plugins) delete data.plugins;
+				return Object.assign(all, data);
+			},
+			{},
+		);
 
 	return Object.fromEntries(
-		entries.map(([name, base]) => [name, convertBase2Flat(base)]),
+		entries.map(([
+			name, base,
+		]) => [
+			name, convertBase2Flat(base),
+		]),
 	) as AirbnbConfigs;
 }
 
@@ -88,12 +105,12 @@ function getProcessed(
 	const deprecatedRules = getLegacyRules(rules);
 	// @todo filter replacedBy rules
 
-	const temp = Object.values(names.config).reduce(
+	const temp = customConfigKeyValues.reduce(
 		(all, name) => Object.assign(all, { [name]: {} }),
 		{} as TempConfigs,
 	);
 
-	type TempConfigs = Omit<CustomConfigs, 'es2022'> & { es6: Linter.FlatConfig; };
+	type TempConfigs = Omit<CustomConfigs, 'es2022'> & { es6: FlatConfig; };
 
 	Object.keys(temp).forEach((name) => {
 		if (isAirbnb(name)) {
@@ -143,19 +160,24 @@ function getProcessed(
 
 	// rename
 	return Object.fromEntries(
-		Object.entries(temp).map(([name, value]) => [
-			name === 'es6' ? 'es2022' : name,
-			value,
+		Object.entries(temp).map(([
+			name, value,
+		]) => [
+			name === 'es6' ? 'es2022' : name, value,
 		]),
 	) as CustomConfigs;
 }
 
-function isAirbnb(name: string): name is AirbnbNames {
-	return Object.values(names.airbnb).includes(name as AirbnbNames);
+function isAirbnb(name: string): name is AirbnbConfigKeys {
+	return Object
+		.values(airbnbConfigKeyValues)
+		.includes(name as AirbnbConfigKeys);
 }
 
-function isCustom(name: string): name is CustomNames {
-	return Object.values(names.custom).includes(name as CustomNames);
+function isCustom(name: string): name is CustomConfigKeys {
+	return Object
+		.values(customConfigKeyValues)
+		.includes(name as CustomConfigKeys);
 }
 
 const ECMA_VERSION = 2022;
@@ -163,9 +185,9 @@ const SOURCE_TYPE = 'module';
 
 // applies to es6, node, imports
 function customizeLanguageOptions(
-	name: AirbnbNames,
-	source: Linter.FlatConfig,
-	target: Linter.FlatConfig,
+	name: AirbnbConfigKeys,
+	source: FlatConfig,
+	target: FlatConfig,
 ) {
 	const languageOptions = { ...source.languageOptions };
 
@@ -209,7 +231,7 @@ function customizeLanguageOptions(
 }
 
 // applies to typescript config
-function customizeTypescriptLanguageOptions(target: Linter.FlatConfig) {
+function customizeTypescriptLanguageOptions(target: FlatConfig) {
 	target.languageOptions = {
 		ecmaVersion: ECMA_VERSION,
 		sourceType: SOURCE_TYPE,
@@ -222,21 +244,28 @@ function customizeTypescriptLanguageOptions(target: Linter.FlatConfig) {
 	};
 }
 
+// @todo types
 const importsKeys = {
-	extensions: `${pluginNames.import}/extensions`,
-	resolver: `${pluginNames.import}/resolver`,
-	parsers: `${pluginNames.import}/parsers`,
+	extensions: `${pluginPrefix.import}/extensions`,
+	resolver: `${pluginPrefix.import}/resolver`,
+	parsers: `${pluginPrefix.import}/parsers`,
 };
 
 // @todo tests !!!
 function customizeSettings(
-	source: Linter.FlatConfig,
-	target: Linter.FlatConfig,
+	source: FlatConfig,
+	target: FlatConfig,
 	ts = false,
 ) {
-	const extsJs = ['.js', '.mjs'];
-	const extsTs = ['.ts', '.mts'];
-	const exts = ts ? [...extsJs, ...extsTs] : extsJs;
+	const extsJs = [
+		'.js', '.mjs',
+	];
+	const extsTs = [
+		'.ts', '.mts',
+	];
+	const exts = ts ? [
+		...extsJs, ...extsTs,
+	] : extsJs;
 
 	const resolver = {
 		node: { extensions: ['.json'] },
@@ -244,12 +273,8 @@ function customizeSettings(
 	};
 
 	const parser = ts
-		? {
-			'@typescript-eslint/parser': extsTs,
-		}
-		: {
-			espree: extsJs,
-		};
+		? { '@typescript-eslint/parser': extsTs }
+		: { espree: extsJs };
 
 	const custom = {
 		[importsKeys.extensions]: exts,

@@ -67,7 +67,7 @@ console.log(Object.keys(configs));
 ### Roadmap
 
 - ✅ bundle (with esbuild to esm)
-- 🔳 convert (whole) codebase to typescript
+- ✅ convert (whole) codebase to typescript
 - ✅ ~~export~~ create type declarations (defineBaseConfig)
 - ✅ add stylistic plugin and rules
 - 🔳 add tests (esp. import/no-unresolved)

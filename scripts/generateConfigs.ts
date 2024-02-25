@@ -1,25 +1,42 @@
 import { Linter } from 'eslint';
 
-import { importBaseConfigs, processEntries } from './utils/convert.ts';
-
-import {
-	NOTICE, ensureFolder, toCamelCase, writeFile,
-} from './utils/write.ts';
-
 import type {
 	AirbnbConfigs,
-	AirbnbNames,
-	ConfigNames,
 	CustomConfigs,
-	NamedFlatConfig,
-} from './utils/types.ts';
+	FlatConfig,
+} from './types/configs.ts';
 
-run();
+import {
+	airbnbConfigKeyValues,
+	customConfigKeyValues,
+} from './utils/constants.ts';
 
-async function run() {
+import {
+	importBaseConfigs,
+	processEntries,
+} from './utils/convert.ts';
+
+import {
+	NOTICE,
+	createFile,
+	ensureFolder,
+	getPath,
+	toCamelCase,
+} from './utils/write.ts';
+
+generateConfigs();
+
+//
+// ###
+//
+
+async function generateConfigs() {
 	const baseConfigEntries = await importBaseConfigs();
 
-	const { convertedConfigs, processedConfigs } = processEntries(baseConfigEntries);
+	const {
+		convertedConfigs,
+		processedConfigs,
+	} = processEntries(baseConfigEntries);
 
 	const baseDir = '../src/configs';
 	ensureFolder(`${baseDir}/`, import.meta.url);
@@ -36,24 +53,25 @@ async function writeConvertedConfigs(folder: string, configs: AirbnbConfigs) {
 	const { url } = import.meta;
 	ensureFolder(`${folder}/`, url);
 
-	const toData = (config: Linter.FlatConfig) => `${NOTICE}
-/** @type {import('../../../shared/types.d.ts').FlatConfig} */
-export default ${JSON.stringify(config)}
+	const toData = (config: FlatConfig) => `${NOTICE}
+import { Linter } from 'eslint';
+export default ${JSON.stringify(config)} as Linter.FlatConfig;
 `;
 
-	const names = Object.keys(configs) as AirbnbNames[];
-
-	await names.reduce(async (chain, name) => {
+	await airbnbConfigKeyValues.reduce(async (chain, name) => {
 		await chain;
 		const config = configs[name];
 
-		const file = `${folder}/${name}.js`;
+		const file = `${folder}/${name}.ts`;
+		const path = getPath(file, url);
 		const data = toData(config);
 
-		await writeFile(url, file, data);
+		await createFile(path, data);
 	}, Promise.resolve());
 
-	await writeIndexFile(url, `${folder}/index.js`, names);
+	const path = getPath(`${folder}/index.ts`, url);
+
+	await writeIndexFile(path, airbnbConfigKeyValues);
 }
 
 async function writeProcessedConfigs(folder: string, configs: CustomConfigs) {
@@ -62,14 +80,12 @@ async function writeProcessedConfigs(folder: string, configs: CustomConfigs) {
 	const { url } = import.meta;
 	ensureFolder(`${folder}/`, url);
 
-	const toData = (config: NamedFlatConfig) => `${NOTICE}
-/** @type {import('../../../shared/types.d.ts').NamedFlatConfig} */
-export default ${JSON.stringify(config)}
+	const toData = (config: Linter.FlatConfig) => `${NOTICE}
+import type { FlatConfig } from '../../../scripts/types/configs.ts';
+export default ${JSON.stringify(config)} as FlatConfig;
 `;
 
-	const names = Object.keys(configs) as ConfigNames[];
-
-	await names.reduce(async (chain, name) => {
+	await customConfigKeyValues.reduce(async (chain, name) => {
 		await chain;
 
 		// create a config with a name
@@ -78,21 +94,24 @@ export default ${JSON.stringify(config)}
 			...configs[name],
 		};
 
-		const file = `${folder}/${name}.js`;
+		const file = `${folder}/${name}.ts`;
+		const path = getPath(file, url);
 		const data = toData(config);
 
-		await writeFile(url, file, data);
+		await createFile(path, data);
 	}, Promise.resolve());
 
-	await writeIndexFile(url, `${folder}/index.js`, names);
+	const path = getPath(`${folder}/index.ts`, url);
+
+	await writeIndexFile(path, customConfigKeyValues);
 }
 
-async function writeIndexFile(url: string, file: string, names: string[]) {
+async function writeIndexFile(file: string, names: string[]) {
 	const camelCaseNames = names.map((name) => toCamelCase(name));
 	let data = `${NOTICE}\n`;
 
 	data += `${camelCaseNames
-		.map((camel, i) => `import ${camel} from './${names[i]}.js';`)
+		.map((camel, i) => `import ${camel} from './${names[i]}.ts';`)
 		.join('\n')}\n\n`;
 
 	data += 'const configs = {\n';
@@ -105,7 +124,7 @@ async function writeIndexFile(url: string, file: string, names: string[]) {
 
 	data += 'export default configs;';
 
-	await writeFile(url, file, data);
+	await createFile(file, data);
 }
 
 // async function writeRules(file: string, rules: ProcessedRule[]) {

@@ -1,31 +1,40 @@
-import { Linter } from 'eslint';
-
-import type { Rule } from 'eslint';
-
-import { pluginNames, pluginRules, getPlugin } from './plugins.ts';
+import { Linter, type Rule } from 'eslint';
 
 import type {
+	FlatConfig,
 	AirbnbConfigs,
-	AirbnbNames,
-	ConfigWithPlugin,
-	PluginNotTypescript,
+	AirbnbConfigKeys,
+	ConfigWithPluginKeys,
+} from '../types/configs.ts';
+
+import type {
 	ProcessedRule,
 	ApprovedMeta,
 	DeprecatedMeta,
-} from './types.ts';
+} from '../types/rules.ts';
 
-const rulesEslint = new Linter().getRules();
+import { pluginPrefix } from '../../src/plugins.ts';
 
+import { airbnbConfigKeyValues } from './constants.ts';
+
+import { getPluginPrefix } from './plugins.ts';
+
+import rawRules from './rawRules.ts';
+
+// extract, classify and sort all rules
+// from eslint-config-airbnb-base
 export function getRules(configs: AirbnbConfigs) {
 	const rules: ProcessedRule[] = [];
-	const names = Object.keys(configs) as AirbnbNames[];
+	// const names = Object.keys(configs) as AirbnbNames[];
 
-	names.forEach((configName) => {
+	airbnbConfigKeyValues.forEach((configName) => {
 		const configFlat = configs[configName];
 
 		if (!configFlat.rules) return;
 
-		Object.entries(configFlat.rules).forEach(([ruleName, ruleValue]) => {
+		Object.entries(configFlat.rules).forEach(([
+			ruleName, ruleValue,
+		]) => {
 			rules.push(getProcessedRule(configName, ruleName, ruleValue));
 		});
 	});
@@ -36,7 +45,9 @@ export function getRules(configs: AirbnbConfigs) {
 export function getApprovedRules(rules: ProcessedRule[]) {
 	const isApprovedRule = (
 		rule: ProcessedRule,
-	): rule is ProcessedRule<ApprovedMeta> => !rule.meta.deprecated && !rule.meta.plugin;
+	): rule is ProcessedRule<ApprovedMeta> => (
+		!rule.meta.deprecated && !rule.meta.plugin
+	);
 
 	const filtered: ProcessedRule<ApprovedMeta>[] = [];
 
@@ -74,22 +85,24 @@ export function getLegacyRules(rules: ProcessedRule[]) {
 // return rules.filter((rule: ProcessedRule) => rule.meta.deprecated && rule.meta.replacedBy);
 // }
 
-export function getProcessedRule(
-	config: string,
+function getProcessedRule(
+	config: AirbnbConfigKeys,
 	name: string,
 	value: Linter.RuleEntry,
 ): ProcessedRule {
 	// Airbnb config uses eslint-plugin-import
 	// therefore some rules are prefixed with 'import'
-	const isImportsRule = name.includes('/') && name.startsWith(pluginNames.import);
+	const isImportsRule = name.includes('/') && name.startsWith(pluginPrefix.import);
 
+	// get meta from eslint/import rules
 	const key = isImportsRule ? name.split('/')[1] : name;
-	const raw = findRawRule(key, isImportsRule);
+	const raw = rawRules.getAirbnbRule(key, isImportsRule);
 
+	// classify as deprecated or as approved
 	let meta: ApprovedMeta | DeprecatedMeta = {
 		deprecated: false,
 		config,
-		plugin: isImportsRule ? pluginNames.import : undefined,
+		plugin: isImportsRule ? pluginPrefix.import : undefined,
 	};
 
 	if (!raw || (raw.meta && raw.meta.deprecated)) {
@@ -106,19 +119,8 @@ export function getProcessedRule(
 	};
 }
 
-function findRawRule(
-	name: string,
-	isImportsRule: boolean,
-): Rule.RuleModule | null {
-	const raw = isImportsRule
-		? pluginRules[pluginNames.import][name]
-		: rulesEslint.get(name);
-
-	return raw || null;
-}
-
 function getDeprecatedMeta(name: string, meta: Rule.RuleMetaData | undefined) {
-	const plugin = findPlugin(name);
+	const plugin = rawRules.getReplacedIn(name);
 
 	const replacedBy = meta && meta.replacedBy ? meta.replacedBy[0] : undefined;
 	const url = meta?.docs?.url;
@@ -130,83 +132,57 @@ function getDeprecatedMeta(name: string, meta: Rule.RuleMetaData | undefined) {
 	};
 }
 
-function findPlugin(ruleName: string) {
-	const possiblePlugins: PluginNotTypescript[] = [
-		pluginNames.import,
-		pluginNames.node,
-		pluginNames.stylistic,
-	];
-
-	const isReplacedIn = (
-		plugin: PluginNotTypescript,
-		name: string,
-	): plugin is PluginNotTypescript => name in pluginRules[plugin];
-
-	let replacedIn: PluginNotTypescript | undefined;
-
-	possiblePlugins.forEach((pluginName) => {
-		if (replacedIn) return;
-
-		if (isReplacedIn(pluginName, ruleName)) replacedIn = pluginName;
-	});
-
-	return replacedIn;
-}
-
 export function copyRules(
-	name: AirbnbNames,
+	key: AirbnbConfigKeys,
 	source: ProcessedRule[],
-	target: Linter.FlatConfig,
+	target: FlatConfig,
 ) {
 	target.rules = source
-		.filter((rule) => rule.meta.config === name)
+		.filter((rule) => rule.meta.config === key)
 		.reduce(
-			(all, rule) => Object.assign(all, {
-				[rule.name]: rule.value,
-			}),
+			(all, rule) => Object.assign(all, { [rule.name]: rule.value }),
 			{},
 		);
 }
 
 export function copyPluginRules(
-	name: ConfigWithPlugin,
+	key: ConfigWithPluginKeys,
 	source: ProcessedRule[],
 	target: Linter.FlatConfig,
 ) {
-	const rules = getScopedRules(name, source);
+	const rules = getPrefixedRules(key, source);
 
-	if (name === 'node') {
-		disableDeprecatedPluginRules(name, rules);
+	if (key === 'node') {
+		disableDeprecatedPluginRules(key, rules);
 	}
 
-	if (name === 'imports') {
+	if (key === 'imports') {
 		overwriteImportsRules(rules);
 	}
 
 	target.rules = rules;
 }
 
-function getScopedRules(
-	name: ConfigWithPlugin,
+function getPrefixedRules(
+	key: ConfigWithPluginKeys,
 	source: ProcessedRule[],
 ): Linter.RulesRecord {
-	const plugin = getPlugin(name);
+	const plugin = getPluginPrefix(key);
 	return source
 		.filter((rule) => rule.meta.plugin === plugin)
 		.reduce(
-			(all, rule) => Object.assign(all, {
-				[`${plugin}/${rule.name}`]: rule.value,
-			}),
+			(all, rule) => Object.assign(all, { [`${plugin}/${rule.name}`]: rule.value }),
 			{},
 		);
 }
 
 function disableDeprecatedPluginRules(
-	name: ConfigWithPlugin,
+	key: ConfigWithPluginKeys,
 	target: Linter.RulesRecord,
 ) {
-	const plugin = getPlugin(name);
-	Object.entries(pluginRules[plugin])
+	const plugin = getPluginPrefix(key);
+
+	(Object.entries(rawRules[plugin]) as [string, Rule.RuleModule][])
 		.filter((entry) => entry[1].meta?.deprecated)
 		.forEach((entry) => {
 			target[`${plugin}/${entry[0]}`] = 0;
@@ -223,12 +199,13 @@ function overwriteImportsRules(target: Linter.RulesRecord) {
 		noExtraneousDepsKey
 	] as Linter.RuleLevelAndOptions; // ??
 
-	const [severity, dependants] = noExtraneousDepsVals;
+	const [
+		severity, dependants,
+	] = noExtraneousDepsVals;
 
 	// target.rules['import/named'] = 0;
 	target[noExtraneousDepsKey] = [
-		severity,
-		{
+		severity, {
 			devDependencies: [
 				...dependants.devDependencies,
 				'**/eslint.config.js',
@@ -268,14 +245,14 @@ export function copyTypescriptRules(
 	});
 
 	filtered.forEach((rule) => {
-		rules[`${pluginNames.typescript}/${rule.name}`] = rule.value;
+		rules[`${pluginPrefix.typescript}/${rule.name}`] = rule.value;
 	});
 
 	target.rules = rules;
 }
 
 export function isTypescriptRule(name: string) {
-	return name in pluginRules[pluginNames.typescript];
+	return rawRules.typescript.has(name);
 }
 
 // export function sortRulesByEntryName(

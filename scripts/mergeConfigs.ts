@@ -1,22 +1,34 @@
 import { Linter } from 'eslint';
 
+import type { FlatConfig } from './types/configs.ts';
+
 import custom, {
 	es2022,
 	node,
 	imports,
 	stylistic,
 	typescript,
-} from '../src/configs/custom/index.js';
+} from '../src/configs/custom/index.ts';
 
-import { NOTICE, ensureFolder, writeFile } from './utils/write.ts';
-import { configHasPlugin, pluginNames } from './utils/plugins.ts';
+import { pluginPrefix } from '../src/plugins.ts';
+
+import { configHasPlugin } from './utils/plugins.ts';
 import { isTypescriptRule } from './utils/rules.ts';
+import {
+	NOTICE, ensureFolder, createFile, getPath,
+} from './utils/write.ts';
 
-const mergedKeys = ['base-mixed', 'base-js', 'base-ts'] as const;
+const mergedKeys = [
+	'base-mixed',
+	'base-js',
+	'base-ts',
+] as const;
 
 mergeConfigs();
 
+//
 // ###
+//
 
 function mergeConfigs() {
 	// generate multiple sets of rules
@@ -30,7 +42,9 @@ function mergeConfigs() {
 	// which are not a part of a plugin (node, imports, stylistic)
 	const sorted = getSortedRulesEntries();
 
-	sorted.forEach(([name, value]) => {
+	sorted.forEach(([
+		name, value,
+	]) => {
 		if (!isTypescriptRule(name)) {
 			// this rule won't be overwritten by typescript plugin
 			// it applies to js and ts files
@@ -66,11 +80,11 @@ function createConfigs() {
 	const languageOptionsJS = getMergedLanguageOptions();
 
 	const { settings: settingsJS } = imports as PartiallyRequired<
-	Linter.FlatConfig,
+	FlatConfig,
 	'settings'
 	>;
 
-	const { languageOptions: languageOptionsTS, settings: settingsTS } = typescript as PartiallyRequired<Linter.FlatConfig, 'settings'>;
+	const { languageOptions: languageOptionsTS, settings: settingsTS } = typescript as PartiallyRequired<FlatConfig, 'settings'>;
 
 	return {
 		[mergedKeys[0]]: {
@@ -78,9 +92,7 @@ function createConfigs() {
 			settings: settingsJS,
 			rules: {},
 		},
-		[mergedKeys[1]]: {
-			rules: {},
-		},
+		[mergedKeys[1]]: { rules: {} },
 		[mergedKeys[2]]: {
 			languageOptions: languageOptionsTS,
 			settings: settingsTS,
@@ -113,12 +125,18 @@ type PartiallyRequired<T, K extends keyof T> = Omit<T, K> &
 function getSortedRulesEntries() {
 	return Object.values(custom)
 		.filter((config) => {
+			if (!config.name) {
+				throw new Error('name does not exist on');
+			}
+
 			const name = config.name.split(':')[1];
 			return !configHasPlugin(name);
 		})
 		.map((config) => Object.entries(config.rules || {}))
 		.reduce(
-			(all, entries) => [...all, ...entries],
+			(all, entries) => [
+				...all, ...entries,
+			],
 			[] as [string, Linter.RuleEntry][],
 		)
 		.sort((a, b) => {
@@ -139,13 +157,14 @@ function getTsOverwrites(
 		...getImportExtraneousDeps(),
 		// turn off
 		// https://github.com/typescript-eslint/typescript-eslint/blob/13583e65f5973da2a7ae8384493c5e00014db51b/docs/linting/TROUBLESHOOTING.md#eslint-plugin-import
-		[`${pluginNames.import}/named`]: 0,
-		[`${pluginNames.import}/no-named-as-default-member`]: 0,
+		[`${pluginPrefix.import}/named`]: 0,
+		[`${pluginPrefix.import}/no-named-as-default-member`]: 0,
 		// add plugin scope
 		...Object.fromEntries(
-			Object.entries(source).map(([name, value]) => [
-				`${pluginNames.typescript}/${name}`,
-				value,
+			Object.entries(source).map(([
+				name, value,
+			]) => [
+				`${pluginPrefix.typescript}/${name}`, value,
 			]),
 		),
 	};
@@ -154,7 +173,7 @@ function getTsOverwrites(
 function getImportExtensions() {
 	const rules = imports.rules as NonNullable<Linter.FlatConfig['rules']>;
 
-	const key = `${pluginNames.import}/extensions`;
+	const key = `${pluginPrefix.import}/extensions`;
 	const rule = rules[key] as Linter.RuleLevelAndOptions;
 
 	const record: Linter.RulesRecord = {
@@ -173,7 +192,7 @@ function getImportExtensions() {
 }
 
 function getImportExtraneousDeps() {
-	const key = `${pluginNames.import}/no-extraneous-dependencies`;
+	const key = `${pluginPrefix.import}/no-extraneous-dependencies`;
 	const rule = imports.rules![key] as Linter.RuleLevelAndOptions;
 
 	const deps = rule[1].devDependencies as string[];
@@ -181,12 +200,10 @@ function getImportExtraneousDeps() {
 
 	const record: Linter.RulesRecord = {
 		[key]: [
-			rule[0],
-			{
+			rule[0], {
 				// @todo replace '**/.eslintrc.js' with '**/.eslintrc{,.js,.cjs}'
 				devDependencies: [
-					...deps,
-					...deps
+					...deps, ...deps
 						.filter((dep) => dep.includes('js') && !dep.includes('eslintrc'))
 						.map((dep) => dep.replace(regex, 'ts$1')),
 				],
@@ -227,8 +244,8 @@ function writeConfigs(source: MergedConfigs) {
 	ensureFolder(`${folder}/`, url);
 
 	const toData = (config: Linter.FlatConfig) => `${NOTICE}
-/** @type {import('../../../shared/types.d.ts').FlatConfig} */
-export default ${JSON.stringify(config)}
+import type { FlatConfig } from '../../../scripts/types/configs.ts';
+export default ${JSON.stringify(config)} as FlatConfig;
 `;
 
 	const names = Object.keys(source);
@@ -237,9 +254,10 @@ export default ${JSON.stringify(config)}
 		await chain;
 		const config = source[name as MergedKey];
 
-		const file = `${folder}/${name}.js`;
+		const file = `${folder}/${name}.ts`;
+		const path = getPath(file, url);
 		const data = toData(config);
 
-		return writeFile(url, file, data);
+		return createFile(path, data);
 	}, Promise.resolve());
 }
