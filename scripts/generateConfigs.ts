@@ -33,16 +33,18 @@ generateConfigs();
 async function generateConfigs() {
 	const baseConfigEntries = await importBaseConfigs();
 
+	// 1. convert aibrnb from esltinrc to flat format
+	//
 	const {
-		convertedConfigs,
-		processedConfigs,
+		convertedEntries,
+		processedEntries,
 	} = processEntries(baseConfigEntries);
 
 	const baseDir = '../src/configs';
 	ensureFolder(`${baseDir}/`, import.meta.url);
 
-	await writeConvertedConfigs(`${baseDir}/airbnb`, convertedConfigs);
-	await writeProcessedConfigs(`${baseDir}/custom`, processedConfigs);
+	await writeConvertedConfigs(`${baseDir}/airbnb`, convertedEntries);
+	await writeProcessedConfigs(`${baseDir}/custom`, processedEntries);
 
 	// const rulesDir = `${baseDir}/rules`;
 	// await writeRules(`${rulesDir}/approved.json`, approvedRules);

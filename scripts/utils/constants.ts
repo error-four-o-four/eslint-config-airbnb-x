@@ -33,3 +33,10 @@ export const configWithPluginKeys: Pick<
 } as const;
 
 export const configWithPluginKeyValues = Object.values(configWithPluginKeys);
+
+export const ECMA_VERSION = 2022;
+export const SOURCE_TYPE = 'module';
+
+export const EXTS_JS = ['.js', '.mjs'];
+
+export const EXTS_TS = ['.js', '.mjs'];

@@ -5,9 +5,6 @@ import { FlatCompat } from '@eslint/eslintrc';
 
 // @ts-expect-error missing types
 import airbnb from 'eslint-config-airbnb-base';
-import globals from 'globals';
-
-import { pluginPrefix } from '../../src/plugins.ts';
 
 import type {
 	BaseConfig,
@@ -19,25 +16,32 @@ import type {
 	CustomConfigKeys,
 } from '../types/configs.ts';
 
-import type { ProcessedRule } from '../types/rules.ts';
+import type {
+	ApprovedMeta, DeprecatedMeta, ProcessedRule,
+} from '../types/rules.ts';
 
 import {
 	airbnbConfigKeyValues,
 	customConfigKeyValues,
 } from './constants.ts';
 
+import { getLanguageOptions, getSettings } from './options.ts';
+
 import {
 	getRules,
 	getApprovedRules,
 	getLegacyRules,
 	getPluginRules,
-	copyRules,
 	copyPluginRules,
-	copyLegacyRules,
-	copyTypescriptRules,
+	// copyRules,
+	// copyLegacyRules,
+	// copyTypescriptRules,
+	copyRulesBy,
+	isTypescriptRule,
 } from './rules.ts';
 
 import { configHasPlugin } from './plugins.ts';
+import { pluginPrefix } from '../../src/plugins.ts';
 
 export async function importBaseConfigs(): Promise<BaseConfigEntry[]> {
 	const promiseBaseConfig = (item: string): Promise<BaseConfigEntry> => {
@@ -46,9 +50,7 @@ export async function importBaseConfigs(): Promise<BaseConfigEntry[]> {
 
 		return new Promise((resolve) => {
 			import(file).then((module) => {
-				const entry = [
-					name, module.default,
-				] as BaseConfigEntry;
+				const entry = [name, module.default] as BaseConfigEntry;
 				resolve(entry);
 			});
 		});
@@ -58,20 +60,24 @@ export async function importBaseConfigs(): Promise<BaseConfigEntry[]> {
 }
 
 export function processEntries(baseEntries: BaseConfigEntry[]) {
-	const convertedConfigs = getConverted(baseEntries);
+	const convertedEntries = getConverted(baseEntries);
 
-	const processedRules = getRules(convertedConfigs);
-	const processedConfigs = getProcessed(convertedConfigs, processedRules);
+	// extract, classify and sort all rules from eslint-config-airbnb-base
+	// type ProcessedRule<ApprovedMeta | DeprecatedMeta>
+	const processedRules = getRules(convertedEntries);
+
+	// create FlatConfigItems with filtered and updated rules
+	const processedEntries = getProcessed(convertedEntries, processedRules);
 
 	return {
-		convertedConfigs,
-		processedConfigs,
+		convertedEntries,
+		processedEntries,
 	};
 }
 
 function getConverted(entries: BaseConfigEntry[]): AirbnbConfigs {
 	const filename = fileURLToPath(import.meta.url);
-	const root = path.dirname(path.resolve(filename, '../..'));
+	const root = path.dirname(path.resolve(filename, '../..')); // @todo use process.cwd()
 
 	const compat = new FlatCompat({ baseDirectory: root });
 
@@ -81,6 +87,7 @@ function getConverted(entries: BaseConfigEntry[]): AirbnbConfigs {
 		.config(base)
 		.reduce(
 			(all, data) => {
+				// remove plugins. they're attached later
 				if (data.plugins) delete data.plugins;
 				return Object.assign(all, data);
 			},
@@ -88,11 +95,7 @@ function getConverted(entries: BaseConfigEntry[]): AirbnbConfigs {
 		);
 
 	return Object.fromEntries(
-		entries.map(([
-			name, base,
-		]) => [
-			name, convertBase2Flat(base),
-		]),
+		entries.map(([name, base]) => [name, convertBase2Flat(base)]),
 	) as AirbnbConfigs;
 }
 
@@ -105,6 +108,8 @@ function getProcessed(
 	const deprecatedRules = getLegacyRules(rules);
 	// @todo filter replacedBy rules
 
+	// use a temporary object
+	// to convert es6 to es2022
 	const temp = customConfigKeyValues.reduce(
 		(all, name) => Object.assign(all, { [name]: {} }),
 		{} as TempConfigs,
@@ -114,26 +119,32 @@ function getProcessed(
 
 	Object.keys(temp).forEach((name) => {
 		if (isAirbnb(name)) {
-			// es6, node, imports have languageOptions
-			if (source[name].languageOptions) {
-				customizeLanguageOptions(name, source[name], temp[name]);
+			// es6/es2022, node, imports have languageOptions
+			if ((name === 'es6' || name === 'node' || name === 'imports')
+				&& typeof getLanguageOptions[name] === 'function') {
+				temp[name].languageOptions = getLanguageOptions[name]();
 			}
 
-			// overwrite imports settings
-			if (source[name].settings) {
-				// @todo tests !!!
-				customizeSettings(source[name], temp[name]);
+			// generate imports settings
+			if (name === 'imports'
+				&& source[name].settings
+				&& typeof getSettings[name] === 'function') {
+				temp[name].settings = getSettings[name](source[name]);
 			}
 
 			// just copy the rules
 			if (!configHasPlugin(name)) {
-				copyRules(name, approvedRules, temp[name]);
+				const filter: (
+					(rule: ProcessedRule<ApprovedMeta>) => boolean
+				) = (rule) => rule.meta.config === name;
+
+				temp[name].rules = copyRulesBy(approvedRules, filter);
 			}
 
 			// add plugin scope
 			// overwrite imports rules
 			if (configHasPlugin(name)) {
-				copyPluginRules(name, pluginRules, temp[name]);
+				temp[name].rules = copyPluginRules(name, pluginRules);
 			}
 		}
 
@@ -141,30 +152,47 @@ function getProcessed(
 			// turn off all deprecated rules and
 			// rules which are replaced by node or stylistic
 			if (name === 'disable-legacy') {
-				copyLegacyRules(deprecatedRules, temp[name]);
+				const filter: (
+					(rule: ProcessedRule<DeprecatedMeta>) => boolean
+				) = (rule) => rule.meta.plugin !== 'import';
+
+				temp[name].rules = copyRulesBy(deprecatedRules, filter, false);
+				// temp[name].rules = copyLegacyRules(deprecatedRules);
 			}
 
 			// use airbnb rules wih stylistic plugin
 			if (name === 'stylistic') {
-				copyPluginRules(name, deprecatedRules, temp[name]);
+				temp[name].rules = copyPluginRules(name, deprecatedRules);
 			}
 
 			if (name === 'typescript') {
-				customizeTypescriptLanguageOptions(temp[name]);
-				copyTypescriptRules(approvedRules, temp[name]);
+				temp[name].languageOptions = getLanguageOptions[name]();
+				temp[name].settings = getSettings[name](temp.imports);
 
-				customizeSettings(source.imports, temp[name], true);
+				const filter: (
+					(rule: ProcessedRule<ApprovedMeta>) => boolean
+				) = ((rule) => isTypescriptRule(rule.name));
+
+				const entries = Object.entries(
+					copyRulesBy(approvedRules, filter),
+				);
+
+				temp[name].rules = {
+					...Object.fromEntries(
+						[...entries].map(([rule]) => [rule, 0]),
+					) as FlatConfig['rules'],
+					...Object.fromEntries(
+						[...entries].map(([rule, value]) => [`${pluginPrefix.typescript}/${rule}`, value]),
+					),
+				};
+				// temp[name].rules = copyTypescriptRules(approvedRules);
 			}
 		}
 	});
 
 	// rename
 	return Object.fromEntries(
-		Object.entries(temp).map(([
-			name, value,
-		]) => [
-			name === 'es6' ? 'es2022' : name, value,
-		]),
+		Object.entries(temp).map(([name, value]) => [name === 'es6' ? 'es2022' : name, value]),
 	) as CustomConfigs;
 }
 
@@ -178,112 +206,4 @@ function isCustom(name: string): name is CustomConfigKeys {
 	return Object
 		.values(customConfigKeyValues)
 		.includes(name as CustomConfigKeys);
-}
-
-const ECMA_VERSION = 2022;
-const SOURCE_TYPE = 'module';
-
-// applies to es6, node, imports
-function customizeLanguageOptions(
-	name: AirbnbConfigKeys,
-	source: FlatConfig,
-	target: FlatConfig,
-) {
-	const languageOptions = { ...source.languageOptions };
-
-	delete languageOptions.ecmaVersion;
-	delete languageOptions.sourceType;
-
-	target.languageOptions = {
-		ecmaVersion: ECMA_VERSION,
-		sourceType: SOURCE_TYPE,
-	};
-
-	if (name === 'es6') {
-		const ecmaFeatures = {
-			...languageOptions.parserOptions?.ecmaFeatures,
-			jsx: false,
-		};
-
-		target.languageOptions.parserOptions = {
-			...languageOptions.parserOptions,
-			ecmaFeatures,
-		};
-	}
-
-	if (name === 'node') {
-		target.languageOptions.parserOptions = languageOptions.parserOptions;
-		target.languageOptions.globals = {
-			...globals.es2021,
-			...globals.node,
-			...globals.nodeBuiltin,
-		};
-	}
-
-	if (name === 'imports') {
-		target.languageOptions.parserOptions = {
-			...target.languageOptions.parserOptions,
-			// required to satisfy 'import/no-named-as-default'
-			ecmaVersion: ECMA_VERSION,
-			sourceType: SOURCE_TYPE,
-		};
-	}
-}
-
-// applies to typescript config
-function customizeTypescriptLanguageOptions(target: FlatConfig) {
-	target.languageOptions = {
-		ecmaVersion: ECMA_VERSION,
-		sourceType: SOURCE_TYPE,
-		parserOptions: {
-			// required to satisfy 'import/no-named-as-default'
-			ecmaVersion: ECMA_VERSION,
-			sourceType: SOURCE_TYPE,
-			project: true,
-		},
-	};
-}
-
-// @todo types
-const importsKeys = {
-	extensions: `${pluginPrefix.import}/extensions`,
-	resolver: `${pluginPrefix.import}/resolver`,
-	parsers: `${pluginPrefix.import}/parsers`,
-};
-
-// @todo tests !!!
-function customizeSettings(
-	source: FlatConfig,
-	target: FlatConfig,
-	ts = false,
-) {
-	const extsJs = [
-		'.js', '.mjs',
-	];
-	const extsTs = [
-		'.ts', '.mts',
-	];
-	const exts = ts ? [
-		...extsJs, ...extsTs,
-	] : extsJs;
-
-	const resolver = {
-		node: { extensions: ['.json'] },
-		typescript: { extensions: exts },
-	};
-
-	const parser = ts
-		? { '@typescript-eslint/parser': extsTs }
-		: { espree: extsJs };
-
-	const custom = {
-		[importsKeys.extensions]: exts,
-		[importsKeys.resolver]: resolver,
-		[importsKeys.parsers]: parser,
-	};
-
-	target.settings = {
-		...source.settings,
-		...custom,
-	};
 }

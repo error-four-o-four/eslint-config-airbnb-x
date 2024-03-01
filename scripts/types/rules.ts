@@ -43,7 +43,6 @@ export type DeprecatedMeta = {
 	url?: string;
 };
 
-// @todo union
 export type ProcessedRule<T = ApprovedMeta | DeprecatedMeta> = {
 	meta: T;
 	name: string;
