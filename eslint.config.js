@@ -15,9 +15,7 @@ export default defineConfig(
 	},
 	{
 		name: 'custom',
-		files: [
-			'**/*.js', '**/*.ts',
-		],
+		files: ['**/*.js', '**/*.ts'],
 		rules: {
 			'import/extensions': [
 				'error',
@@ -27,48 +25,56 @@ export default defineConfig(
 					ts: 'always',
 				},
 			],
-			'stylistic/indent': [
-				'warn', 'tab',
-			],
-			'stylistic/linebreak-style': [
-				'warn', 'windows',
-			],
+			'stylistic/indent': ['warn', 'tab'],
+			'stylistic/linebreak-style': ['warn', 'windows'],
 			'stylistic/max-len': [
-				'warn', {
+				'warn',
+				{
 					ignoreStrings: true,
 					ignoreComments: true,
 				},
 			],
 			'stylistic/no-tabs': 0,
 			'stylistic/array-bracket-newline': [
-				'warn', { minItems: 2 },
+				'warn',
+				{
+					multiline: true,
+					minItems: 3,
+				},
 			],
 			'stylistic/array-element-newline': [
-				'warn', { minItems: 3 },
+				'warn',
+				{
+					multiline: true,
+					minItems: 3,
+				},
 			],
 			'stylistic/object-curly-newline': [
-				'warn', {
+				'warn',
+				{
 					ObjectExpression: {
+						consistent: true,
 						multiline: true,
-						minProperties: 2,
+						minProperties: 3,
 					},
 					ObjectPattern: {
+						consistent: true,
 						multiline: true,
 						minProperties: 3,
 					},
 					ImportDeclaration: {
+						consistent: true,
 						multiline: true,
 						minProperties: 3,
 					},
 					ExportDeclaration: {
+						consistent: true,
 						multiline: true,
-						minProperties: 3,
+						minProperties: 2,
 					},
 				},
 			],
-			'stylistic/object-property-newline': [
-				'warn', { allowAllPropertiesOnSameLine: false },
-			],
+			'stylistic/object-property-newline': ['warn', { allowAllPropertiesOnSameLine: false }],
 		},
 	},
 	{

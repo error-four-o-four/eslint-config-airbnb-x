@@ -36,21 +36,16 @@ export default {
 		'no-useless-constructor': 0,
 		'prefer-destructuring': 0,
 		'require-await': 0,
-		'typescript/class-methods-use-this': [
-			'error', { exceptMethods: [] },
-		],
+		'typescript/class-methods-use-this': ['error', { exceptMethods: [] }],
 		'typescript/default-param-last': 'error',
-		'typescript/dot-notation': [
-			'error', { allowKeywords: true },
-		],
+		'typescript/dot-notation': ['error', { allowKeywords: true }],
 		'typescript/init-declarations': 'off',
-		'typescript/max-params': [
-			'off', 3,
-		],
+		'typescript/max-params': ['off', 3],
 		'typescript/no-array-constructor': 'error',
 		'typescript/no-dupe-class-members': 'error',
 		'typescript/no-empty-function': [
-			'error', {
+			'error',
+			{
 				allow: [
 					'arrowFunctions',
 					'functions',
@@ -63,7 +58,8 @@ export default {
 		'typescript/no-loop-func': 'error',
 		'typescript/no-loss-of-precision': 'error',
 		'typescript/no-magic-numbers': [
-			'off', {
+			'off',
+			{
 				ignore: [],
 				ignoreArrayIndexes: true,
 				enforceConst: true,
@@ -72,7 +68,8 @@ export default {
 		],
 		'typescript/no-redeclare': 'error',
 		'typescript/no-restricted-imports': [
-			'off', {
+			'off',
+			{
 				paths: [],
 				patterns: [],
 			},
@@ -80,21 +77,24 @@ export default {
 		'typescript/no-shadow': 'error',
 		'typescript/no-throw-literal': 'error',
 		'typescript/no-unused-expressions': [
-			'error', {
+			'error',
+			{
 				allowShortCircuit: false,
 				allowTernary: false,
 				allowTaggedTemplates: false,
 			},
 		],
 		'typescript/no-unused-vars': [
-			'error', {
+			'error',
+			{
 				vars: 'all',
 				args: 'after-used',
 				ignoreRestSiblings: true,
 			},
 		],
 		'typescript/no-use-before-define': [
-			'error', {
+			'error',
+			{
 				functions: true,
 				classes: true,
 				variables: true,
@@ -130,19 +130,23 @@ export default {
 			},
 		},
 		'import/extensions': [
-			'.js',
-			'.mjs',
-			'.ts',
-			'.mts',
+			[
+				'.js',
+				'.mjs',
+				'.ts',
+				'.mts',
+			],
 		],
 		'import/core-modules': [],
-		'import/ignore': [
-			'node_modules', '\\.(coffee|scss|css|less|hbs|svg|json)$',
-		],
+		'import/ignore': ['node_modules', '\\.(coffee|scss|css|less|hbs|svg|json)$'],
 		'import/parsers': {
 			'@typescript-eslint/parser': [
-				'.ts', '.mts',
+				'.js',
+				'.mjs',
+				'.ts',
+				'.mts',
 			],
 		},
+		'import/external-module-folders': ['node_modules', 'node_modules/@types'],
 	},
 } as FlatConfig;

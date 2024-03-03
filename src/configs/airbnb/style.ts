@@ -3,28 +3,24 @@ import { Linter } from 'eslint';
 
 export default {
 	rules: {
-		'array-bracket-newline': [
-			'off', 'consistent',
-		],
+		'array-bracket-newline': ['off', 'consistent'],
 		'array-element-newline': [
-			'off', {
+			'off',
+			{
 				multiline: true,
 				minItems: 3,
 			},
 		],
-		'array-bracket-spacing': [
-			'error', 'never',
-		],
-		'block-spacing': [
-			'error', 'always',
-		],
+		'array-bracket-spacing': ['error', 'never'],
+		'block-spacing': ['error', 'always'],
 		'brace-style': [
 			'error',
 			'1tbs',
 			{ allowSingleLine: true },
 		],
 		camelcase: [
-			'error', {
+			'error',
+			{
 				properties: 'never',
 				ignoreDestructuring: false,
 			},
@@ -46,7 +42,8 @@ export default {
 			},
 		],
 		'comma-dangle': [
-			'error', {
+			'error',
+			{
 				arrays: 'always-multiline',
 				objects: 'always-multiline',
 				imports: 'always-multiline',
@@ -55,7 +52,8 @@ export default {
 			},
 		],
 		'comma-spacing': [
-			'error', {
+			'error',
+			{
 				before: false,
 				after: true,
 			},
@@ -79,19 +77,11 @@ export default {
 				},
 			},
 		],
-		'computed-property-spacing': [
-			'error', 'never',
-		],
+		'computed-property-spacing': ['error', 'never'],
 		'consistent-this': 'off',
-		'eol-last': [
-			'error', 'always',
-		],
-		'function-call-argument-newline': [
-			'error', 'consistent',
-		],
-		'func-call-spacing': [
-			'error', 'never',
-		],
+		'eol-last': ['error', 'always'],
+		'function-call-argument-newline': ['error', 'consistent'],
+		'func-call-spacing': ['error', 'never'],
 		'func-name-matching': [
 			'off',
 			'always',
@@ -101,18 +91,12 @@ export default {
 			},
 		],
 		'func-names': 'warn',
-		'func-style': [
-			'off', 'expression',
-		],
-		'function-paren-newline': [
-			'error', 'multiline-arguments',
-		],
+		'func-style': ['off', 'expression'],
+		'function-paren-newline': ['error', 'multiline-arguments'],
 		'id-denylist': 'off',
 		'id-length': 'off',
 		'id-match': 'off',
-		'implicit-arrow-linebreak': [
-			'error', 'beside',
-		],
+		'implicit-arrow-linebreak': ['error', 'beside'],
 		indent: [
 			'error',
 			2,
@@ -154,17 +138,17 @@ export default {
 				ignoreComments: false,
 			},
 		],
-		'jsx-quotes': [
-			'off', 'prefer-double',
-		],
+		'jsx-quotes': ['off', 'prefer-double'],
 		'key-spacing': [
-			'error', {
+			'error',
+			{
 				beforeColon: false,
 				afterColon: true,
 			},
 		],
 		'keyword-spacing': [
-			'error', {
+			'error',
+			{
 				before: true,
 				after: true,
 				overrides: {
@@ -175,15 +159,14 @@ export default {
 			},
 		],
 		'line-comment-position': [
-			'off', {
+			'off',
+			{
 				position: 'above',
 				ignorePattern: '',
 				applyDefaultPatterns: true,
 			},
 		],
-		'linebreak-style': [
-			'error', 'unix',
-		],
+		'linebreak-style': ['error', 'unix'],
 		'lines-between-class-members': [
 			'error',
 			'always',
@@ -191,14 +174,13 @@ export default {
 		],
 		'lines-around-comment': 'off',
 		'lines-around-directive': [
-			'error', {
+			'error',
+			{
 				before: 'always',
 				after: 'always',
 			},
 		],
-		'max-depth': [
-			'off', 4,
-		],
+		'max-depth': ['off', 4],
 		'max-len': [
 			'error',
 			100,
@@ -212,14 +194,16 @@ export default {
 			},
 		],
 		'max-lines': [
-			'off', {
+			'off',
+			{
 				max: 300,
 				skipBlankLines: true,
 				skipComments: true,
 			},
 		],
 		'max-lines-per-function': [
-			'off', {
+			'off',
+			{
 				max: 50,
 				skipBlankLines: true,
 				skipComments: true,
@@ -227,23 +211,14 @@ export default {
 			},
 		],
 		'max-nested-callbacks': 'off',
-		'max-params': [
-			'off', 3,
-		],
-		'max-statements': [
-			'off', 10,
-		],
-		'max-statements-per-line': [
-			'off', { max: 1 },
-		],
-		'multiline-comment-style': [
-			'off', 'starred-block',
-		],
-		'multiline-ternary': [
-			'off', 'never',
-		],
+		'max-params': ['off', 3],
+		'max-statements': ['off', 10],
+		'max-statements-per-line': ['off', { max: 1 }],
+		'multiline-comment-style': ['off', 'starred-block'],
+		'multiline-ternary': ['off', 'never'],
 		'new-cap': [
-			'error', {
+			'error',
+			{
 				newIsCap: true,
 				newIsCapExceptions: [],
 				capIsNew: false,
@@ -257,35 +232,22 @@ export default {
 		'new-parens': 'error',
 		'newline-after-var': 'off',
 		'newline-before-return': 'off',
-		'newline-per-chained-call': [
-			'error', { ignoreChainWithDepth: 4 },
-		],
+		'newline-per-chained-call': ['error', { ignoreChainWithDepth: 4 }],
 		'no-array-constructor': 'error',
 		'no-bitwise': 'error',
 		'no-continue': 'error',
 		'no-inline-comments': 'off',
 		'no-lonely-if': 'error',
 		'no-mixed-operators': [
-			'error', {
+			'error',
+			{
 				groups: [
-					[
-						'%', '**',
-					],
-					[
-						'%', '+',
-					],
-					[
-						'%', '-',
-					],
-					[
-						'%', '*',
-					],
-					[
-						'%', '/',
-					],
-					[
-						'/', '*',
-					],
+					['%', '**'],
+					['%', '+'],
+					['%', '-'],
+					['%', '*'],
+					['%', '/'],
+					['/', '*'],
 					[
 						'&',
 						'|',
@@ -299,9 +261,7 @@ export default {
 						'===',
 						'!==',
 					],
-					[
-						'&&', '||',
-					],
+					['&&', '||'],
 				],
 				allowSamePrecedence: false,
 			},
@@ -309,7 +269,8 @@ export default {
 		'no-mixed-spaces-and-tabs': 'error',
 		'no-multi-assign': ['error'],
 		'no-multiple-empty-lines': [
-			'error', {
+			'error',
+			{
 				max: 1,
 				maxBOF: 0,
 				maxEOF: 0,
@@ -342,33 +303,32 @@ export default {
 		'no-tabs': 'error',
 		'no-ternary': 'off',
 		'no-trailing-spaces': [
-			'error', {
+			'error',
+			{
 				skipBlankLines: false,
 				ignoreComments: false,
 			},
 		],
 		'no-underscore-dangle': [
-			'error', {
+			'error',
+			{
 				allow: [],
 				allowAfterThis: false,
 				allowAfterSuper: false,
 				enforceInMethodNames: true,
 			},
 		],
-		'no-unneeded-ternary': [
-			'error', { defaultAssignment: false },
-		],
+		'no-unneeded-ternary': ['error', { defaultAssignment: false }],
 		'no-whitespace-before-property': 'error',
 		'nonblock-statement-body-position': [
 			'error',
 			'beside',
 			{ overrides: {} },
 		],
-		'object-curly-spacing': [
-			'error', 'always',
-		],
+		'object-curly-spacing': ['error', 'always'],
 		'object-curly-newline': [
-			'error', {
+			'error',
+			{
 				ObjectExpression: {
 					minProperties: 4,
 					multiline: true,
@@ -391,18 +351,10 @@ export default {
 				},
 			},
 		],
-		'object-property-newline': [
-			'error', { allowAllPropertiesOnSameLine: true },
-		],
-		'one-var': [
-			'error', 'never',
-		],
-		'one-var-declaration-per-line': [
-			'error', 'always',
-		],
-		'operator-assignment': [
-			'error', 'always',
-		],
+		'object-property-newline': ['error', { allowAllPropertiesOnSameLine: true }],
+		'one-var': ['error', 'never'],
+		'one-var-declaration-per-line': ['error', 'always'],
+		'operator-assignment': ['error', 'always'],
 		'operator-linebreak': [
 			'error',
 			'before',
@@ -435,18 +387,15 @@ export default {
 			{ avoidEscape: true },
 		],
 		'require-jsdoc': 'off',
-		semi: [
-			'error', 'always',
-		],
+		semi: ['error', 'always'],
 		'semi-spacing': [
-			'error', {
+			'error',
+			{
 				before: false,
 				after: true,
 			},
 		],
-		'semi-style': [
-			'error', 'last',
-		],
+		'semi-style': ['error', 'last'],
 		'sort-keys': [
 			'off',
 			'asc',
@@ -458,18 +407,18 @@ export default {
 		'sort-vars': 'off',
 		'space-before-blocks': 'error',
 		'space-before-function-paren': [
-			'error', {
+			'error',
+			{
 				anonymous: 'always',
 				named: 'never',
 				asyncArrow: 'always',
 			},
 		],
-		'space-in-parens': [
-			'error', 'never',
-		],
+		'space-in-parens': ['error', 'never'],
 		'space-infix-ops': 'error',
 		'space-unary-ops': [
-			'error', {
+			'error',
+			{
 				words: true,
 				nonwords: false,
 				overrides: {},
@@ -480,9 +429,7 @@ export default {
 			'always',
 			{
 				line: {
-					exceptions: [
-						'-', '+',
-					],
+					exceptions: ['-', '+'],
 					markers: [
 						'=',
 						'!',
@@ -490,9 +437,7 @@ export default {
 					],
 				},
 				block: {
-					exceptions: [
-						'-', '+',
-					],
+					exceptions: ['-', '+'],
 					markers: [
 						'=',
 						'!',
@@ -504,17 +449,14 @@ export default {
 			},
 		],
 		'switch-colon-spacing': [
-			'error', {
+			'error',
+			{
 				after: true,
 				before: false,
 			},
 		],
-		'template-tag-spacing': [
-			'error', 'never',
-		],
-		'unicode-bom': [
-			'error', 'never',
-		],
+		'template-tag-spacing': ['error', 'never'],
+		'unicode-bom': ['error', 'never'],
 		'wrap-regex': 'off',
 	},
 } as Linter.FlatConfig;

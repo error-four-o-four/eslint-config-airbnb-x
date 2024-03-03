@@ -167,7 +167,6 @@ function getProcessed(
 
 			if (name === 'typescript') {
 				temp[name].languageOptions = getLanguageOptions[name]();
-				temp[name].settings = getSettings[name](temp.imports);
 
 				const filter: (
 					(rule: ProcessedRule<ApprovedMeta>) => boolean
@@ -177,15 +176,24 @@ function getProcessed(
 					copyRulesBy(approvedRules, filter),
 				);
 
-				temp[name].rules = {
-					...Object.fromEntries(
-						[...entries].map(([rule]) => [rule, 0]),
-					) as FlatConfig['rules'],
-					...Object.fromEntries(
-						[...entries].map(([rule, value]) => [`${pluginPrefix.typescript}/${rule}`, value]),
-					),
-				};
+				const disabledEntries = Object.fromEntries(
+					[...entries].map(([rule]) => [rule, 0]),
+				) as FlatConfig['rules'];
+
+				const prefixedEntries = Object.fromEntries(
+					[...entries].map(([rule, value]) => {
+						const prefixed = `${pluginPrefix.typescript}/${rule}`;
+						return [prefixed, value];
+					}),
+				) as FlatConfig['rules'];
+
 				// temp[name].rules = copyTypescriptRules(approvedRules);
+				temp[name].rules = {
+					...disabledEntries,
+					...prefixedEntries,
+				};
+
+				temp[name].settings = getSettings[name](temp.imports);
 			}
 		}
 	});

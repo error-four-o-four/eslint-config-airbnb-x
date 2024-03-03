@@ -39,4 +39,4 @@ export const SOURCE_TYPE = 'module';
 
 export const EXTS_JS = ['.js', '.mjs'];
 
-export const EXTS_TS = ['.js', '.mjs'];
+export const EXTS_TS = ['.ts', '.mts'];

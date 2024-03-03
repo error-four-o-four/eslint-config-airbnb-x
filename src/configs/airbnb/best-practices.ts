@@ -4,31 +4,17 @@ import { Linter } from 'eslint';
 export default {
 	rules: {
 		'accessor-pairs': 'off',
-		'array-callback-return': [
-			'error', { allowImplicit: true },
-		],
+		'array-callback-return': ['error', { allowImplicit: true }],
 		'block-scoped-var': 'error',
-		complexity: [
-			'off', 20,
-		],
-		'class-methods-use-this': [
-			'error', { exceptMethods: [] },
-		],
+		complexity: ['off', 20],
+		'class-methods-use-this': ['error', { exceptMethods: [] }],
 		'consistent-return': 'error',
-		curly: [
-			'error', 'multi-line',
-		],
-		'default-case': [
-			'error', { commentPattern: '^no default$' },
-		],
+		curly: ['error', 'multi-line'],
+		'default-case': ['error', { commentPattern: '^no default$' }],
 		'default-case-last': 'error',
 		'default-param-last': 'error',
-		'dot-notation': [
-			'error', { allowKeywords: true },
-		],
-		'dot-location': [
-			'error', 'property',
-		],
+		'dot-notation': ['error', { allowKeywords: true }],
+		'dot-location': ['error', 'property'],
 		eqeqeq: [
 			'error',
 			'always',
@@ -36,19 +22,16 @@ export default {
 		],
 		'grouped-accessor-pairs': 'error',
 		'guard-for-in': 'error',
-		'max-classes-per-file': [
-			'error', 1,
-		],
+		'max-classes-per-file': ['error', 1],
 		'no-alert': 'warn',
 		'no-caller': 'error',
 		'no-case-declarations': 'error',
 		'no-constructor-return': 'error',
 		'no-div-regex': 'off',
-		'no-else-return': [
-			'error', { allowElseIf: false },
-		],
+		'no-else-return': ['error', { allowElseIf: false }],
 		'no-empty-function': [
-			'error', {
+			'error',
+			{
 				allow: [
 					'arrowFunctions',
 					'functions',
@@ -64,12 +47,11 @@ export default {
 		'no-extra-label': 'error',
 		'no-fallthrough': 'error',
 		'no-floating-decimal': 'error',
-		'no-global-assign': [
-			'error', { exceptions: [] },
-		],
+		'no-global-assign': ['error', { exceptions: [] }],
 		'no-native-reassign': 'off',
 		'no-implicit-coercion': [
-			'off', {
+			'off',
+			{
 				boolean: false,
 				number: true,
 				string: true,
@@ -81,7 +63,8 @@ export default {
 		'no-invalid-this': 'off',
 		'no-iterator': 'error',
 		'no-labels': [
-			'error', {
+			'error',
+			{
 				allowLoop: false,
 				allowSwitch: false,
 			},
@@ -89,16 +72,15 @@ export default {
 		'no-lone-blocks': 'error',
 		'no-loop-func': 'error',
 		'no-magic-numbers': [
-			'off', {
+			'off',
+			{
 				ignore: [],
 				ignoreArrayIndexes: true,
 				enforceConst: true,
 				detectObjects: false,
 			},
 		],
-		'no-multi-spaces': [
-			'error', { ignoreEOLComments: false },
-		],
+		'no-multi-spaces': ['error', { ignoreEOLComments: false }],
 		'no-multi-str': 'error',
 		'no-new': 'error',
 		'no-new-func': 'error',
@@ -107,7 +89,8 @@ export default {
 		'no-octal': 'error',
 		'no-octal-escape': 'error',
 		'no-param-reassign': [
-			'error', {
+			'error',
+			{
 				props: true,
 				ignorePropertyModificationsFor: [
 					'acc',
@@ -177,20 +160,17 @@ export default {
 				message: 'Use the exponentiation operator (**) instead.',
 			},
 		],
-		'no-return-assign': [
-			'error', 'always',
-		],
+		'no-return-assign': ['error', 'always'],
 		'no-return-await': 'error',
 		'no-script-url': 'error',
-		'no-self-assign': [
-			'error', { props: true },
-		],
+		'no-self-assign': ['error', { props: true }],
 		'no-self-compare': 'error',
 		'no-sequences': 'error',
 		'no-throw-literal': 'error',
 		'no-unmodified-loop-condition': 'off',
 		'no-unused-expressions': [
-			'error', {
+			'error',
+			{
 				allowShortCircuit: false,
 				allowTernary: false,
 				allowTaggedTemplates: false,
@@ -204,7 +184,8 @@ export default {
 		'no-useless-return': 'error',
 		'no-void': 'error',
 		'no-warning-comments': [
-			'off', {
+			'off',
+			{
 				terms: [
 					'todo',
 					'fixme',
@@ -214,13 +195,9 @@ export default {
 			},
 		],
 		'no-with': 'error',
-		'prefer-promise-reject-errors': [
-			'error', { allowEmptyReject: true },
-		],
+		'prefer-promise-reject-errors': ['error', { allowEmptyReject: true }],
 		'prefer-named-capture-group': 'off',
-		'prefer-regex-literals': [
-			'error', { disallowRedundantWrapping: true },
-		],
+		'prefer-regex-literals': ['error', { disallowRedundantWrapping: true }],
 		radix: 'error',
 		'require-await': 'off',
 		'require-unicode-regexp': 'off',

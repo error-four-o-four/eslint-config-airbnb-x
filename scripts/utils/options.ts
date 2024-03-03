@@ -72,32 +72,34 @@ type ConfigKeysWithOptions = Extract<
 
 const importSettingsKeys = {
 	extensions: `${pluginPrefix.import}/extensions`,
-	resolver: `${pluginPrefix.import}/resolver`,
+	externalModuleFolders: `${pluginPrefix.import}/external-module-folders`,
 	parsers: `${pluginPrefix.import}/parsers`,
+	resolver: `${pluginPrefix.import}/resolver`,
 };
 
 export const getSettings = {
-	imports: (source) => ({
-		...source,
+	imports: ({ settings }) => ({
+		...settings,
 		[importSettingsKeys.extensions]: EXTS_JS,
+		[importSettingsKeys.parsers]: { espree: EXTS_JS },
 		[importSettingsKeys.resolver]: {
 			node: { extensions: ['.json'] },
 			typescript: { extensions: EXTS_JS },
 		},
-		[importSettingsKeys.parsers]: { espree: EXTS_JS },
 	}),
-	typescript: (source) => {
+	typescript: ({ settings }) => {
 		const exts = [...EXTS_JS, ...EXTS_TS];
 
-		return ({
-			...source,
+		return {
+			...settings,
+			[importSettingsKeys.extensions]: [exts],
+			[importSettingsKeys.externalModuleFolders]: ['node_modules', 'node_modules/@types'],
+			[importSettingsKeys.parsers]: { '@typescript-eslint/parser': exts },
 			[importSettingsKeys.resolver]: {
 				node: { extensions: ['.json'] },
 				typescript: { extensions: exts },
 			},
-			[importSettingsKeys.extensions]: [exts],
-			[importSettingsKeys.parsers]: { '@typescript-eslint/parser': exts },
-		});
+		};
 	},
 } as {
 	[K in ConfigKeysWithSettings]: ({ settings }: FlatConfig) => Settings

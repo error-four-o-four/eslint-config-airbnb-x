@@ -24,13 +24,16 @@ import {
 	toCamelCase,
 } from './utils/write.ts';
 
-generateConfigs();
+const generateAllConfigs = process.argv.length < 3;
+const generateConfigArg = generateAllConfigs ? undefined : process.argv.at(-1);
+
+generateConfigs(generateAllConfigs, generateConfigArg);
 
 //
 // ###
 //
 
-async function generateConfigs() {
+async function generateConfigs(all: boolean, arg: string | undefined) {
 	const baseConfigEntries = await importBaseConfigs();
 
 	// 1. convert aibrnb from esltinrc to flat format
@@ -43,8 +46,24 @@ async function generateConfigs() {
 	const baseDir = '../src/configs';
 	ensureFolder(`${baseDir}/`, import.meta.url);
 
-	await writeConvertedConfigs(`${baseDir}/airbnb`, convertedEntries);
-	await writeProcessedConfigs(`${baseDir}/custom`, processedEntries);
+	if (all) {
+		console.log('Generating "airbnb" and "custom" config ...');
+		await writeConvertedConfigs(`${baseDir}/airbnb`, convertedEntries);
+		await writeProcessedConfigs(`${baseDir}/custom`, processedEntries);
+	} else {
+		// check process argument
+		if (!arg || !['airbnb', 'custom'].includes(arg)) {
+			throw new Error('Please provide an argument: \'airbnb\' or \'custom\'');
+		}
+
+		if (arg === 'airbnb') {
+			console.log('Generating "airbnb" config ...');
+			await writeConvertedConfigs(`${baseDir}/airbnb`, convertedEntries);
+		} else {
+			console.log('Generating "custom" config ...');
+			await writeProcessedConfigs(`${baseDir}/custom`, processedEntries);
+		}
+	}
 
 	// const rulesDir = `${baseDir}/rules`;
 	// await writeRules(`${rulesDir}/approved.json`, approvedRules);

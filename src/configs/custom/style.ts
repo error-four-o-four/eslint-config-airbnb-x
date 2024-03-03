@@ -5,7 +5,8 @@ export default {
 	name: 'airbnb:style',
 	rules: {
 		camelcase: [
-			'error', {
+			'error',
+			{
 				properties: 'never',
 				ignoreDestructuring: false,
 			},
@@ -36,31 +37,30 @@ export default {
 			},
 		],
 		'func-names': 'warn',
-		'func-style': [
-			'off', 'expression',
-		],
+		'func-style': ['off', 'expression'],
 		'id-denylist': 'off',
 		'id-length': 'off',
 		'id-match': 'off',
 		'line-comment-position': [
-			'off', {
+			'off',
+			{
 				position: 'above',
 				ignorePattern: '',
 				applyDefaultPatterns: true,
 			},
 		],
-		'max-depth': [
-			'off', 4,
-		],
+		'max-depth': ['off', 4],
 		'max-lines': [
-			'off', {
+			'off',
+			{
 				max: 300,
 				skipBlankLines: true,
 				skipComments: true,
 			},
 		],
 		'max-lines-per-function': [
-			'off', {
+			'off',
+			{
 				max: 50,
 				skipBlankLines: true,
 				skipComments: true,
@@ -68,17 +68,12 @@ export default {
 			},
 		],
 		'max-nested-callbacks': 'off',
-		'max-params': [
-			'off', 3,
-		],
-		'max-statements': [
-			'off', 10,
-		],
-		'multiline-comment-style': [
-			'off', 'starred-block',
-		],
+		'max-params': ['off', 3],
+		'max-statements': ['off', 10],
+		'multiline-comment-style': ['off', 'starred-block'],
 		'new-cap': [
-			'error', {
+			'error',
+			{
 				newIsCap: true,
 				newIsCapExceptions: [],
 				capIsNew: false,
@@ -119,22 +114,17 @@ export default {
 		],
 		'no-ternary': 'off',
 		'no-underscore-dangle': [
-			'error', {
+			'error',
+			{
 				allow: [],
 				allowAfterThis: false,
 				allowAfterSuper: false,
 				enforceInMethodNames: true,
 			},
 		],
-		'no-unneeded-ternary': [
-			'error', { defaultAssignment: false },
-		],
-		'one-var': [
-			'error', 'never',
-		],
-		'operator-assignment': [
-			'error', 'always',
-		],
+		'no-unneeded-ternary': ['error', { defaultAssignment: false }],
+		'one-var': ['error', 'never'],
+		'operator-assignment': ['error', 'always'],
 		'prefer-exponentiation-operator': 'error',
 		'prefer-object-spread': 'error',
 		'sort-keys': [
@@ -146,8 +136,6 @@ export default {
 			},
 		],
 		'sort-vars': 'off',
-		'unicode-bom': [
-			'error', 'never',
-		],
+		'unicode-bom': ['error', 'never'],
 	},
 } as FlatConfig;

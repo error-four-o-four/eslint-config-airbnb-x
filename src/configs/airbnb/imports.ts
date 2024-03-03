@@ -22,13 +22,12 @@ export default {
 			'.jsx',
 		],
 		'import/core-modules': [],
-		'import/ignore': [
-			'node_modules', '\\.(coffee|scss|css|less|hbs|svg|json)$',
-		],
+		'import/ignore': ['node_modules', '\\.(coffee|scss|css|less|hbs|svg|json)$'],
 	},
 	rules: {
 		'import/no-unresolved': [
-			'error', {
+			'error',
+			{
 				commonjs: true,
 				caseSensitive: true,
 			},
@@ -41,7 +40,8 @@ export default {
 		'import/no-named-as-default-member': 'error',
 		'import/no-deprecated': 'off',
 		'import/no-extraneous-dependencies': [
-			'error', {
+			'error',
+			{
 				devDependencies: [
 					'test/**',
 					'tests/**',
@@ -87,31 +87,31 @@ export default {
 			},
 		],
 		'import/order': [
-			'error', {
-				groups: [[
-					'builtin',
-					'external',
-					'internal',
-				]],
+			'error',
+			{
+				groups: [
+					[
+						'builtin',
+						'external',
+						'internal',
+					],
+				],
 			},
 		],
 		'import/newline-after-import': 'error',
 		'import/prefer-default-export': 'error',
 		'import/no-restricted-paths': 'off',
-		'import/max-dependencies': [
-			'off', { max: 10 },
-		],
+		'import/max-dependencies': ['off', { max: 10 }],
 		'import/no-absolute-path': 'error',
 		'import/no-dynamic-require': 'error',
-		'import/no-internal-modules': [
-			'off', { allow: [] },
-		],
+		'import/no-internal-modules': ['off', { allow: [] }],
 		'import/unambiguous': 'off',
 		'import/no-webpack-loader-syntax': 'error',
 		'import/no-unassigned-import': 'off',
 		'import/no-named-default': 'error',
 		'import/no-anonymous-default-export': [
-			'off', {
+			'off',
+			{
 				allowArray: false,
 				allowArrowFunction: false,
 				allowAnonymousClass: false,
@@ -125,29 +125,25 @@ export default {
 		'import/no-default-export': 'off',
 		'import/no-named-export': 'off',
 		'import/no-self-import': 'error',
-		'import/no-cycle': [
-			'error', { maxDepth: '∞' },
-		],
-		'import/no-useless-path-segments': [
-			'error', { commonjs: true },
-		],
+		'import/no-cycle': ['error', { maxDepth: '∞' }],
+		'import/no-useless-path-segments': ['error', { commonjs: true }],
 		'import/dynamic-import-chunkname': [
-			'off', {
+			'off',
+			{
 				importFunctions: [],
 				webpackChunknameFormat: '[0-9a-zA-Z-_/.]+',
 			},
 		],
 		'import/no-relative-parent-imports': 'off',
 		'import/no-unused-modules': [
-			'off', {
+			'off',
+			{
 				ignoreExports: [],
 				missingExports: true,
 				unusedExports: true,
 			},
 		],
-		'import/no-import-module-exports': [
-			'error', { exceptions: [] },
-		],
+		'import/no-import-module-exports': ['error', { exceptions: [] }],
 		'import/no-relative-packages': 'error',
 	},
 } as Linter.FlatConfig;

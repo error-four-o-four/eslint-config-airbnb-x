@@ -82,14 +82,16 @@ export default {
 		'no-undef-init': 'error',
 		'no-undefined': 'off',
 		'no-unused-vars': [
-			'error', {
+			'error',
+			{
 				vars: 'all',
 				args: 'after-used',
 				ignoreRestSiblings: true,
 			},
 		],
 		'no-use-before-define': [
-			'error', {
+			'error',
+			{
 				functions: true,
 				classes: true,
 				variables: true,

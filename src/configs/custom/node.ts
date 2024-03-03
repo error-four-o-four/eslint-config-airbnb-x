@@ -4,8 +4,6 @@ import type { FlatConfig } from '../../../scripts/types/configs.ts';
 export default {
 	name: 'airbnb:node',
 	languageOptions: {
-		ecmaVersion: 2022,
-		sourceType: 'module',
 		parserOptions: { ecmaFeatures: { globalReturn: true } },
 		globals: {
 			AggregateError: false,
@@ -145,14 +143,14 @@ export default {
 			WritableStreamDefaultController: false,
 			WritableStreamDefaultWriter: false,
 		},
+		ecmaVersion: 2022,
+		sourceType: 'module',
 	},
 	rules: {
 		'node/callback-return': 'off',
 		'node/global-require': 'error',
 		'node/handle-callback-err': 'off',
-		'node/no-mixed-requires': [
-			'off', false,
-		],
+		'node/no-mixed-requires': ['off', false],
 		'node/no-new-require': 'error',
 		'node/no-path-concat': 'error',
 		'node/no-process-env': 'off',

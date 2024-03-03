@@ -209,15 +209,18 @@ function overwriteImportsRules(target: Linter.RulesRecord) {
 	const [severity, dependants] = noExtraneousDepsVals;
 
 	// target.rules['import/named'] = 0;
-	target[noExtraneousDepsKey] = [severity, {
-		devDependencies: [
-			...dependants.devDependencies,
-			'**/eslint.config.js',
-			'**/vite.config.js',
-			'**/vite.config.*.js',
-		],
-		optionalDependencies: dependants.optionalDependencies,
-	}];
+	target[noExtraneousDepsKey] = [
+		severity,
+		{
+			devDependencies: [
+				...dependants.devDependencies,
+				'**/eslint.config.js',
+				'**/vite.config.js',
+				'**/vite.config.*.js',
+			],
+			optionalDependencies: dependants.optionalDependencies,
+		},
+	];
 }
 
 // export function copyLegacyRules(

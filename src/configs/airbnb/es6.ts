@@ -18,39 +18,32 @@ export default {
 			'as-needed',
 			{ requireReturnForObjectLiteral: false },
 		],
-		'arrow-parens': [
-			'error', 'always',
-		],
+		'arrow-parens': ['error', 'always'],
 		'arrow-spacing': [
-			'error', {
+			'error',
+			{
 				before: true,
 				after: true,
 			},
 		],
 		'constructor-super': 'error',
 		'generator-star-spacing': [
-			'error', {
+			'error',
+			{
 				before: false,
 				after: true,
 			},
 		],
 		'no-class-assign': 'error',
-		'no-confusing-arrow': [
-			'error', { allowParens: true },
-		],
+		'no-confusing-arrow': ['error', { allowParens: true }],
 		'no-const-assign': 'error',
 		'no-dupe-class-members': 'error',
 		'no-duplicate-imports': 'off',
 		'no-new-symbol': 'error',
-		'no-restricted-exports': [
-			'error', {
-				restrictedNamedExports: [
-					'default', 'then',
-				],
-			},
-		],
+		'no-restricted-exports': ['error', { restrictedNamedExports: ['default', 'then'] }],
 		'no-restricted-imports': [
-			'off', {
+			'off',
+			{
 				paths: [],
 				patterns: [],
 			},
@@ -59,7 +52,8 @@ export default {
 		'no-useless-computed-key': 'error',
 		'no-useless-constructor': 'error',
 		'no-useless-rename': [
-			'error', {
+			'error',
+			{
 				ignoreDestructuring: false,
 				ignoreImport: false,
 				ignoreExport: false,
@@ -75,13 +69,15 @@ export default {
 			},
 		],
 		'prefer-arrow-callback': [
-			'error', {
+			'error',
+			{
 				allowNamedFunctions: false,
 				allowUnboundThis: true,
 			},
 		],
 		'prefer-const': [
-			'error', {
+			'error',
+			{
 				destructuring: 'any',
 				ignoreReadBeforeAssign: true,
 			},
@@ -106,11 +102,10 @@ export default {
 		'prefer-spread': 'error',
 		'prefer-template': 'error',
 		'require-yield': 'error',
-		'rest-spread-spacing': [
-			'error', 'never',
-		],
+		'rest-spread-spacing': ['error', 'never'],
 		'sort-imports': [
-			'off', {
+			'off',
+			{
 				ignoreCase: false,
 				ignoreDeclarationSort: false,
 				ignoreMemberSort: false,
@@ -124,8 +119,6 @@ export default {
 		],
 		'symbol-description': 'error',
 		'template-curly-spacing': 'error',
-		'yield-star-spacing': [
-			'error', 'after',
-		],
+		'yield-star-spacing': ['error', 'after'],
 	},
 } as Linter.FlatConfig;
