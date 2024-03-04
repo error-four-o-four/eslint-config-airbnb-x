@@ -122,18 +122,6 @@ function getDeprecatedMeta(name: string, meta: Rule.RuleMetaData | undefined) {
 	};
 }
 
-// export function copyRules(
-// 	key: AirbnbConfigKeys,
-// 	source: ProcessedRule[],
-// ): Linter.RulesRecord {
-// 	return source
-// 		.filter((rule) => rule.meta.config === key)
-// 		.reduce(
-// 			(all, rule) => Object.assign(all, { [rule.name]: rule.value }),
-// 			{},
-// 		);
-// }
-
 export function copyRulesBy(
 	source: ProcessedRule[],
 	filter: (...args: any[]) => any,
@@ -222,38 +210,6 @@ function overwriteImportsRules(target: Linter.RulesRecord) {
 		},
 	];
 }
-
-// export function copyLegacyRules(
-// 	source: ProcessedRule<DeprecatedMeta>[],
-// ) {
-// 	const rules: FlatConfig['rules'] = {};
-
-// 	source
-// 		.filter((rule) => rule.meta.plugin !== 'import')
-// 		.forEach((rule) => {
-// 			rules[rule.name] = 0;
-// 		});
-
-// 	return rules;
-// }
-
-// export function copyTypescriptRules(
-// 	source: ProcessedRule[],
-// ) {
-// 	const filtered = source.filter((rule) => isTypescriptRule(rule.name));
-// 	const rules: FlatConfig['rules'] = {};
-
-// 	filtered.forEach((rule) => {
-// 		// console.log(`'${rule.name}' is replaced in @typescript-eslint`);
-// 		rules[rule.name] = 0;
-// 	});
-
-// 	filtered.forEach((rule) => {
-// 		rules[`${pluginPrefix.typescript}/${rule.name}`] = rule.value;
-// 	});
-
-// 	return rules;
-// }
 
 export function isTypescriptRule(name: string) {
 	return rawRules.typescript.has(name);

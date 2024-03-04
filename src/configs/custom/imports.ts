@@ -4,12 +4,12 @@ import type { FlatConfig } from '../../../scripts/types/configs.ts';
 export default {
 	name: 'airbnb:imports',
 	languageOptions: {
+		ecmaVersion: 2022,
+		sourceType: 'module',
 		parserOptions: {
 			ecmaVersion: 2022,
 			sourceType: 'module',
 		},
-		ecmaVersion: 2022,
-		sourceType: 'module',
 	},
 	settings: {
 		'import/resolver': {

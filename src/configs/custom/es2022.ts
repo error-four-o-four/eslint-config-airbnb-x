@@ -1,4 +1,106 @@
 // FILE GENERATED WITH SCRIPT
 import type { FlatConfig } from '../../../scripts/types/configs.ts';
 
-export default { name: 'airbnb:es2022' } as FlatConfig;
+export default {
+	name: 'airbnb:es2022',
+	languageOptions: {
+		ecmaVersion: 2022,
+		sourceType: 'module',
+		parserOptions: {
+			ecmaFeatures: {
+				jsx: false,
+				generators: false,
+				objectLiteralDuplicateProperties: false,
+			},
+		},
+	},
+	rules: {
+		'arrow-body-style': [
+			'error',
+			'as-needed',
+			{ requireReturnForObjectLiteral: false },
+		],
+		'constructor-super': 'error',
+		'no-class-assign': 'error',
+		'no-const-assign': 'error',
+		'no-dupe-class-members': 'error',
+		'no-duplicate-imports': 'off',
+		'no-new-symbol': 'error',
+		'no-restricted-exports': ['error', { restrictedNamedExports: ['default', 'then'] }],
+		'no-restricted-imports': [
+			'off',
+			{
+				paths: [],
+				patterns: [],
+			},
+		],
+		'no-this-before-super': 'error',
+		'no-useless-computed-key': 'error',
+		'no-useless-constructor': 'error',
+		'no-useless-rename': [
+			'error',
+			{
+				ignoreDestructuring: false,
+				ignoreImport: false,
+				ignoreExport: false,
+			},
+		],
+		'no-var': 'error',
+		'object-shorthand': [
+			'error',
+			'always',
+			{
+				ignoreConstructors: false,
+				avoidQuotes: true,
+			},
+		],
+		'prefer-arrow-callback': [
+			'error',
+			{
+				allowNamedFunctions: false,
+				allowUnboundThis: true,
+			},
+		],
+		'prefer-const': [
+			'error',
+			{
+				destructuring: 'any',
+				ignoreReadBeforeAssign: true,
+			},
+		],
+		'prefer-destructuring': [
+			'error',
+			{
+				VariableDeclarator: {
+					array: false,
+					object: true,
+				},
+				AssignmentExpression: {
+					array: true,
+					object: false,
+				},
+			},
+			{ enforceForRenamedProperties: false },
+		],
+		'prefer-numeric-literals': 'error',
+		'prefer-rest-params': 'error',
+		'prefer-spread': 'error',
+		'prefer-template': 'error',
+		'require-yield': 'error',
+		'sort-imports': [
+			'off',
+			{
+				ignoreCase: false,
+				ignoreDeclarationSort: false,
+				ignoreMemberSort: false,
+				memberSyntaxSortOrder: [
+					'none',
+					'all',
+					'multiple',
+					'single',
+				],
+			},
+		],
+		'symbol-description': 'error',
+	},
+} as FlatConfig;

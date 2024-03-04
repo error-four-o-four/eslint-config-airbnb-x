@@ -33,9 +33,6 @@ import {
 	getLegacyRules,
 	getPluginRules,
 	copyPluginRules,
-	// copyRules,
-	// copyLegacyRules,
-	// copyTypescriptRules,
 	copyRulesBy,
 	isTypescriptRule,
 } from './rules.ts';
@@ -110,41 +107,39 @@ function getProcessed(
 
 	// use a temporary object
 	// to convert es6 to es2022
-	const temp = customConfigKeyValues.reduce(
+	const result = customConfigKeyValues.reduce(
 		(all, name) => Object.assign(all, { [name]: {} }),
-		{} as TempConfigs,
+		{} as CustomConfigs,
 	);
 
-	type TempConfigs = Omit<CustomConfigs, 'es2022'> & { es6: FlatConfig; };
-
-	Object.keys(temp).forEach((name) => {
+	Object.keys(result).forEach((name) => {
 		if (isAirbnb(name)) {
-			// es6/es2022, node, imports have languageOptions
-			if ((name === 'es6' || name === 'node' || name === 'imports')
+			if ((name === 'node' || name === 'imports')
 				&& typeof getLanguageOptions[name] === 'function') {
-				temp[name].languageOptions = getLanguageOptions[name]();
+				// create languageOptions
+				result[name].languageOptions = getLanguageOptions[name]();
 			}
 
-			// generate imports settings
 			if (name === 'imports'
-				&& source[name].settings
-				&& typeof getSettings[name] === 'function') {
-				temp[name].settings = getSettings[name](source[name]);
+			&& source[name].settings
+			&& typeof getSettings[name] === 'function') {
+				// copy/create imports settings
+				result[name].settings = getSettings[name](source[name]);
 			}
 
 			// just copy the rules
-			if (!configHasPlugin(name)) {
+			if (name !== 'es6' && !configHasPlugin(name)) {
 				const filter: (
 					(rule: ProcessedRule<ApprovedMeta>) => boolean
 				) = (rule) => rule.meta.config === name;
 
-				temp[name].rules = copyRulesBy(approvedRules, filter);
+				result[name].rules = copyRulesBy(approvedRules, filter);
 			}
 
 			// add plugin scope
 			// overwrite imports rules
 			if (configHasPlugin(name)) {
-				temp[name].rules = copyPluginRules(name, pluginRules);
+				result[name].rules = copyPluginRules(name, pluginRules);
 			}
 		}
 
@@ -156,17 +151,34 @@ function getProcessed(
 					(rule: ProcessedRule<DeprecatedMeta>) => boolean
 				) = (rule) => rule.meta.plugin !== 'import';
 
-				temp[name].rules = copyRulesBy(deprecatedRules, filter, false);
-				// temp[name].rules = copyLegacyRules(deprecatedRules);
+				result[name].rules = copyRulesBy(
+					deprecatedRules,
+					filter,
+					false,
+				);
+			}
+
+			// create es2022 config
+			if (name === 'es2022') {
+				// create languageOptions
+				// @todo create dynamically (?)
+				result[name].languageOptions = getLanguageOptions[name]();
+
+				const filter: (
+					(rule: ProcessedRule<ApprovedMeta>) => boolean
+				) = ((rule) => rule.meta.config === 'es6');
+				// copy rules
+				result[name].rules = copyRulesBy(approvedRules, filter);
 			}
 
 			// use airbnb rules wih stylistic plugin
 			if (name === 'stylistic') {
-				temp[name].rules = copyPluginRules(name, deprecatedRules);
+				result[name].rules = copyPluginRules(name, deprecatedRules);
 			}
 
+			// create typescript config
 			if (name === 'typescript') {
-				temp[name].languageOptions = getLanguageOptions[name]();
+				result[name].languageOptions = getLanguageOptions[name]();
 
 				const filter: (
 					(rule: ProcessedRule<ApprovedMeta>) => boolean
@@ -187,21 +199,17 @@ function getProcessed(
 					}),
 				) as FlatConfig['rules'];
 
-				// temp[name].rules = copyTypescriptRules(approvedRules);
-				temp[name].rules = {
+				result[name].rules = {
 					...disabledEntries,
 					...prefixedEntries,
 				};
 
-				temp[name].settings = getSettings[name](temp.imports);
+				result[name].settings = getSettings[name](result.imports);
 			}
 		}
 	});
 
-	// rename
-	return Object.fromEntries(
-		Object.entries(temp).map(([name, value]) => [name === 'es6' ? 'es2022' : name, value]),
-	) as CustomConfigs;
+	return result;
 }
 
 function isAirbnb(name: string): name is AirbnbConfigKeys {

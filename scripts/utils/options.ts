@@ -23,7 +23,8 @@ const defaultOptions: FlatConfig['languageOptions'] = {
 };
 
 export const getLanguageOptions = {
-	es6: () => ({
+	es2022: () => ({
+		...defaultOptions,
 		parserOptions: {
 			ecmaFeatures: {
 				jsx: false,
@@ -32,24 +33,23 @@ export const getLanguageOptions = {
 				objectLiteralDuplicateProperties: false,
 			},
 		},
-		...defaultOptions,
 	}),
 	node: () => ({
+		...defaultOptions,
 		parserOptions: { ecmaFeatures: { globalReturn: true } },
 		globals: {
 			...globals.es2021,
 			...globals.node,
 			...globals.nodeBuiltin,
 		},
-		...defaultOptions,
 	}),
 	imports: () => ({
+		...defaultOptions,
 		parserOptions: {
 			// required to satisfy 'import/no-named-as-default'
 			ecmaVersion: ECMA_VERSION,
 			sourceType: SOURCE_TYPE,
 		},
-		...defaultOptions,
 	}),
 	typescript: () => ({
 		ecmaVersion: ECMA_VERSION,
@@ -67,7 +67,7 @@ export const getLanguageOptions = {
 
 type ConfigKeysWithOptions = Extract<
 	AirbnbConfigKeys | CustomConfigKeys,
-	'es6' | 'node' | 'imports' | 'typescript'
+	'es2022' | 'node' | 'imports' | 'typescript'
 >;
 
 const importSettingsKeys = {
