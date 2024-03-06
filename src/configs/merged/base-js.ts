@@ -2,18 +2,24 @@
 import type { FlatConfig } from '../../../scripts/types/configs.ts';
 
 export default {
+	settings: {
+		'import/resolver': {
+			node: { extensions: ['.json'] },
+			typescript: { extensions: ['.js', '.mjs'] },
+		},
+		'import/extensions': ['.js', '.mjs'],
+		'import/core-modules': [],
+		'import/ignore': ['node_modules', '\\.(coffee|scss|css|less|hbs|svg|json)$'],
+		'import/parsers': { espree: ['.js', '.mjs'] },
+	},
 	rules: {
 		'block-spacing': 0,
 		'brace-style': 0,
-		'class-methods-use-this': [
-			'error', { exceptMethods: [] },
-		],
+		'class-methods-use-this': ['error', { exceptMethods: [] }],
 		'comma-dangle': 0,
 		'comma-spacing': 0,
 		'default-param-last': 'error',
-		'dot-notation': [
-			'error', { allowKeywords: true },
-		],
+		'dot-notation': ['error', { allowKeywords: true }],
 		'func-call-spacing': 0,
 		indent: 0,
 		'init-declarations': 'off',
@@ -21,12 +27,12 @@ export default {
 		'keyword-spacing': 0,
 		'lines-around-comment': 0,
 		'lines-between-class-members': 0,
-		'max-params': [
-			'off', 3,
-		],
+		'max-params': ['off', 3],
 		'no-array-constructor': 'error',
+		'no-dupe-class-members': 'error',
 		'no-empty-function': [
-			'error', {
+			'error',
+			{
 				allow: [
 					'arrowFunctions',
 					'functions',
@@ -41,7 +47,8 @@ export default {
 		'no-loop-func': 'error',
 		'no-loss-of-precision': 'error',
 		'no-magic-numbers': [
-			'off', {
+			'off',
+			{
 				ignore: [],
 				ignoreArrayIndexes: true,
 				enforceConst: true,
@@ -49,36 +56,105 @@ export default {
 			},
 		],
 		'no-redeclare': 'error',
+		'no-restricted-imports': [
+			'off',
+			{
+				paths: [],
+				patterns: [],
+			},
+		],
 		'no-shadow': 'error',
 		'no-throw-literal': 'error',
 		'no-unused-expressions': [
-			'error', {
+			'error',
+			{
 				allowShortCircuit: false,
 				allowTernary: false,
 				allowTaggedTemplates: false,
 			},
 		],
 		'no-unused-vars': [
-			'error', {
+			'error',
+			{
 				vars: 'all',
 				args: 'after-used',
 				ignoreRestSiblings: true,
 			},
 		],
 		'no-use-before-define': [
-			'error', {
+			'error',
+			{
 				functions: true,
 				classes: true,
 				variables: true,
 			},
 		],
+		'no-useless-constructor': 'error',
 		'object-curly-spacing': 0,
 		'padding-line-between-statements': 0,
+		'prefer-destructuring': [
+			'error',
+			{
+				VariableDeclarator: {
+					array: false,
+					object: true,
+				},
+				AssignmentExpression: {
+					array: true,
+					object: false,
+				},
+			},
+			{ enforceForRenamedProperties: false },
+		],
 		quotes: 0,
 		'require-await': 'off',
 		semi: 0,
 		'space-before-blocks': 0,
 		'space-before-function-paren': 0,
 		'space-infix-ops': 0,
+		'import/extensions': [
+			'error',
+			'ignorePackages',
+			{
+				js: 'never',
+				mjs: 'never',
+				jsx: 'never',
+			},
+		],
+		'import/named': 'error',
+		'import/no-extraneous-dependencies': [
+			'error',
+			{
+				devDependencies: [
+					'test/**',
+					'tests/**',
+					'spec/**',
+					'**/__tests__/**',
+					'**/__mocks__/**',
+					'test.{js,jsx}',
+					'test-*.{js,jsx}',
+					'**/*{.,_}{test,spec}.{js,jsx}',
+					'**/jest.config.js',
+					'**/jest.setup.js',
+					'**/vue.config.js',
+					'**/webpack.config.js',
+					'**/webpack.config.*.js',
+					'**/rollup.config.js',
+					'**/rollup.config.*.js',
+					'**/gulpfile.js',
+					'**/gulpfile.*.js',
+					'**/Gruntfile{,.js}',
+					'**/protractor.conf.js',
+					'**/protractor.conf.*.js',
+					'**/karma.conf.js',
+					'**/.eslintrc.js',
+					'**/eslint.config.js',
+					'**/vite.config.js',
+					'**/vite.config.*.js',
+				],
+				optionalDependencies: false,
+			},
+		],
+		'import/no-named-as-default-member': 'error',
 	},
 } as FlatConfig;

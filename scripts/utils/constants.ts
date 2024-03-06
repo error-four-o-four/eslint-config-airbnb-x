@@ -40,3 +40,15 @@ export const SOURCE_TYPE = 'module';
 export const EXTS_JS = ['.js', '.mjs'];
 
 export const EXTS_TS = ['.ts', '.mts'];
+
+//
+// mergeConfigs.ts
+//
+
+export const mergedConfigKeys = {
+	baseMixed: 'base-mixed',
+	baseJs: 'base-js',
+	baseTs: 'base-ts',
+} as const;
+
+export const mergedConfigKeyValues = Object.values(mergedConfigKeys);

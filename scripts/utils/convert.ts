@@ -17,15 +17,22 @@ import type {
 } from '../types/configs.ts';
 
 import type {
-	ApprovedMeta, DeprecatedMeta, ProcessedRule,
+	ApprovedMeta,
+	DeprecatedMeta,
+	ProcessedRule,
 } from '../types/rules.ts';
+
+import { pluginPrefix } from '../../src/plugins.ts';
 
 import {
 	airbnbConfigKeyValues,
 	customConfigKeyValues,
 } from './constants.ts';
 
-import { getLanguageOptions, getSettings } from './options.ts';
+import {
+	getLanguageOptions,
+	getSettings,
+} from './options.ts';
 
 import {
 	getRules,
@@ -38,7 +45,6 @@ import {
 } from './rules.ts';
 
 import { configHasPlugin } from './plugins.ts';
-import { pluginPrefix } from '../../src/plugins.ts';
 
 export async function importBaseConfigs(): Promise<BaseConfigEntry[]> {
 	const promiseBaseConfig = (item: string): Promise<BaseConfigEntry> => {

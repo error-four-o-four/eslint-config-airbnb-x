@@ -6,7 +6,12 @@ export default {
 		ecmaVersion: 2022,
 		sourceType: 'module',
 		parserOptions: {
-			ecmaFeatures: { globalReturn: true },
+			ecmaFeatures: {
+				globalReturn: true,
+				jsx: false,
+				generators: false,
+				objectLiteralDuplicateProperties: false,
+			},
 			ecmaVersion: 2022,
 			sourceType: 'module',
 		},
@@ -149,42 +154,24 @@ export default {
 			WritableStreamDefaultWriter: false,
 		},
 	},
-	settings: {
-		'import/resolver': {
-			node: { extensions: ['.json'] },
-			typescript: {
-				extensions: [
-					'.js', '.mjs',
-				],
-			},
-		},
-		'import/extensions': [
-			'.js', '.mjs',
-		],
-		'import/core-modules': [],
-		'import/ignore': [
-			'node_modules', '\\.(coffee|scss|css|less|hbs|svg|json)$',
-		],
-		'import/parsers': {
-			espree: [
-				'.js', '.mjs',
-			],
-		},
-	},
 	rules: {
 		'accessor-pairs': 'off',
 		'array-bracket-newline': 0,
 		'array-bracket-spacing': 0,
-		'array-callback-return': [
-			'error', { allowImplicit: true },
-		],
+		'array-callback-return': ['error', { allowImplicit: true }],
 		'array-element-newline': 0,
+		'arrow-body-style': [
+			'error',
+			'as-needed',
+			{ requireReturnForObjectLiteral: false },
+		],
 		'arrow-parens': 0,
 		'arrow-spacing': 0,
 		'block-scoped-var': 'error',
 		'callback-return': 0,
 		camelcase: [
-			'error', {
+			'error',
+			{
 				properties: 'never',
 				ignoreDestructuring: false,
 			},
@@ -206,18 +193,13 @@ export default {
 			},
 		],
 		'comma-style': 0,
-		complexity: [
-			'off', 20,
-		],
+		complexity: ['off', 20],
 		'computed-property-spacing': 0,
 		'consistent-return': 'error',
 		'consistent-this': 'off',
-		curly: [
-			'error', 'multi-line',
-		],
-		'default-case': [
-			'error', { commentPattern: '^no default$' },
-		],
+		'constructor-super': 'error',
+		curly: ['error', 'multi-line'],
+		'default-case': ['error', { commentPattern: '^no default$' }],
 		'default-case-last': 'error',
 		'dot-location': 0,
 		'eol-last': 0,
@@ -236,15 +218,11 @@ export default {
 			},
 		],
 		'func-names': 'warn',
-		'func-style': [
-			'off', 'expression',
-		],
+		'func-style': ['off', 'expression'],
 		'function-call-argument-newline': 0,
 		'function-paren-newline': 0,
 		'generator-star-spacing': 0,
-		'getter-return': [
-			'error', { allowImplicit: true },
-		],
+		'getter-return': ['error', { allowImplicit: true }],
 		'global-require': 0,
 		'grouped-accessor-pairs': 'error',
 		'guard-for-in': 'error',
@@ -255,7 +233,8 @@ export default {
 		'implicit-arrow-linebreak': 0,
 		'jsx-quotes': 0,
 		'line-comment-position': [
-			'off', {
+			'off',
+			{
 				position: 'above',
 				ignorePattern: '',
 				applyDefaultPatterns: true,
@@ -263,22 +242,20 @@ export default {
 		],
 		'linebreak-style': 0,
 		'lines-around-directive': 0,
-		'max-classes-per-file': [
-			'error', 1,
-		],
-		'max-depth': [
-			'off', 4,
-		],
+		'max-classes-per-file': ['error', 1],
+		'max-depth': ['off', 4],
 		'max-len': 0,
 		'max-lines': [
-			'off', {
+			'off',
+			{
 				max: 300,
 				skipBlankLines: true,
 				skipComments: true,
 			},
 		],
 		'max-lines-per-function': [
-			'off', {
+			'off',
+			{
 				max: 50,
 				skipBlankLines: true,
 				skipComments: true,
@@ -286,16 +263,13 @@ export default {
 			},
 		],
 		'max-nested-callbacks': 'off',
-		'max-statements': [
-			'off', 10,
-		],
+		'max-statements': ['off', 10],
 		'max-statements-per-line': 0,
-		'multiline-comment-style': [
-			'off', 'starred-block',
-		],
+		'multiline-comment-style': ['off', 'starred-block'],
 		'multiline-ternary': 0,
 		'new-cap': [
-			'error', {
+			'error',
+			{
 				newIsCap: true,
 				newIsCapExceptions: [],
 				capIsNew: false,
@@ -318,12 +292,12 @@ export default {
 		'no-caller': 'error',
 		'no-case-declarations': 'error',
 		'no-catch-shadow': 0,
+		'no-class-assign': 'error',
 		'no-compare-neg-zero': 'error',
-		'no-cond-assign': [
-			'error', 'always',
-		],
+		'no-cond-assign': ['error', 'always'],
 		'no-confusing-arrow': 0,
 		'no-console': 'warn',
+		'no-const-assign': 'error',
 		'no-constant-condition': 'warn',
 		'no-constructor-return': 'error',
 		'no-continue': 'error',
@@ -335,9 +309,8 @@ export default {
 		'no-dupe-else-if': 'error',
 		'no-dupe-keys': 'error',
 		'no-duplicate-case': 'error',
-		'no-else-return': [
-			'error', { allowElseIf: false },
-		],
+		'no-duplicate-imports': 'off',
+		'no-else-return': ['error', { allowElseIf: false }],
 		'no-empty': 'error',
 		'no-empty-character-class': 'error',
 		'no-empty-pattern': 'error',
@@ -351,11 +324,10 @@ export default {
 		'no-fallthrough': 'error',
 		'no-floating-decimal': 0,
 		'no-func-assign': 'error',
-		'no-global-assign': [
-			'error', { exceptions: [] },
-		],
+		'no-global-assign': ['error', { exceptions: [] }],
 		'no-implicit-coercion': [
-			'off', {
+			'off',
+			{
 				boolean: false,
 				number: true,
 				string: true,
@@ -371,7 +343,8 @@ export default {
 		'no-iterator': 'error',
 		'no-label-var': 'error',
 		'no-labels': [
-			'error', {
+			'error',
+			{
 				allowLoop: false,
 				allowSwitch: false,
 			},
@@ -394,13 +367,15 @@ export default {
 		'no-new-func': 'error',
 		'no-new-object': 0,
 		'no-new-require': 0,
+		'no-new-symbol': 'error',
 		'no-new-wrappers': 'error',
 		'no-nonoctal-decimal-escape': 'error',
 		'no-obj-calls': 'error',
 		'no-octal': 'error',
 		'no-octal-escape': 'error',
 		'no-param-reassign': [
-			'error', {
+			'error',
+			{
 				props: true,
 				ignorePropertyModificationsFor: [
 					'acc',
@@ -425,6 +400,7 @@ export default {
 		'no-proto': 'error',
 		'no-prototype-builtins': 'error',
 		'no-regex-spaces': 'error',
+		'no-restricted-exports': ['error', { restrictedNamedExports: ['default', 'then'] }],
 		'no-restricted-globals': [
 			'error',
 			{
@@ -565,14 +541,10 @@ export default {
 				message: '`with` is disallowed in strict mode because it makes code impossible to predict and optimize.',
 			},
 		],
-		'no-return-assign': [
-			'error', 'always',
-		],
+		'no-return-assign': ['error', 'always'],
 		'no-return-await': 0,
 		'no-script-url': 'error',
-		'no-self-assign': [
-			'error', { props: true },
-		],
+		'no-self-assign': ['error', { props: true }],
 		'no-self-compare': 'error',
 		'no-sequences': 'error',
 		'no-setter-return': 'error',
@@ -583,12 +555,14 @@ export default {
 		'no-tabs': 0,
 		'no-template-curly-in-string': 'error',
 		'no-ternary': 'off',
+		'no-this-before-super': 'error',
 		'no-trailing-spaces': 0,
 		'no-undef': 'error',
 		'no-undef-init': 'error',
 		'no-undefined': 'off',
 		'no-underscore-dangle': [
-			'error', {
+			'error',
+			{
 				allow: [],
 				allowAfterThis: false,
 				allowAfterSuper: false,
@@ -597,29 +571,34 @@ export default {
 		],
 		'no-unexpected-multiline': 'error',
 		'no-unmodified-loop-condition': 'off',
-		'no-unneeded-ternary': [
-			'error', { defaultAssignment: false },
-		],
+		'no-unneeded-ternary': ['error', { defaultAssignment: false }],
 		'no-unreachable': 'error',
-		'no-unreachable-loop': [
-			'error', { ignore: [] },
-		],
+		'no-unreachable-loop': ['error', { ignore: [] }],
 		'no-unsafe-finally': 'error',
 		'no-unsafe-negation': 'error',
-		'no-unsafe-optional-chaining': [
-			'error', { disallowArithmeticOperators: true },
-		],
+		'no-unsafe-optional-chaining': ['error', { disallowArithmeticOperators: true }],
 		'no-unused-labels': 'error',
 		'no-unused-private-class-members': 'off',
 		'no-useless-backreference': 'error',
 		'no-useless-call': 'off',
 		'no-useless-catch': 'error',
+		'no-useless-computed-key': 'error',
 		'no-useless-concat': 'error',
 		'no-useless-escape': 'error',
+		'no-useless-rename': [
+			'error',
+			{
+				ignoreDestructuring: false,
+				ignoreImport: false,
+				ignoreExport: false,
+			},
+		],
 		'no-useless-return': 'error',
+		'no-var': 'error',
 		'no-void': 'error',
 		'no-warning-comments': [
-			'off', {
+			'off',
+			{
 				terms: [
 					'todo',
 					'fixme',
@@ -633,33 +612,66 @@ export default {
 		'nonblock-statement-body-position': 0,
 		'object-curly-newline': 0,
 		'object-property-newline': 0,
-		'one-var': [
-			'error', 'never',
+		'object-shorthand': [
+			'error',
+			'always',
+			{
+				ignoreConstructors: false,
+				avoidQuotes: true,
+			},
 		],
+		'one-var': ['error', 'never'],
 		'one-var-declaration-per-line': 0,
-		'operator-assignment': [
-			'error', 'always',
-		],
+		'operator-assignment': ['error', 'always'],
 		'operator-linebreak': 0,
 		'padded-blocks': 0,
+		'prefer-arrow-callback': [
+			'error',
+			{
+				allowNamedFunctions: false,
+				allowUnboundThis: true,
+			},
+		],
+		'prefer-const': [
+			'error',
+			{
+				destructuring: 'any',
+				ignoreReadBeforeAssign: true,
+			},
+		],
 		'prefer-exponentiation-operator': 'error',
 		'prefer-named-capture-group': 'off',
+		'prefer-numeric-literals': 'error',
 		'prefer-object-spread': 'error',
-		'prefer-promise-reject-errors': [
-			'error', { allowEmptyReject: true },
-		],
+		'prefer-promise-reject-errors': ['error', { allowEmptyReject: true }],
 		'prefer-reflect': 0,
-		'prefer-regex-literals': [
-			'error', { disallowRedundantWrapping: true },
-		],
+		'prefer-regex-literals': ['error', { disallowRedundantWrapping: true }],
+		'prefer-rest-params': 'error',
+		'prefer-spread': 'error',
+		'prefer-template': 'error',
 		'quote-props': 0,
 		radix: 'error',
 		'require-atomic-updates': 'off',
 		'require-jsdoc': 0,
 		'require-unicode-regexp': 'off',
+		'require-yield': 'error',
 		'rest-spread-spacing': 0,
 		'semi-spacing': 0,
 		'semi-style': 0,
+		'sort-imports': [
+			'off',
+			{
+				ignoreCase: false,
+				ignoreDeclarationSort: false,
+				ignoreMemberSort: false,
+				memberSyntaxSortOrder: [
+					'none',
+					'all',
+					'multiple',
+					'single',
+				],
+			},
+		],
 		'sort-keys': [
 			'off',
 			'asc',
@@ -672,20 +684,15 @@ export default {
 		'space-in-parens': 0,
 		'space-unary-ops': 0,
 		'spaced-comment': 0,
-		strict: [
-			'error', 'never',
-		],
+		strict: ['error', 'never'],
 		'switch-colon-spacing': 0,
+		'symbol-description': 'error',
 		'template-curly-spacing': 0,
 		'template-tag-spacing': 0,
-		'unicode-bom': [
-			'error', 'never',
-		],
+		'unicode-bom': ['error', 'never'],
 		'use-isnan': 'error',
 		'valid-jsdoc': 0,
-		'valid-typeof': [
-			'error', { requireStringLiterals: true },
-		],
+		'valid-typeof': ['error', { requireStringLiterals: true }],
 		'vars-on-top': 'error',
 		'wrap-iife': 0,
 		'wrap-regex': 0,
@@ -693,35 +700,25 @@ export default {
 		yoda: 'error',
 		'import/default': 'off',
 		'import/dynamic-import-chunkname': [
-			'off', {
+			'off',
+			{
 				importFunctions: [],
 				webpackChunknameFormat: '[0-9a-zA-Z-_/.]+',
 			},
 		],
 		'import/export': 'error',
 		'import/exports-last': 'off',
-		'import/extensions': [
-			'error',
-			'ignorePackages',
-			{
-				js: 'never',
-				mjs: 'never',
-				jsx: 'never',
-			},
-		],
 		'import/first': 'error',
 		'import/group-exports': 'off',
 		'import/imports-first': 'off',
-		'import/max-dependencies': [
-			'off', { max: 10 },
-		],
-		'import/named': 'error',
+		'import/max-dependencies': ['off', { max: 10 }],
 		'import/namespace': 'off',
 		'import/newline-after-import': 'error',
 		'import/no-absolute-path': 'error',
 		'import/no-amd': 'error',
 		'import/no-anonymous-default-export': [
-			'off', {
+			'off',
+			{
 				allowArray: false,
 				allowArrowFunction: false,
 				allowAnonymousClass: false,
@@ -731,54 +728,15 @@ export default {
 			},
 		],
 		'import/no-commonjs': 'off',
-		'import/no-cycle': [
-			'error', { maxDepth: '∞' },
-		],
+		'import/no-cycle': ['error', { maxDepth: '∞' }],
 		'import/no-default-export': 'off',
 		'import/no-deprecated': 'off',
 		'import/no-duplicates': 'error',
 		'import/no-dynamic-require': 'error',
-		'import/no-extraneous-dependencies': [
-			'error', {
-				devDependencies: [
-					'test/**',
-					'tests/**',
-					'spec/**',
-					'**/__tests__/**',
-					'**/__mocks__/**',
-					'test.{js,jsx}',
-					'test-*.{js,jsx}',
-					'**/*{.,_}{test,spec}.{js,jsx}',
-					'**/jest.config.js',
-					'**/jest.setup.js',
-					'**/vue.config.js',
-					'**/webpack.config.js',
-					'**/webpack.config.*.js',
-					'**/rollup.config.js',
-					'**/rollup.config.*.js',
-					'**/gulpfile.js',
-					'**/gulpfile.*.js',
-					'**/Gruntfile{,.js}',
-					'**/protractor.conf.js',
-					'**/protractor.conf.*.js',
-					'**/karma.conf.js',
-					'**/.eslintrc.js',
-					'**/eslint.config.js',
-					'**/vite.config.js',
-					'**/vite.config.*.js',
-				],
-				optionalDependencies: false,
-			},
-		],
-		'import/no-import-module-exports': [
-			'error', { exceptions: [] },
-		],
-		'import/no-internal-modules': [
-			'off', { allow: [] },
-		],
+		'import/no-import-module-exports': ['error', { exceptions: [] }],
+		'import/no-internal-modules': ['off', { allow: [] }],
 		'import/no-mutable-exports': 'error',
 		'import/no-named-as-default': 'error',
-		'import/no-named-as-default-member': 'error',
 		'import/no-named-default': 'error',
 		'import/no-named-export': 'off',
 		'import/no-namespace': 'off',
@@ -789,29 +747,32 @@ export default {
 		'import/no-self-import': 'error',
 		'import/no-unassigned-import': 'off',
 		'import/no-unresolved': [
-			'error', {
+			'error',
+			{
 				commonjs: true,
 				caseSensitive: true,
 			},
 		],
 		'import/no-unused-modules': [
-			'off', {
+			'off',
+			{
 				ignoreExports: [],
 				missingExports: true,
 				unusedExports: true,
 			},
 		],
-		'import/no-useless-path-segments': [
-			'error', { commonjs: true },
-		],
+		'import/no-useless-path-segments': ['error', { commonjs: true }],
 		'import/no-webpack-loader-syntax': 'error',
 		'import/order': [
-			'error', {
-				groups: [[
-					'builtin',
-					'external',
-					'internal',
-				]],
+			'error',
+			{
+				groups: [
+					[
+						'builtin',
+						'external',
+						'internal',
+					],
+				],
 			},
 		],
 		'import/prefer-default-export': 'error',
@@ -819,45 +780,38 @@ export default {
 		'node/callback-return': 'off',
 		'node/global-require': 'error',
 		'node/handle-callback-err': 'off',
-		'node/no-mixed-requires': [
-			'off', false,
-		],
+		'node/no-mixed-requires': ['off', false],
 		'node/no-new-require': 'error',
 		'node/no-path-concat': 'error',
 		'node/no-process-env': 'off',
 		'node/no-process-exit': 'off',
 		'node/no-sync': 'off',
-		'stylistic/array-bracket-newline': [
-			'off', 'consistent',
-		],
-		'stylistic/array-bracket-spacing': [
-			'error', 'never',
-		],
+		'stylistic/array-bracket-newline': ['off', 'consistent'],
+		'stylistic/array-bracket-spacing': ['error', 'never'],
 		'stylistic/array-element-newline': [
-			'off', {
+			'off',
+			{
 				multiline: true,
 				minItems: 3,
 			},
 		],
-		'stylistic/arrow-parens': [
-			'error', 'always',
-		],
+		'stylistic/arrow-parens': ['error', 'always'],
 		'stylistic/arrow-spacing': [
-			'error', {
+			'error',
+			{
 				before: true,
 				after: true,
 			},
 		],
-		'stylistic/block-spacing': [
-			'error', 'always',
-		],
+		'stylistic/block-spacing': ['error', 'always'],
 		'stylistic/brace-style': [
 			'error',
 			'1tbs',
 			{ allowSingleLine: true },
 		],
 		'stylistic/comma-dangle': [
-			'error', {
+			'error',
+			{
 				arrays: 'always-multiline',
 				objects: 'always-multiline',
 				imports: 'always-multiline',
@@ -866,7 +820,8 @@ export default {
 			},
 		],
 		'stylistic/comma-spacing': [
-			'error', {
+			'error',
+			{
 				before: false,
 				after: true,
 			},
@@ -890,33 +845,20 @@ export default {
 				},
 			},
 		],
-		'stylistic/computed-property-spacing': [
-			'error', 'never',
-		],
-		'stylistic/dot-location': [
-			'error', 'property',
-		],
-		'stylistic/eol-last': [
-			'error', 'always',
-		],
-		'stylistic/func-call-spacing': [
-			'error', 'never',
-		],
-		'stylistic/function-call-argument-newline': [
-			'error', 'consistent',
-		],
-		'stylistic/function-paren-newline': [
-			'error', 'multiline-arguments',
-		],
+		'stylistic/computed-property-spacing': ['error', 'never'],
+		'stylistic/dot-location': ['error', 'property'],
+		'stylistic/eol-last': ['error', 'always'],
+		'stylistic/func-call-spacing': ['error', 'never'],
+		'stylistic/function-call-argument-newline': ['error', 'consistent'],
+		'stylistic/function-paren-newline': ['error', 'multiline-arguments'],
 		'stylistic/generator-star-spacing': [
-			'error', {
+			'error',
+			{
 				before: false,
 				after: true,
 			},
 		],
-		'stylistic/implicit-arrow-linebreak': [
-			'error', 'beside',
-		],
+		'stylistic/implicit-arrow-linebreak': ['error', 'beside'],
 		'stylistic/indent': [
 			'error',
 			2,
@@ -958,17 +900,17 @@ export default {
 				ignoreComments: false,
 			},
 		],
-		'stylistic/jsx-quotes': [
-			'off', 'prefer-double',
-		],
+		'stylistic/jsx-quotes': ['off', 'prefer-double'],
 		'stylistic/key-spacing': [
-			'error', {
+			'error',
+			{
 				beforeColon: false,
 				afterColon: true,
 			},
 		],
 		'stylistic/keyword-spacing': [
-			'error', {
+			'error',
+			{
 				before: true,
 				after: true,
 				overrides: {
@@ -978,9 +920,7 @@ export default {
 				},
 			},
 		],
-		'stylistic/linebreak-style': [
-			'error', 'unix',
-		],
+		'stylistic/linebreak-style': ['error', 'unix'],
 		'stylistic/lines-around-comment': 'off',
 		'stylistic/lines-between-class-members': [
 			'error',
@@ -999,19 +939,11 @@ export default {
 				ignoreTemplateLiterals: true,
 			},
 		],
-		'stylistic/max-statements-per-line': [
-			'off', { max: 1 },
-		],
-		'stylistic/multiline-ternary': [
-			'off', 'never',
-		],
+		'stylistic/max-statements-per-line': ['off', { max: 1 }],
+		'stylistic/multiline-ternary': ['off', 'never'],
 		'stylistic/new-parens': 'error',
-		'stylistic/newline-per-chained-call': [
-			'error', { ignoreChainWithDepth: 4 },
-		],
-		'stylistic/no-confusing-arrow': [
-			'error', { allowParens: true },
-		],
+		'stylistic/newline-per-chained-call': ['error', { ignoreChainWithDepth: 4 }],
+		'stylistic/no-confusing-arrow': ['error', { allowParens: true }],
 		'stylistic/no-extra-parens': [
 			'off',
 			'all',
@@ -1026,26 +958,15 @@ export default {
 		'stylistic/no-extra-semi': 'error',
 		'stylistic/no-floating-decimal': 'error',
 		'stylistic/no-mixed-operators': [
-			'error', {
+			'error',
+			{
 				groups: [
-					[
-						'%', '**',
-					],
-					[
-						'%', '+',
-					],
-					[
-						'%', '-',
-					],
-					[
-						'%', '*',
-					],
-					[
-						'%', '/',
-					],
-					[
-						'/', '*',
-					],
+					['%', '**'],
+					['%', '+'],
+					['%', '-'],
+					['%', '*'],
+					['%', '/'],
+					['/', '*'],
 					[
 						'&',
 						'|',
@@ -1059,19 +980,16 @@ export default {
 						'===',
 						'!==',
 					],
-					[
-						'&&', '||',
-					],
+					['&&', '||'],
 				],
 				allowSamePrecedence: false,
 			},
 		],
 		'stylistic/no-mixed-spaces-and-tabs': 'error',
-		'stylistic/no-multi-spaces': [
-			'error', { ignoreEOLComments: false },
-		],
+		'stylistic/no-multi-spaces': ['error', { ignoreEOLComments: false }],
 		'stylistic/no-multiple-empty-lines': [
-			'error', {
+			'error',
+			{
 				max: 1,
 				maxBOF: 0,
 				maxEOF: 0,
@@ -1079,7 +997,8 @@ export default {
 		],
 		'stylistic/no-tabs': 'error',
 		'stylistic/no-trailing-spaces': [
-			'error', {
+			'error',
+			{
 				skipBlankLines: false,
 				ignoreComments: false,
 			},
@@ -1091,7 +1010,8 @@ export default {
 			{ overrides: {} },
 		],
 		'stylistic/object-curly-newline': [
-			'error', {
+			'error',
+			{
 				ObjectExpression: {
 					minProperties: 4,
 					multiline: true,
@@ -1114,15 +1034,9 @@ export default {
 				},
 			},
 		],
-		'stylistic/object-curly-spacing': [
-			'error', 'always',
-		],
-		'stylistic/object-property-newline': [
-			'error', { allowAllPropertiesOnSameLine: true },
-		],
-		'stylistic/one-var-declaration-per-line': [
-			'error', 'always',
-		],
+		'stylistic/object-curly-spacing': ['error', 'always'],
+		'stylistic/object-property-newline': ['error', { allowAllPropertiesOnSameLine: true }],
+		'stylistic/one-var-declaration-per-line': ['error', 'always'],
 		'stylistic/operator-linebreak': [
 			'error',
 			'before',
@@ -1152,35 +1066,30 @@ export default {
 			'single',
 			{ avoidEscape: true },
 		],
-		'stylistic/rest-spread-spacing': [
-			'error', 'never',
-		],
-		'stylistic/semi': [
-			'error', 'always',
-		],
+		'stylistic/rest-spread-spacing': ['error', 'never'],
+		'stylistic/semi': ['error', 'always'],
 		'stylistic/semi-spacing': [
-			'error', {
+			'error',
+			{
 				before: false,
 				after: true,
 			},
 		],
-		'stylistic/semi-style': [
-			'error', 'last',
-		],
+		'stylistic/semi-style': ['error', 'last'],
 		'stylistic/space-before-blocks': 'error',
 		'stylistic/space-before-function-paren': [
-			'error', {
+			'error',
+			{
 				anonymous: 'always',
 				named: 'never',
 				asyncArrow: 'always',
 			},
 		],
-		'stylistic/space-in-parens': [
-			'error', 'never',
-		],
+		'stylistic/space-in-parens': ['error', 'never'],
 		'stylistic/space-infix-ops': 'error',
 		'stylistic/space-unary-ops': [
-			'error', {
+			'error',
+			{
 				words: true,
 				nonwords: false,
 				overrides: {},
@@ -1191,9 +1100,7 @@ export default {
 			'always',
 			{
 				line: {
-					exceptions: [
-						'-', '+',
-					],
+					exceptions: ['-', '+'],
 					markers: [
 						'=',
 						'!',
@@ -1201,9 +1108,7 @@ export default {
 					],
 				},
 				block: {
-					exceptions: [
-						'-', '+',
-					],
+					exceptions: ['-', '+'],
 					markers: [
 						'=',
 						'!',
@@ -1215,23 +1120,20 @@ export default {
 			},
 		],
 		'stylistic/switch-colon-spacing': [
-			'error', {
+			'error',
+			{
 				after: true,
 				before: false,
 			},
 		],
 		'stylistic/template-curly-spacing': 'error',
-		'stylistic/template-tag-spacing': [
-			'error', 'never',
-		],
+		'stylistic/template-tag-spacing': ['error', 'never'],
 		'stylistic/wrap-iife': [
 			'error',
 			'outside',
 			{ functionPrototypeMethods: false },
 		],
 		'stylistic/wrap-regex': 'off',
-		'stylistic/yield-star-spacing': [
-			'error', 'after',
-		],
+		'stylistic/yield-star-spacing': ['error', 'after'],
 	},
 } as FlatConfig;

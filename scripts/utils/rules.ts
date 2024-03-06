@@ -1,7 +1,11 @@
 import { Linter, type Rule } from 'eslint';
 
+import {
+	ImportRules,
+	RenamePrefix,
+} from '@antfu/eslint-define-config';
+
 import type {
-	// FlatConfig,
 	AirbnbConfigs,
 	AirbnbConfigKeys,
 	ConfigWithPluginKeys,
@@ -213,6 +217,82 @@ function overwriteImportsRules(target: Linter.RulesRecord) {
 
 export function isTypescriptRule(name: string) {
 	return rawRules.typescript.has(name);
+}
+
+//
+// ### merge ### adjust ts rules
+//
+
+type OverwriteKeys = RenamePrefix<
+Pick<
+ImportRules,
+	'import/extensions'
+	| 'import/named'
+	| 'import/no-extraneous-dependencies'
+	| 'import/no-named-as-default-member'
+>,
+'import/',
+	`${typeof pluginPrefix.import}/`
+>;
+
+export const getImportOverwrites = {
+	// https://github.com/typescript-eslint/typescript-eslint/blob/13583e65f5973da2a7ae8384493c5e00014db51b/docs/linting/TROUBLESHOOTING.md#eslint-plugin-import
+	'import/named': () => 0,
+	'import/no-named-as-default-member': () => 0,
+	// add e.g vite.config.ts
+	'import/no-extraneous-dependencies': (source) => {
+		const regex = /\bjs(x?)\b/g;
+		const [severity, dependencies] = source;
+
+		let {
+			devDependencies,
+			// eslint-disable-next-line prefer-const
+			optionalDependencies,
+		} = <{
+			devDependencies: string[],
+			optionalDependencies: string[]
+		}>dependencies;
+
+		devDependencies = [
+			...devDependencies,
+			...devDependencies
+				.filter((dep) => dep.includes('js') && !dep.includes('eslintrc'))
+				.map((dep) => dep.replace(regex, 'ts$1')),
+		];
+
+		return [
+			severity,
+			{
+				devDependencies,
+				optionalDependencies,
+			},
+		];
+	},
+	'import/extensions': (source) => {
+		const [
+			severity,
+			level,
+			options,
+		] = source;
+
+		return [
+			severity,
+			level,
+			{
+				...options,
+				ts: 'never',
+				tsx: 'never',
+			},
+		];
+	},
+} as {
+	[K in keyof OverwriteKeys]: (...args: any[]) => Linter.RuleEntry<any[]>
+};
+
+export function isImportOverwriteRule(
+	name: string,
+): name is keyof OverwriteKeys {
+	return Object.keys(getImportOverwrites).includes(name);
 }
 
 // export function sortRulesByEntryName(

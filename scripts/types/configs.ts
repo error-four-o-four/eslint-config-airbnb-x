@@ -5,7 +5,10 @@ import {
 	airbnbConfigKeyValues,
 	configWithPluginKeyValues,
 	customConfigKeyValues,
+	mergedConfigKeyValues,
 } from '../utils/constants.ts';
+
+import { PartiallyRequired } from './utils.ts';
 
 export interface BaseConfig extends Linter.BaseConfig {}
 export type BaseConfigEntry = [AirbnbConfigKeys, BaseConfig];
@@ -27,3 +30,19 @@ export type CustomConfigs = {
 };
 
 export type ConfigWithPluginKeys = (typeof configWithPluginKeyValues)[number];
+
+//
+// mergeConfigs.ts
+//
+
+export type ConfigWithLanguageOptions = PartiallyRequired<FlatConfig, 'languageOptions'>;
+
+export type MergedConfigKeys = (typeof mergedConfigKeyValues)[number];
+
+export type MergedConfigs = {
+	[K in MergedConfigKeys]: K extends 'base-mixed'
+		? PartiallyRequired<FlatConfig, 'languageOptions' | 'rules'>
+		: K extends 'base-js'
+			? PartiallyRequired<FlatConfig, 'settings' | 'rules'>
+			: PartiallyRequired<FlatConfig, 'languageOptions' | 'settings' | 'rules'>;
+};

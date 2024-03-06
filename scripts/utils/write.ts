@@ -1,9 +1,15 @@
 import {
-	existsSync, mkdirSync, writeFileSync,
+	existsSync,
+	mkdirSync,
+	writeFileSync,
 } from 'node:fs';
+
 import {
-	dirname, isAbsolute, sep,
+	dirname,
+	isAbsolute,
+	sep,
 } from 'node:path';
+
 import { fileURLToPath } from 'node:url';
 
 import { Linter } from 'eslint';

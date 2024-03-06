@@ -2,15 +2,7 @@
 import type { FlatConfig } from '../../../scripts/types/configs.ts';
 
 export default {
-	languageOptions: {
-		ecmaVersion: 2022,
-		sourceType: 'module',
-		parserOptions: {
-			ecmaVersion: 2022,
-			sourceType: 'module',
-			project: true,
-		},
-	},
+	languageOptions: { parserOptions: { project: true } },
 	settings: {
 		'import/resolver': {
 			node: { extensions: ['.json'] },
@@ -30,14 +22,16 @@ export default {
 			'.mts',
 		],
 		'import/core-modules': [],
-		'import/ignore': [
-			'node_modules', '\\.(coffee|scss|css|less|hbs|svg|json)$',
-		],
+		'import/ignore': ['node_modules', '\\.(coffee|scss|css|less|hbs|svg|json)$'],
 		'import/parsers': {
 			'@typescript-eslint/parser': [
-				'.ts', '.mts',
+				'.js',
+				'.mjs',
+				'.ts',
+				'.mts',
 			],
 		},
+		'import/external-module-folders': ['node_modules', 'node_modules/@types'],
 	},
 	rules: {
 		'block-spacing': 0,
@@ -56,6 +50,7 @@ export default {
 		'lines-between-class-members': 0,
 		'max-params': 0,
 		'no-array-constructor': 0,
+		'no-dupe-class-members': 0,
 		'no-empty-function': 0,
 		'no-extra-parens': 0,
 		'no-extra-semi': 0,
@@ -65,13 +60,16 @@ export default {
 		'no-loss-of-precision': 0,
 		'no-magic-numbers': 0,
 		'no-redeclare': 0,
+		'no-restricted-imports': 0,
 		'no-shadow': 0,
 		'no-throw-literal': 0,
 		'no-unused-expressions': 0,
 		'no-unused-vars': 0,
 		'no-use-before-define': 0,
+		'no-useless-constructor': 0,
 		'object-curly-spacing': 0,
 		'padding-line-between-statements': 0,
+		'prefer-destructuring': 0,
 		quotes: 0,
 		'require-await': 0,
 		semi: 0,
@@ -89,8 +87,10 @@ export default {
 				tsx: 'never',
 			},
 		],
+		'import/named': 0,
 		'import/no-extraneous-dependencies': [
-			'error', {
+			'error',
+			{
 				devDependencies: [
 					'test/**',
 					'tests/**',
@@ -140,19 +140,14 @@ export default {
 				optionalDependencies: false,
 			},
 		],
-		'import/named': 0,
 		'import/no-named-as-default-member': 0,
 		'typescript/block-spacing': 0,
 		'typescript/brace-style': 0,
-		'typescript/class-methods-use-this': [
-			'error', { exceptMethods: [] },
-		],
+		'typescript/class-methods-use-this': ['error', { exceptMethods: [] }],
 		'typescript/comma-dangle': 0,
 		'typescript/comma-spacing': 0,
 		'typescript/default-param-last': 'error',
-		'typescript/dot-notation': [
-			'error', { allowKeywords: true },
-		],
+		'typescript/dot-notation': ['error', { allowKeywords: true }],
 		'typescript/func-call-spacing': 0,
 		'typescript/indent': 0,
 		'typescript/init-declarations': 'off',
@@ -160,12 +155,12 @@ export default {
 		'typescript/keyword-spacing': 0,
 		'typescript/lines-around-comment': 0,
 		'typescript/lines-between-class-members': 0,
-		'typescript/max-params': [
-			'off', 3,
-		],
+		'typescript/max-params': ['off', 3],
 		'typescript/no-array-constructor': 'error',
+		'typescript/no-dupe-class-members': 'error',
 		'typescript/no-empty-function': [
-			'error', {
+			'error',
+			{
 				allow: [
 					'arrowFunctions',
 					'functions',
@@ -180,7 +175,8 @@ export default {
 		'typescript/no-loop-func': 'error',
 		'typescript/no-loss-of-precision': 'error',
 		'typescript/no-magic-numbers': [
-			'off', {
+			'off',
+			{
 				ignore: [],
 				ignoreArrayIndexes: true,
 				enforceConst: true,
@@ -188,31 +184,56 @@ export default {
 			},
 		],
 		'typescript/no-redeclare': 'error',
+		'typescript/no-restricted-imports': [
+			'off',
+			{
+				paths: [],
+				patterns: [],
+			},
+		],
 		'typescript/no-shadow': 'error',
 		'typescript/no-throw-literal': 'error',
 		'typescript/no-unused-expressions': [
-			'error', {
+			'error',
+			{
 				allowShortCircuit: false,
 				allowTernary: false,
 				allowTaggedTemplates: false,
 			},
 		],
 		'typescript/no-unused-vars': [
-			'error', {
+			'error',
+			{
 				vars: 'all',
 				args: 'after-used',
 				ignoreRestSiblings: true,
 			},
 		],
 		'typescript/no-use-before-define': [
-			'error', {
+			'error',
+			{
 				functions: true,
 				classes: true,
 				variables: true,
 			},
 		],
+		'typescript/no-useless-constructor': 'error',
 		'typescript/object-curly-spacing': 0,
 		'typescript/padding-line-between-statements': 0,
+		'typescript/prefer-destructuring': [
+			'error',
+			{
+				VariableDeclarator: {
+					array: false,
+					object: true,
+				},
+				AssignmentExpression: {
+					array: true,
+					object: false,
+				},
+			},
+			{ enforceForRenamedProperties: false },
+		],
 		'typescript/quotes': 0,
 		'typescript/require-await': 'off',
 		'typescript/semi': 0,

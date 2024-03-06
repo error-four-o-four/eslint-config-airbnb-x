@@ -8,14 +8,14 @@ import {
 	FlatConfig,
 } from '../types/configs.ts';
 
+import { pluginPrefix } from '../../src/plugins.ts';
+
 import {
 	EXTS_JS,
 	ECMA_VERSION,
 	SOURCE_TYPE,
 	EXTS_TS,
 } from './constants.ts';
-
-import { pluginPrefix } from '../../src/plugins.ts';
 
 const defaultOptions: FlatConfig['languageOptions'] = {
 	ecmaVersion: ECMA_VERSION,
