@@ -12,6 +12,36 @@ export default {
 			project: true,
 		},
 	},
+	settings: {
+		'import/resolver': {
+			node: { extensions: ['.json'] },
+			typescript: {
+				extensions: [
+					'.js',
+					'.mjs',
+					'.ts',
+					'.mts',
+				],
+			},
+		},
+		'import/extensions': [
+			'.js',
+			'.mjs',
+			'.ts',
+			'.mts',
+		],
+		'import/core-modules': [],
+		'import/ignore': ['node_modules', '\\.(coffee|scss|css|less|hbs|svg|json)$'],
+		'import/parsers': {
+			'@typescript-eslint/parser': [
+				'.js',
+				'.mjs',
+				'.ts',
+				'.mts',
+			],
+		},
+		'import/external-module-folders': ['node_modules', 'node_modules/@types'],
+	},
 	rules: {
 		'class-methods-use-this': 0,
 		'default-param-last': 0,
@@ -116,37 +146,5 @@ export default {
 			{ enforceForRenamedProperties: false },
 		],
 		'typescript/require-await': 'off',
-	},
-	settings: {
-		'import/resolver': {
-			node: { extensions: ['.json'] },
-			typescript: {
-				extensions: [
-					'.js',
-					'.mjs',
-					'.ts',
-					'.mts',
-				],
-			},
-		},
-		'import/extensions': [
-			[
-				'.js',
-				'.mjs',
-				'.ts',
-				'.mts',
-			],
-		],
-		'import/core-modules': [],
-		'import/ignore': ['node_modules', '\\.(coffee|scss|css|less|hbs|svg|json)$'],
-		'import/parsers': {
-			'@typescript-eslint/parser': [
-				'.js',
-				'.mjs',
-				'.ts',
-				'.mts',
-			],
-		},
-		'import/external-module-folders': ['node_modules', 'node_modules/@types'],
 	},
 } as FlatConfig;

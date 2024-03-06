@@ -58,6 +58,7 @@ export const getLanguageOptions = {
 			// required to satisfy 'import/no-named-as-default'
 			ecmaVersion: ECMA_VERSION,
 			sourceType: SOURCE_TYPE,
+			// @todo https://github.com/privatenumber/get-tsconfig?tab=readme-ov-file#faq
 			project: true,
 		},
 	}),
@@ -92,7 +93,7 @@ export const getSettings = {
 
 		return {
 			...settings,
-			[importSettingsKeys.extensions]: [exts],
+			[importSettingsKeys.extensions]: exts,
 			[importSettingsKeys.externalModuleFolders]: ['node_modules', 'node_modules/@types'],
 			[importSettingsKeys.parsers]: { '@typescript-eslint/parser': exts },
 			[importSettingsKeys.resolver]: {

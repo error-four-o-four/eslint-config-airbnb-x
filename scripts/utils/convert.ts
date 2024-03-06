@@ -179,6 +179,7 @@ function getProcessed(
 			// create typescript config
 			if (name === 'typescript') {
 				result[name].languageOptions = getLanguageOptions[name]();
+				result[name].settings = getSettings[name](result.imports);
 
 				const filter: (
 					(rule: ProcessedRule<ApprovedMeta>) => boolean
@@ -203,8 +204,6 @@ function getProcessed(
 					...disabledEntries,
 					...prefixedEntries,
 				};
-
-				result[name].settings = getSettings[name](result.imports);
 			}
 		}
 	});
