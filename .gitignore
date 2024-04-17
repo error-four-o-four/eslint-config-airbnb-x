@@ -1,6 +1,3 @@
 node_modules
-dist
-tmp
-lib
 *.tsbuildinfo
 *.tgz

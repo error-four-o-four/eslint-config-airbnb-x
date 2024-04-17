@@ -7,11 +7,7 @@ console.log(`\u001b[33m${message}\u001b[0m`);
 
 export default defineConfig(
 	{
-		ignores: [
-			'**/dist/*',
-			'**/tmp/*',
-			'**/shared/*',
-		],
+		ignores: ['**/dist/*', '**/node_modules/*'],
 	},
 	{
 		name: 'custom',
