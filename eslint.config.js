@@ -1,4 +1,4 @@
-import defineConfig from './dist/base/index.js';
+import defineConfig from './tmp/index.js';
 
 const message = 'linting ...';
 
@@ -7,7 +7,11 @@ console.log(`\u001b[33m${message}\u001b[0m`);
 
 export default defineConfig(
 	{
-		ignores: ['**/dist/*', '**/node_modules/*'],
+		ignores: [
+			'**/tmp/*',
+			'**/dist/*',
+			'**/node_modules/*',
+		],
 	},
 	{
 		name: 'custom',

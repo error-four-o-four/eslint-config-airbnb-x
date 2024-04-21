@@ -33,7 +33,15 @@ export function getRules(configs: AirbnbConfigs) {
 
 		if (!configFlat.rules) return;
 
-		Object.entries(configFlat.rules).forEach(([ruleName, ruleValue]) => {
+		Object.keys(configFlat.rules).forEach((ruleName) => {
+			// @todo assertion
+			const ruleValue = configFlat.rules![ruleName];
+
+			if (ruleValue === undefined) {
+				console.log(`${configName}: ${ruleName} is undefined`);
+				return;
+			}
+
 			rules.push(getProcessedRule(configName, ruleName, ruleValue));
 		});
 	});
@@ -224,14 +232,14 @@ export function isTypescriptRule(name: string) {
 //
 
 type OverwriteKeys = RenamePrefix<
-Pick<
-ImportRules,
+	Pick<
+		ImportRules,
 	'import/extensions'
 	| 'import/named'
 	| 'import/no-extraneous-dependencies'
 	| 'import/no-named-as-default-member'
->,
-'import/',
+	>,
+	'import/',
 	`${typeof pluginPrefix.import}/`
 >;
 

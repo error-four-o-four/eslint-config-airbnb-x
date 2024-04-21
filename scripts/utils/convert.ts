@@ -63,7 +63,8 @@ export async function importBaseConfigs(): Promise<BaseConfigEntry[]> {
 }
 
 export function processEntries(baseEntries: BaseConfigEntry[]) {
-	const convertedEntries = getConverted(baseEntries);
+	// use FlatCompat
+	const convertedEntries = convertBaseConfigs(baseEntries);
 
 	// extract, classify and sort all rules from eslint-config-airbnb-base
 	// type ProcessedRule<ApprovedMeta | DeprecatedMeta>
@@ -78,7 +79,7 @@ export function processEntries(baseEntries: BaseConfigEntry[]) {
 	};
 }
 
-function getConverted(entries: BaseConfigEntry[]): AirbnbConfigs {
+export function convertBaseConfigs(entries: BaseConfigEntry[]): AirbnbConfigs {
 	const filename = fileURLToPath(import.meta.url);
 	const root = path.dirname(path.resolve(filename, '../..')); // @todo use process.cwd()
 

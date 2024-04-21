@@ -1,7 +1,4 @@
-// @ts-expect-error missing types
-import eslintPluginImport from 'eslint-plugin-i';
-
-// @ts-expect-error missing types
+import eslintPluginImport from 'eslint-plugin-import-x';
 import eslintPluginNode from 'eslint-plugin-n';
 import eslintPluginStylistic from '@stylistic/eslint-plugin';
 import eslintPluginTypescript from '@typescript-eslint/eslint-plugin';

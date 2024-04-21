@@ -44,6 +44,12 @@ function mergeConfigs() {
 	// sort and add all rules
 	// which are not a part of a plugin (node, imports, stylistic, typescript)
 	getSortedRulesEntries().forEach(([rule, value]) => {
+		// @todo
+		if (value === undefined) {
+			console.log(`${rule} - value is undefined`);
+			return;
+		}
+
 		if (!isTypescriptRule(rule)) {
 			// this rule won't be overwritten by typescript plugin
 			// it applies to .js and .ts files
@@ -59,6 +65,9 @@ function mergeConfigs() {
 
 	// add imports rules for .js and .ts files
 	Object.entries(customConfigs.imports.rules!).forEach(([rule, value]) => {
+		// @todo
+		if (!value) return;
+
 		if (!isImportOverwriteRule(rule)) {
 			addRule(result[mergedConfigKeys.baseMixed], rule, value);
 			return;
@@ -72,17 +81,27 @@ function mergeConfigs() {
 
 	// add node rules
 	Object.entries(customConfigs.node.rules!).forEach(([rule, value]) => {
+		// @todo
+		if (!value) return;
+
 		addRule(result[mergedConfigKeys.baseMixed], rule, value);
 	});
 
 	// add stylistic
 	Object.entries(customConfigs.stylistic.rules!).forEach(([rule, value]) => {
+		// @todo
+		if (!value) return;
+
 		addRule(result[mergedConfigKeys.baseMixed], rule, value);
 	});
 
 	// add typescript overwrites
 	Object.entries(result[mergedConfigKeys.baseJs].rules).forEach(
+
 		([rule, value]) => {
+			// @todo
+			if (!value) return;
+
 			if (!rule.startsWith(pluginPrefix.import)) {
 				addRule(
 					result[mergedConfigKeys.baseTs],

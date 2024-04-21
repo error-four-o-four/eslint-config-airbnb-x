@@ -44,6 +44,7 @@ export default {
 	},
 	rules: {
 		'class-methods-use-this': 0,
+		'consistent-return': 0,
 		'default-param-last': 0,
 		'dot-notation': 0,
 		'init-declarations': 0,
@@ -65,8 +66,10 @@ export default {
 		'no-use-before-define': 0,
 		'no-useless-constructor': 0,
 		'prefer-destructuring': 0,
+		'prefer-promise-reject-errors': 0,
 		'require-await': 0,
 		'typescript/class-methods-use-this': ['error', { exceptMethods: [] }],
+		'typescript/consistent-return': 'error',
 		'typescript/default-param-last': 'error',
 		'typescript/dot-notation': ['error', { allowKeywords: true }],
 		'typescript/init-declarations': 'off',
@@ -145,6 +148,7 @@ export default {
 			},
 			{ enforceForRenamedProperties: false },
 		],
+		'typescript/prefer-promise-reject-errors': ['error', { allowEmptyReject: true }],
 		'typescript/require-await': 'off',
 	},
 } as FlatConfig;

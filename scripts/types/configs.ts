@@ -17,9 +17,7 @@ export type AddedConfigKeys = (typeof addedConfigKeyValues)[number];
 export type AirbnbConfigKeys = (typeof airbnbConfigKeyValues)[number];
 export type CustomConfigKeys = (typeof customConfigKeyValues)[number];
 
-export interface FlatConfig extends Linter.FlatConfig {
-	name?: string;
-}
+export interface FlatConfig extends Linter.FlatConfig {}
 
 export type AirbnbConfigs = {
 	[K in AirbnbConfigKeys]: FlatConfig
