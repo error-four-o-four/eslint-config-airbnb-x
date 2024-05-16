@@ -1,0 +1,1097 @@
+{
+  "array-bracket-newline": {
+    "source": "style",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/array-bracket-newline",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/js/array-bracket-newline"
+      }
+    ]
+  },
+  "array-bracket-spacing": {
+    "source": "style",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/array-bracket-spacing",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/js/array-bracket-spacing"
+      }
+    ]
+  },
+  "array-element-newline": {
+    "source": "style",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/array-element-newline",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/js/array-element-newline"
+      }
+    ]
+  },
+  "arrow-parens": {
+    "source": "es6",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/arrow-parens",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/js/arrow-parens"
+      }
+    ]
+  },
+  "arrow-spacing": {
+    "source": "es6",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/arrow-spacing",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/js/arrow-spacing"
+      }
+    ]
+  },
+  "block-spacing": {
+    "source": "style",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/block-spacing",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/ts/block-spacing"
+      },
+      {
+        "prefix": "type",
+        "deprecated": true,
+        "replacedBy": [
+          "style/block-spacing"
+        ],
+        "url": "https://typescript-eslint.io/rules/block-spacing"
+      }
+    ]
+  },
+  "brace-style": {
+    "source": "style",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/brace-style",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/ts/brace-style"
+      },
+      {
+        "prefix": "type",
+        "deprecated": true,
+        "replacedBy": [
+          "style/brace-style"
+        ],
+        "url": "https://typescript-eslint.io/rules/brace-style"
+      }
+    ]
+  },
+  "callback-return": {
+    "source": "node",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/callback-return",
+    "plugins": [
+      {
+        "prefix": "node",
+        "url": "https://github.com/eslint-community/eslint-plugin-n/blob/HEAD/docs/rules/callback-return.md"
+      }
+    ]
+  },
+  "comma-dangle": {
+    "source": "style",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/comma-dangle",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/ts/comma-dangle"
+      },
+      {
+        "prefix": "type",
+        "deprecated": true,
+        "replacedBy": [
+          "style/comma-dangle"
+        ],
+        "url": "https://typescript-eslint.io/rules/comma-dangle"
+      }
+    ]
+  },
+  "comma-spacing": {
+    "source": "style",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/comma-spacing",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/ts/comma-spacing"
+      },
+      {
+        "prefix": "type",
+        "deprecated": true,
+        "replacedBy": [
+          "style/comma-spacing"
+        ],
+        "url": "https://typescript-eslint.io/rules/comma-spacing"
+      }
+    ]
+  },
+  "comma-style": {
+    "source": "style",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/comma-style",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/js/comma-style"
+      }
+    ]
+  },
+  "computed-property-spacing": {
+    "source": "style",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/computed-property-spacing",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/js/computed-property-spacing"
+      }
+    ]
+  },
+  "dot-location": {
+    "source": "bestPractices",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/dot-location",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/js/dot-location"
+      }
+    ]
+  },
+  "eol-last": {
+    "source": "style",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/eol-last",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/js/eol-last"
+      }
+    ]
+  },
+  "func-call-spacing": {
+    "source": "style",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/func-call-spacing",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/ts/function-call-spacing"
+      },
+      {
+        "prefix": "type",
+        "deprecated": true,
+        "replacedBy": [
+          "style/func-call-spacing"
+        ],
+        "url": "https://typescript-eslint.io/rules/func-call-spacing"
+      }
+    ]
+  },
+  "function-call-argument-newline": {
+    "source": "style",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/function-call-argument-newline",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/js/function-call-argument-newline"
+      }
+    ]
+  },
+  "function-paren-newline": {
+    "source": "style",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/function-paren-newline",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/js/function-paren-newline"
+      }
+    ]
+  },
+  "generator-star-spacing": {
+    "source": "es6",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/generator-star-spacing",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/js/generator-star-spacing"
+      }
+    ]
+  },
+  "global-require": {
+    "source": "node",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/global-require",
+    "plugins": [
+      {
+        "prefix": "node",
+        "url": "https://github.com/eslint-community/eslint-plugin-n/blob/HEAD/docs/rules/global-require.md"
+      }
+    ]
+  },
+  "handle-callback-err": {
+    "source": "node",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/handle-callback-err",
+    "plugins": [
+      {
+        "prefix": "node",
+        "url": "https://github.com/eslint-community/eslint-plugin-n/blob/HEAD/docs/rules/handle-callback-err.md"
+      }
+    ]
+  },
+  "implicit-arrow-linebreak": {
+    "source": "style",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/implicit-arrow-linebreak",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/js/implicit-arrow-linebreak"
+      }
+    ]
+  },
+  "import/imports-first": {
+    "unprefixed": "imports-first",
+    "source": "imports",
+    "deprecated": true,
+    "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/7b25c1cb95ee18acc1531002fd343e1e6031f9ed/docs/rules/imports-first.md",
+    "plugins": [
+      {
+        "prefix": "import",
+        "deprecated": true,
+        "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/7b25c1cb95ee18acc1531002fd343e1e6031f9ed/docs/rules/imports-first.md"
+      }
+    ]
+  },
+  "indent": {
+    "source": "style",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/indent",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/ts/indent"
+      },
+      {
+        "prefix": "type",
+        "deprecated": true,
+        "replacedBy": [
+          "style/indent"
+        ],
+        "url": "https://typescript-eslint.io/rules/indent"
+      }
+    ]
+  },
+  "jsx-quotes": {
+    "source": "style",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/jsx-quotes",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/js/jsx-quotes"
+      }
+    ]
+  },
+  "key-spacing": {
+    "source": "style",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/key-spacing",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/ts/key-spacing"
+      },
+      {
+        "prefix": "type",
+        "deprecated": true,
+        "replacedBy": [
+          "style/key-spacing"
+        ],
+        "url": "https://typescript-eslint.io/rules/key-spacing"
+      }
+    ]
+  },
+  "keyword-spacing": {
+    "source": "style",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/keyword-spacing",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/ts/keyword-spacing"
+      },
+      {
+        "prefix": "type",
+        "deprecated": true,
+        "replacedBy": [
+          "style/keyword-spacing"
+        ],
+        "url": "https://typescript-eslint.io/rules/keyword-spacing"
+      }
+    ]
+  },
+  "linebreak-style": {
+    "source": "style",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/linebreak-style",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/js/linebreak-style"
+      }
+    ]
+  },
+  "lines-around-comment": {
+    "source": "style",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/lines-around-comment",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/ts/lines-around-comment"
+      },
+      {
+        "prefix": "type",
+        "deprecated": true,
+        "replacedBy": [
+          "style/lines-around-comment"
+        ],
+        "url": "https://typescript-eslint.io/rules/lines-around-comment"
+      }
+    ]
+  },
+  "lines-around-directive": {
+    "source": "style",
+    "deprecated": true,
+    "replacedBy": [
+      "padding-line-between-statements"
+    ],
+    "url": "https://eslint.org/docs/latest/rules/lines-around-directive"
+  },
+  "lines-between-class-members": {
+    "source": "style",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/lines-between-class-members",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/ts/lines-between-class-members"
+      },
+      {
+        "prefix": "type",
+        "deprecated": true,
+        "replacedBy": [
+          "style/lines-between-class-members"
+        ],
+        "url": "https://typescript-eslint.io/rules/lines-between-class-members"
+      }
+    ]
+  },
+  "max-len": {
+    "source": "style",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/max-len",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/js/max-len"
+      }
+    ]
+  },
+  "max-statements-per-line": {
+    "source": "style",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/max-statements-per-line",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/js/max-statements-per-line"
+      }
+    ]
+  },
+  "multiline-ternary": {
+    "source": "style",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/multiline-ternary",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/js/multiline-ternary"
+      }
+    ]
+  },
+  "new-parens": {
+    "source": "style",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/new-parens",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/js/new-parens"
+      }
+    ]
+  },
+  "newline-after-var": {
+    "source": "style",
+    "deprecated": true,
+    "replacedBy": [
+      "padding-line-between-statements"
+    ],
+    "url": "https://eslint.org/docs/latest/rules/newline-after-var"
+  },
+  "newline-before-return": {
+    "source": "style",
+    "deprecated": true,
+    "replacedBy": [
+      "padding-line-between-statements"
+    ],
+    "url": "https://eslint.org/docs/latest/rules/newline-before-return"
+  },
+  "newline-per-chained-call": {
+    "source": "style",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/newline-per-chained-call",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/js/newline-per-chained-call"
+      }
+    ]
+  },
+  "no-buffer-constructor": {
+    "source": "node",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/no-buffer-constructor"
+  },
+  "no-catch-shadow": {
+    "source": "variables",
+    "deprecated": true,
+    "replacedBy": [
+      "no-shadow"
+    ],
+    "url": "https://eslint.org/docs/latest/rules/no-catch-shadow"
+  },
+  "no-confusing-arrow": {
+    "source": "es6",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/no-confusing-arrow",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/js/no-confusing-arrow"
+      }
+    ]
+  },
+  "no-extra-parens": {
+    "source": "errors",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/no-extra-parens",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/ts/no-extra-parens"
+      },
+      {
+        "prefix": "type",
+        "deprecated": true,
+        "replacedBy": [
+          "style/no-extra-parens"
+        ],
+        "url": "https://typescript-eslint.io/rules/no-extra-parens"
+      }
+    ]
+  },
+  "no-extra-semi": {
+    "source": "errors",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/no-extra-semi",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/ts/no-extra-semi"
+      },
+      {
+        "prefix": "type",
+        "deprecated": true,
+        "replacedBy": [
+          "style/no-extra-semi"
+        ],
+        "url": "https://typescript-eslint.io/rules/no-extra-semi"
+      }
+    ]
+  },
+  "no-floating-decimal": {
+    "source": "bestPractices",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/no-floating-decimal",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/js/no-floating-decimal"
+      }
+    ]
+  },
+  "no-mixed-operators": {
+    "source": "style",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/no-mixed-operators",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/js/no-mixed-operators"
+      }
+    ]
+  },
+  "no-mixed-requires": {
+    "source": "node",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/no-mixed-requires",
+    "plugins": [
+      {
+        "prefix": "node",
+        "url": "https://github.com/eslint-community/eslint-plugin-n/blob/HEAD/docs/rules/no-mixed-requires.md"
+      }
+    ]
+  },
+  "no-mixed-spaces-and-tabs": {
+    "source": "style",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/no-mixed-spaces-and-tabs",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/js/no-mixed-spaces-and-tabs"
+      }
+    ]
+  },
+  "no-multi-spaces": {
+    "source": "bestPractices",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/no-multi-spaces",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/js/no-multi-spaces"
+      }
+    ]
+  },
+  "no-multiple-empty-lines": {
+    "source": "style",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/no-multiple-empty-lines",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/js/no-multiple-empty-lines"
+      }
+    ]
+  },
+  "no-native-reassign": {
+    "source": "bestPractices",
+    "deprecated": true,
+    "replacedBy": [
+      "no-global-assign"
+    ],
+    "url": "https://eslint.org/docs/latest/rules/no-native-reassign"
+  },
+  "no-negated-in-lhs": {
+    "source": "errors",
+    "deprecated": true,
+    "replacedBy": [
+      "no-unsafe-negation"
+    ],
+    "url": "https://eslint.org/docs/latest/rules/no-negated-in-lhs"
+  },
+  "no-new-object": {
+    "source": "style",
+    "deprecated": true,
+    "replacedBy": [
+      "no-object-constructor"
+    ],
+    "url": "https://eslint.org/docs/latest/rules/no-new-object"
+  },
+  "no-new-require": {
+    "source": "node",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/no-new-require",
+    "plugins": [
+      {
+        "prefix": "node",
+        "url": "https://github.com/eslint-community/eslint-plugin-n/blob/HEAD/docs/rules/no-new-require.md"
+      }
+    ]
+  },
+  "no-path-concat": {
+    "source": "node",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/no-path-concat",
+    "plugins": [
+      {
+        "prefix": "node",
+        "url": "https://github.com/eslint-community/eslint-plugin-n/blob/HEAD/docs/rules/no-path-concat.md"
+      }
+    ]
+  },
+  "no-process-env": {
+    "source": "node",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/no-process-env",
+    "plugins": [
+      {
+        "prefix": "node",
+        "url": "https://github.com/eslint-community/eslint-plugin-n/blob/HEAD/docs/rules/no-process-env.md"
+      }
+    ]
+  },
+  "no-process-exit": {
+    "source": "node",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/no-process-exit",
+    "plugins": [
+      {
+        "prefix": "node",
+        "url": "https://github.com/eslint-community/eslint-plugin-n/blob/HEAD/docs/rules/no-process-exit.md"
+      }
+    ]
+  },
+  "no-restricted-modules": {
+    "source": "node",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/no-restricted-modules"
+  },
+  "no-return-await": {
+    "source": "bestPractices",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/no-return-await"
+  },
+  "no-spaced-func": {
+    "source": "style",
+    "deprecated": true,
+    "replacedBy": [
+      "func-call-spacing"
+    ],
+    "url": "https://eslint.org/docs/latest/rules/no-spaced-func"
+  },
+  "no-sync": {
+    "source": "node",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/no-sync",
+    "plugins": [
+      {
+        "prefix": "node",
+        "url": "https://github.com/eslint-community/eslint-plugin-n/blob/HEAD/docs/rules/no-sync.md"
+      }
+    ]
+  },
+  "no-tabs": {
+    "source": "style",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/no-tabs",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/js/no-tabs"
+      }
+    ]
+  },
+  "no-trailing-spaces": {
+    "source": "style",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/no-trailing-spaces",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/js/no-trailing-spaces"
+      }
+    ]
+  },
+  "no-whitespace-before-property": {
+    "source": "style",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/no-whitespace-before-property",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/js/no-whitespace-before-property"
+      }
+    ]
+  },
+  "nonblock-statement-body-position": {
+    "source": "style",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/nonblock-statement-body-position",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/js/nonblock-statement-body-position"
+      }
+    ]
+  },
+  "object-curly-newline": {
+    "source": "style",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/object-curly-newline",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/js/object-curly-newline"
+      }
+    ]
+  },
+  "object-curly-spacing": {
+    "source": "style",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/object-curly-spacing",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/ts/object-curly-spacing"
+      },
+      {
+        "prefix": "type",
+        "deprecated": true,
+        "replacedBy": [
+          "style/object-curly-spacing"
+        ],
+        "url": "https://typescript-eslint.io/rules/object-curly-spacing"
+      }
+    ]
+  },
+  "object-property-newline": {
+    "source": "style",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/object-property-newline",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/js/object-property-newline"
+      }
+    ]
+  },
+  "one-var-declaration-per-line": {
+    "source": "style",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/one-var-declaration-per-line",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/js/one-var-declaration-per-line"
+      }
+    ]
+  },
+  "operator-linebreak": {
+    "source": "style",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/operator-linebreak",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/js/operator-linebreak"
+      }
+    ]
+  },
+  "padded-blocks": {
+    "source": "style",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/padded-blocks",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/js/padded-blocks"
+      }
+    ]
+  },
+  "padding-line-between-statements": {
+    "source": "style",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/padding-line-between-statements",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/ts/padding-line-between-statements"
+      },
+      {
+        "prefix": "type",
+        "deprecated": true,
+        "replacedBy": [
+          "style/padding-line-between-statements"
+        ],
+        "url": "https://typescript-eslint.io/rules/padding-line-between-statements"
+      }
+    ]
+  },
+  "prefer-reflect": {
+    "source": "es6",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/prefer-reflect"
+  },
+  "quote-props": {
+    "source": "style",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/quote-props",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/ts/quote-props"
+      }
+    ]
+  },
+  "quotes": {
+    "source": "style",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/quotes",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/ts/quotes"
+      },
+      {
+        "prefix": "type",
+        "deprecated": true,
+        "replacedBy": [
+          "style/quotes"
+        ],
+        "url": "https://typescript-eslint.io/rules/quotes"
+      }
+    ]
+  },
+  "require-jsdoc": {
+    "source": "style",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/require-jsdoc"
+  },
+  "rest-spread-spacing": {
+    "source": "es6",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/rest-spread-spacing",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/js/rest-spread-spacing"
+      }
+    ]
+  },
+  "semi": {
+    "source": "style",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/semi",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/ts/semi"
+      },
+      {
+        "prefix": "type",
+        "deprecated": true,
+        "replacedBy": [
+          "style/semi"
+        ],
+        "url": "https://typescript-eslint.io/rules/semi"
+      }
+    ]
+  },
+  "semi-spacing": {
+    "source": "style",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/semi-spacing",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/js/semi-spacing"
+      }
+    ]
+  },
+  "semi-style": {
+    "source": "style",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/semi-style",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/js/semi-style"
+      }
+    ]
+  },
+  "space-before-blocks": {
+    "source": "style",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/space-before-blocks",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/ts/space-before-blocks"
+      },
+      {
+        "prefix": "type",
+        "deprecated": true,
+        "replacedBy": [
+          "style/space-before-blocks"
+        ],
+        "url": "https://typescript-eslint.io/rules/space-before-blocks"
+      }
+    ]
+  },
+  "space-before-function-paren": {
+    "source": "style",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/space-before-function-paren",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/ts/space-before-function-paren"
+      },
+      {
+        "prefix": "type",
+        "deprecated": true,
+        "replacedBy": [
+          "style/space-before-function-paren"
+        ],
+        "url": "https://typescript-eslint.io/rules/space-before-function-paren"
+      }
+    ]
+  },
+  "space-in-parens": {
+    "source": "style",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/space-in-parens",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/js/space-in-parens"
+      }
+    ]
+  },
+  "space-infix-ops": {
+    "source": "style",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/space-infix-ops",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/ts/space-infix-ops"
+      },
+      {
+        "prefix": "type",
+        "deprecated": true,
+        "replacedBy": [
+          "style/space-infix-ops"
+        ],
+        "url": "https://typescript-eslint.io/rules/space-infix-ops"
+      }
+    ]
+  },
+  "space-unary-ops": {
+    "source": "style",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/space-unary-ops",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/js/space-unary-ops"
+      }
+    ]
+  },
+  "spaced-comment": {
+    "source": "style",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/spaced-comment",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/js/spaced-comment"
+      }
+    ]
+  },
+  "switch-colon-spacing": {
+    "source": "style",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/switch-colon-spacing",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/js/switch-colon-spacing"
+      }
+    ]
+  },
+  "template-curly-spacing": {
+    "source": "es6",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/template-curly-spacing",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/js/template-curly-spacing"
+      }
+    ]
+  },
+  "template-tag-spacing": {
+    "source": "style",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/template-tag-spacing",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/js/template-tag-spacing"
+      }
+    ]
+  },
+  "valid-jsdoc": {
+    "source": "errors",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/valid-jsdoc"
+  },
+  "wrap-iife": {
+    "source": "bestPractices",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/wrap-iife",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/js/wrap-iife"
+      }
+    ]
+  },
+  "wrap-regex": {
+    "source": "style",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/wrap-regex",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/js/wrap-regex"
+      }
+    ]
+  },
+  "yield-star-spacing": {
+    "source": "es6",
+    "deprecated": true,
+    "url": "https://eslint.org/docs/latest/rules/yield-star-spacing",
+    "plugins": [
+      {
+        "prefix": "style",
+        "url": "https://eslint.style/rules/js/yield-star-spacing"
+      }
+    ]
+  }
+}

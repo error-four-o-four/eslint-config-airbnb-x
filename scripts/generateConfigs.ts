@@ -1,173 +1,85 @@
-import { Linter } from 'eslint';
+/**
+ * generates and writes 'custom' flat config files
+ * to 'src/configs/custom'
+ * depends on 'convertConfigs.ts' and 'extractRules.ts'
+ */
 
-import type {
-	AirbnbConfigs,
-	CustomConfigs,
-	FlatConfig,
-} from './types/configs.ts';
+import { join } from 'path';
+
+import type { Linter } from 'eslint';
+import type { CustomConfigs } from './generate/types.ts';
+
+import convertedConfigs from '../src/configs/airbnb/index.ts';
 
 import {
-	airbnbConfigKeyValues,
-	customConfigKeyValues,
-} from './utils/constants.ts';
-
-import {
-	importBaseConfigs,
-	processEntries,
-} from './utils/convert.ts';
+	createCustomConfigs,
+	applyCustomMetaData,
+	// applyTypescriptMetaData,
+	applyOptionsAndSettings,
+} from './generate/main.ts';
 
 import {
 	NOTICE,
-	createFile,
 	ensureFolder,
-	getPath,
-	toCamelCase,
-} from './utils/write.ts';
+	resolvePath,
+	toKebabCase,
+	writeFile,
+} from './shared/utils.ts';
 
-const generateAllConfigs = process.argv.length < 3;
-const generateConfigArg = generateAllConfigs ? undefined : process.argv.at(-1);
+// #####
 
-generateConfigs(generateAllConfigs, generateConfigArg);
+const customConfigs = createCustomConfigs();
 
-//
-// ###
-//
+applyCustomMetaData(convertedConfigs, customConfigs);
+// applyTypescriptMetaData(convertedConfigs, customConfigs);
 
-async function generateConfigs(all: boolean, arg: string | undefined) {
-	const baseConfigEntries = await importBaseConfigs();
+applyOptionsAndSettings(convertedConfigs, customConfigs);
 
-	// 1. convert aibrnb from esltinrc to flat format
-	//
-	const {
-		convertedEntries,
-		processedEntries,
-	} = processEntries(baseConfigEntries);
+// #####
 
-	const baseDir = '../src/configs';
-	ensureFolder(`${baseDir}/`, import.meta.url);
+const destination = resolvePath('../src/configs/custom/', import.meta.url);
 
-	if (all) {
-		console.log('Generating "airbnb" and "custom" config ...');
-		await writeConvertedConfigs(`${baseDir}/airbnb`, convertedEntries);
-		await writeProcessedConfigs(`${baseDir}/custom`, processedEntries);
-	} else {
-		// check process argument
-		if (!arg || !['airbnb', 'custom'].includes(arg)) {
-			throw new Error('Please provide an argument: \'airbnb\' or \'custom\'');
-		}
+ensureFolder(destination);
+writeCustomConfigs(destination, customConfigs);
+writeIndexFile(`${destination}index.ts`, Object.keys(customConfigs));
 
-		if (arg === 'airbnb') {
-			console.log('Generating "airbnb" config ...');
-			await writeConvertedConfigs(`${baseDir}/airbnb`, convertedEntries);
-		} else {
-			console.log('Generating "custom" config ...');
-			await writeProcessedConfigs(`${baseDir}/custom`, processedEntries);
-		}
-	}
+// #####
 
-	// const rulesDir = `${baseDir}/rules`;
-	// await writeRules(`${rulesDir}/approved.json`, approvedRules);
-	// await writeRules(`${rulesDir}/deprecated.json`, deprecatedRules);
-}
-
-async function writeConvertedConfigs(folder: string, configs: AirbnbConfigs) {
-	const { url } = import.meta;
-	ensureFolder(`${folder}/`, url);
-
-	const toData = (config: FlatConfig) => `${NOTICE}
-import { Linter } from 'eslint';
+// import type { FlatConfig } from '../../../scripts/types/configs.ts';
+const parseConfig = (config: Linter.FlatConfig) => `${NOTICE}\n
+import type { Linter } from 'eslint';\n
 export default ${JSON.stringify(config)} as Linter.FlatConfig;
 `;
 
-	await airbnbConfigKeyValues.reduce(async (chain, name) => {
+async function writeCustomConfigs(folder: string, configs: CustomConfigs) {
+	await Object.entries(configs).reduce(async (chain, entry) => {
 		await chain;
-		const config = configs[name];
+		const [name, config] = entry;
 
-		const file = `${folder}/${name}.ts`;
-		const path = getPath(file, url);
-		const data = toData(config);
+		const path = join(folder, `${toKebabCase(name)}.ts`);
+		const data = parseConfig(config);
 
-		await createFile(path, data);
+		return writeFile(path, data);
 	}, Promise.resolve());
-
-	const path = getPath(`${folder}/index.ts`, url);
-
-	await writeIndexFile(path, airbnbConfigKeyValues);
 }
 
-async function writeProcessedConfigs(folder: string, configs: CustomConfigs) {
-	const prefix = 'airbnb';
-
-	const { url } = import.meta;
-	ensureFolder(`${folder}/`, url);
-
-	const toData = (config: Linter.FlatConfig) => `${NOTICE}
-import type { FlatConfig } from '../../../scripts/types/configs.ts';
-export default ${JSON.stringify(config)} as FlatConfig;
-`;
-
-	await customConfigKeyValues.reduce(async (chain, name) => {
-		await chain;
-
-		// create a config with a name
-		const config = {
-			name: `${prefix}:${name}`,
-			...configs[name],
-		};
-
-		const file = `${folder}/${name}.ts`;
-		const path = getPath(file, url);
-		const data = toData(config);
-
-		await createFile(path, data);
-	}, Promise.resolve());
-
-	const path = getPath(`${folder}/index.ts`, url);
-
-	await writeIndexFile(path, customConfigKeyValues);
-}
-
-async function writeIndexFile(file: string, names: string[]) {
-	const camelCaseNames = names.map((name) => toCamelCase(name));
+async function writeIndexFile(path: string, names: string[]) {
+	const kebabCaseNames = names.map((name) => toKebabCase(name));
 	let data = `${NOTICE}\n`;
 
-	data += `${camelCaseNames
-		.map((camel, i) => `import ${camel} from './${names[i]}.ts';`)
+	data += `${kebabCaseNames
+		.map((kebab, i) => `import ${names[i]} from './${kebab}.ts';`)
 		.join('\n')}\n\n`;
 
 	data += 'const configs = {\n';
-	data += `${camelCaseNames.map((camel) => `\t${camel},`).join('\n')}\n`;
+	data += `${names.map((name) => `\t${name},`).join('\n')}\n`;
 	data += '};\n\n';
 
 	data += 'export {\n';
-	data += `${camelCaseNames.map((camel) => `\t${camel},`).join('\n')}\n`;
+	data += `${names.map((name) => `\t${name},`).join('\n')}\n`;
 	data += '};\n\n';
 
 	data += 'export default configs;';
 
-	await createFile(file, data);
+	await writeFile(path, data);
 }
-
-// async function writeRules(file: string, rules: ProcessedRule[]) {
-// 	const { url } = import.meta;
-// 	ensureFolder(file, url);
-
-// 	const modified = rules.map(({ name, value, meta }) =>
-// 		meta.deprecated
-// 			? {
-// 				name,
-// 				foundIn: meta.config,
-// 				replacedIn: meta.plugin || null,
-// 				replacedBy: meta.replacedBy || null,
-// 				url: meta.url,
-// 				value,
-// 			}
-// 			: {
-// 				name,
-// 				foundIn: meta.config,
-// 				value,
-// 			}
-// 	);
-
-// 	await writeFile(url, file, JSON.stringify(modified), 'json');
-// }
