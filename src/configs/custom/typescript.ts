@@ -1,5 +1,6 @@
 // FILE GENERATED WITH SCRIPT
-import type { FlatConfig } from '../../../scripts/types/configs.ts';
+
+import type { Linter } from 'eslint';
 
 export default {
 	name: 'airbnb:typescript',
@@ -32,6 +33,7 @@ export default {
 		],
 		'import/core-modules': [],
 		'import/ignore': ['node_modules', '\\.(coffee|scss|css|less|hbs|svg|json)$'],
+		'import/external-module-folders': ['node_modules', 'node_modules/@types'],
 		'import/parsers': {
 			'@typescript-eslint/parser': [
 				'.js',
@@ -40,13 +42,13 @@ export default {
 				'.mts',
 			],
 		},
-		'import/external-module-folders': ['node_modules', 'node_modules/@types'],
 	},
 	rules: {
 		'class-methods-use-this': 0,
 		'consistent-return': 0,
 		'default-param-last': 0,
 		'dot-notation': 0,
+		'import/no-namespace': 0,
 		'init-declarations': 0,
 		'max-params': 0,
 		'no-array-constructor': 0,
@@ -60,7 +62,6 @@ export default {
 		'no-redeclare': 0,
 		'no-restricted-imports': 0,
 		'no-shadow': 0,
-		'no-throw-literal': 0,
 		'no-unused-expressions': 0,
 		'no-unused-vars': 0,
 		'no-use-before-define': 0,
@@ -68,15 +69,25 @@ export default {
 		'prefer-destructuring': 0,
 		'prefer-promise-reject-errors': 0,
 		'require-await': 0,
-		'typescript/class-methods-use-this': ['error', { exceptMethods: [] }],
-		'typescript/consistent-return': 'error',
-		'typescript/default-param-last': 'error',
-		'typescript/dot-notation': ['error', { allowKeywords: true }],
-		'typescript/init-declarations': 'off',
-		'typescript/max-params': ['off', 3],
-		'typescript/no-array-constructor': 'error',
-		'typescript/no-dupe-class-members': 'error',
-		'typescript/no-empty-function': [
+		'type/block-spacing': 0,
+		'type/brace-style': 0,
+		'type/class-methods-use-this': ['error', { exceptMethods: [] }],
+		'type/comma-dangle': 0,
+		'type/comma-spacing': 0,
+		'type/consistent-return': 'error',
+		'type/default-param-last': 'error',
+		'type/dot-notation': ['error', { allowKeywords: true }],
+		'type/func-call-spacing': 0,
+		'type/indent': 0,
+		'type/init-declarations': 'off',
+		'type/key-spacing': 0,
+		'type/keyword-spacing': 0,
+		'type/lines-around-comment': 0,
+		'type/lines-between-class-members': 0,
+		'type/max-params': ['off', 3],
+		'type/no-array-constructor': 'error',
+		'type/no-dupe-class-members': 'error',
+		'type/no-empty-function': [
 			'error',
 			{
 				allow: [
@@ -86,11 +97,13 @@ export default {
 				],
 			},
 		],
-		'typescript/no-implied-eval': 'error',
-		'typescript/no-invalid-this': 'off',
-		'typescript/no-loop-func': 'error',
-		'typescript/no-loss-of-precision': 'error',
-		'typescript/no-magic-numbers': [
+		'type/no-extra-parens': 0,
+		'type/no-extra-semi': 0,
+		'type/no-implied-eval': 'error',
+		'type/no-invalid-this': 'off',
+		'type/no-loop-func': 'error',
+		'type/no-loss-of-precision': 'error',
+		'type/no-magic-numbers': [
 			'off',
 			{
 				ignore: [],
@@ -99,17 +112,18 @@ export default {
 				detectObjects: false,
 			},
 		],
-		'typescript/no-redeclare': 'error',
-		'typescript/no-restricted-imports': [
+		'type/no-namespace': 'off',
+		'type/no-redeclare': 'error',
+		'type/no-restricted-imports': [
 			'off',
 			{
 				paths: [],
 				patterns: [],
 			},
 		],
-		'typescript/no-shadow': 'error',
-		'typescript/no-throw-literal': 'error',
-		'typescript/no-unused-expressions': [
+		'type/no-shadow': 'error',
+		'type/no-throw-literal': 0,
+		'type/no-unused-expressions': [
 			'error',
 			{
 				allowShortCircuit: false,
@@ -117,7 +131,7 @@ export default {
 				allowTaggedTemplates: false,
 			},
 		],
-		'typescript/no-unused-vars': [
+		'type/no-unused-vars': [
 			'error',
 			{
 				vars: 'all',
@@ -125,7 +139,7 @@ export default {
 				ignoreRestSiblings: true,
 			},
 		],
-		'typescript/no-use-before-define': [
+		'type/no-use-before-define': [
 			'error',
 			{
 				functions: true,
@@ -133,8 +147,10 @@ export default {
 				variables: true,
 			},
 		],
-		'typescript/no-useless-constructor': 'error',
-		'typescript/prefer-destructuring': [
+		'type/no-useless-constructor': 'error',
+		'type/object-curly-spacing': 0,
+		'type/padding-line-between-statements': 0,
+		'type/prefer-destructuring': [
 			'error',
 			{
 				VariableDeclarator: {
@@ -148,7 +164,12 @@ export default {
 			},
 			{ enforceForRenamedProperties: false },
 		],
-		'typescript/prefer-promise-reject-errors': ['error', { allowEmptyReject: true }],
-		'typescript/require-await': 'off',
+		'type/prefer-promise-reject-errors': ['error', { allowEmptyReject: true }],
+		'type/quotes': 0,
+		'type/require-await': 'off',
+		'type/semi': 0,
+		'type/space-before-blocks': 0,
+		'type/space-before-function-paren': 0,
+		'type/space-infix-ops': 0,
 	},
-} as FlatConfig;
+} as Linter.FlatConfig;

@@ -1,5 +1,6 @@
 // FILE GENERATED WITH SCRIPT
-import type { FlatConfig } from '../../../scripts/types/configs.ts';
+
+import type { Linter } from 'eslint';
 
 export default {
 	name: 'airbnb:imports',
@@ -43,7 +44,7 @@ export default {
 		],
 		'import/first': 'error',
 		'import/group-exports': 'off',
-		'import/imports-first': 'off',
+		'import/imports-first': 0,
 		'import/max-dependencies': ['off', { max: 10 }],
 		'import/named': 'error',
 		'import/namespace': 'off',
@@ -146,4 +147,4 @@ export default {
 		'import/prefer-default-export': 'error',
 		'import/unambiguous': 'off',
 	},
-} as FlatConfig;
+} as Linter.FlatConfig;

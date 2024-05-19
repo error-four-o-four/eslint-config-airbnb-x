@@ -1,5 +1,6 @@
 // FILE GENERATED WITH SCRIPT
-import type { FlatConfig } from '../../../scripts/types/configs.ts';
+
+import type { Linter } from 'eslint';
 
 export default {
 	name: 'airbnb:disable-legacy',
@@ -95,4 +96,4 @@ export default {
 		'wrap-regex': 0,
 		'yield-star-spacing': 0,
 	},
-} as FlatConfig;
+} as Linter.FlatConfig;

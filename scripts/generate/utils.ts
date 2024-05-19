@@ -1,5 +1,8 @@
+import type { Linter } from 'eslint';
+
 import type {
 	ConvertedConfigs,
+	MetaDataProps,
 	PluginPrefix,
 } from '../shared/types.ts';
 
@@ -10,11 +13,18 @@ import type {
 	CustomConfigKeysWithSettings,
 } from './types.ts';
 
+import { assertNotNull } from '../shared/utils.ts';
+
 import {
 	configKeysWithPlugin,
 	configKeysWithOptions,
 	configKeysWithSettings,
 } from './setup.ts';
+
+import {
+	hasOverwrite,
+	overwrite,
+} from './overwrites.ts';
 
 // export const isConvertedConfigKey = (
 // 	(key: string): key is keyof ConvertedConfigs => Object
@@ -63,12 +73,36 @@ export const configHasSettings = (
 // 		.includes(key as ConfigKeysWithSettings)
 // );
 
+export function getRuleValue(
+	rule: string,
+	meta: MetaDataProps,
+	source: ConvertedConfigs,
+) {
+	const config = source[meta.source];
+	assertNotNull(config.rules);
+
+	let value = config.rules[rule];
+	assertNotNull(value);
+
+	if (hasOverwrite(rule)) value = overwrite(rule, value);
+
+	return Array.isArray(value)
+		? value as Linter.RuleLevelAndOptions
+		: value as Linter.RuleLevel;
+}
+
 // export const configPrefixMap = {
 // 	imports: 'import',
 // 	node: 'node',
 // 	style: 'style',
 // 	typescript: 'type',
 // } as Record<CustomConfigKeysWithPlugin, keyof PluginPrefix>;
+
+export function mapConfigKeys(
+	key: keyof ConvertedConfigs,
+): keyof CustomConfigs {
+	return (key === 'es6' ? 'es2022' : key);
+}
 
 const prefixConfigMap = {
 	import: 'imports',
@@ -81,10 +115,4 @@ export function mapPrefixToConfigKey(
 	prefix: keyof PluginPrefix,
 ) {
 	return prefixConfigMap[prefix];
-}
-
-export function mapConfigKeys(
-	key: keyof ConvertedConfigs,
-): keyof CustomConfigs {
-	return (key === 'es6' ? 'es2022' : key);
 }

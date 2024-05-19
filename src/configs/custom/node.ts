@@ -1,5 +1,6 @@
 // FILE GENERATED WITH SCRIPT
-import type { FlatConfig } from '../../../scripts/types/configs.ts';
+
+import type { Linter } from 'eslint';
 
 export default {
 	name: 'airbnb:node',
@@ -153,4 +154,4 @@ export default {
 		'node/no-process-exit': 'off',
 		'node/no-sync': 'off',
 	},
-} as FlatConfig;
+} as Linter.FlatConfig;

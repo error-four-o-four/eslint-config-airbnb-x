@@ -15,9 +15,10 @@ import { fileURLToPath } from 'node:url';
 
 import { Linter } from 'eslint';
 
+import type { PluginPrefix } from './types.ts';
+
 // @ts-ignore tmp
 import promisedConfig from '../../eslint.config.js';
-import { PluginPrefix } from './types.ts';
 
 export function assertNotNull(
 	value: unknown,
@@ -62,7 +63,7 @@ export function toKebabCase(input: string) {
 		.toLowerCase();
 }
 
-export function toPrefixedKey<T extends string>(
+export function getPrefixedRule<T extends string>(
 	prefix: keyof PluginPrefix,
 	rule: T,
 ) {
@@ -71,7 +72,7 @@ export function toPrefixedKey<T extends string>(
 
 const regExPrefixed = /\//;
 
-export function toUnprefixedKey<T extends string>(rule: T) {
+export function getUnprefixedRule<T extends string>(rule: T) {
 	return (regExPrefixed.test(rule)) ? rule.split('/')[1] : rule;
 }
 
@@ -131,11 +132,12 @@ export function readJson(path: string, url: string) {
 
 export async function writeFile(filePath: string, fileData: string) {
 	const dirPath = dirname(filePath);
+	const strPath = filePath.replace(process.cwd(), '');
+	const msgInit = `Writing data to '${strPath}'`;
 
 	if (!existsSync(dirPath)) mkdirSync(dirPath);
 
-	console.log('\nwriting data to file:');
-	console.log(`${filePath.replace(process.cwd(), '')}`);
+	console.log(msgInit);
 	writeFileSync(filePath, fileData, { flag: 'w+' });
 
 	const result = linter.verifyAndFix(fileData, config, filePath);
@@ -149,7 +151,7 @@ export async function writeFile(filePath: string, fileData: string) {
 		);
 
 		result.messages.forEach(
-			(message) => console.log(`* ${message.message}`),
+			(msgLint) => console.log(`* ${msgLint.message}`),
 		);
 	}
 

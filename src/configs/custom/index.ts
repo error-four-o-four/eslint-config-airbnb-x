@@ -7,7 +7,6 @@ import variables from './variables.ts';
 import imports from './imports.ts';
 import strict from './strict.ts';
 import es2022 from './es2022.ts';
-import stylistic from './stylistic.ts';
 import typescript from './typescript.ts';
 import disableLegacy from './disable-legacy.ts';
 
@@ -20,7 +19,6 @@ const configs = {
 	imports,
 	strict,
 	es2022,
-	stylistic,
 	typescript,
 	disableLegacy,
 };
@@ -34,7 +32,6 @@ export {
 	imports,
 	strict,
 	es2022,
-	stylistic,
 	typescript,
 	disableLegacy,
 };

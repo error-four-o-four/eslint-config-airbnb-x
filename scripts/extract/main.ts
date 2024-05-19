@@ -10,7 +10,7 @@ import rawMetaData from '../shared/raw.ts';
 
 import { pluginPrefix } from '../setupGlobal.ts';
 
-import { assertNotNull, toUnprefixedKey } from '../shared/utils.ts';
+import { assertNotNull, getUnprefixedRule } from '../shared/utils.ts';
 import { findPlugins, renameReplacedByPrefix } from './utils.ts';
 
 /**
@@ -40,7 +40,7 @@ export function extractMetaData(
 	{ rule, source }: { rule: string, source: keyof ConvertedConfigs; },
 ) {
 	const isImportRule = rule.startsWith(pluginPrefix.import);
-	const unprefixed = isImportRule ? toUnprefixedKey(rule) : rule;
+	const unprefixed = isImportRule ? getUnprefixedRule(rule) : rule;
 	const origin: keyof Pick<RawMetaData, 'eslint' | 'import'> = isImportRule ? 'import' : 'eslint';
 
 	const raw = rawMetaData[origin].get(unprefixed);

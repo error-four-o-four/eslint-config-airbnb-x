@@ -1,18 +1,13 @@
 import type { Linter } from 'eslint';
 import type { CustomConfigs } from './types.ts';
-import type {
-	ConvertedConfigs, MetaDataProps, RawMetaData,
-} from '../shared/types.ts';
+
+import type { ConvertedConfigs, MetaDataProps } from '../shared/types.ts';
 
 import customMetaData from '../extractedMetaData.ts';
 
-// import { pluginPrefix } from '../setupGlobal.ts';
-
 import {
-	assertNotNull,
 	toKebabCase,
-	toPrefixedKey,
-	// toPrefixedKey,
+	getPrefixedRule,
 } from '../shared/utils.ts';
 
 import {
@@ -21,12 +16,15 @@ import {
 	configKeysWithSettings,
 } from './setup.ts';
 
-import { hasOverwrite, overwrite } from './overwrites.ts';
-import { getLanguageOptions, getSettings } from './options.ts';
+import {
+	getLanguageOptions,
+	getSettings,
+} from './options.ts';
 
 import {
 	configHasOptions,
 	configHasSettings,
+	getRuleValue,
 	mapConfigKeys,
 	mapPrefixToConfigKey,
 } from './utils.ts';
@@ -57,25 +55,7 @@ export function createCustomConfigs() {
 	);
 }
 
-function getRuleValue(
-	rule: string,
-	meta: MetaDataProps,
-	source: ConvertedConfigs,
-) {
-	const config = source[meta.source];
-	assertNotNull(config.rules);
-
-	let value = config.rules[rule];
-	assertNotNull(value);
-
-	if (hasOverwrite(rule)) {
-		value = overwrite(rule, value);
-	}
-
-	return Array.isArray(value)
-		? value as Linter.RuleLevelAndOptions
-		: value as Linter.RuleLevel;
-}
+const message = 'Made a wrong assumption';
 
 export function applyCustomMetaData(
 	sourceConfigs: ConvertedConfigs,
@@ -83,69 +63,37 @@ export function applyCustomMetaData(
 ) {
 	customMetaData.forEach((meta, rule) => {
 		const value = getRuleValue(rule, meta, sourceConfigs);
-
-		const origin: keyof Pick<RawMetaData, 'eslint' | 'import'> = meta.unprefixed
-			? 'import' : 'eslint';
+		const replaced = handlePluginRule(rule, meta, value, targetConfigs);
+		handleTypescriptRule(rule, meta, value, targetConfigs);
 
 		if (meta.replacedBy) {
 			/** @todo create manual overwrite */
-			console.log(`Create manual overwrite '${rule}:${meta.replacedBy}'`);
+			/** @todo consider to define replacements explicetly => 'replacements.ts' */
+			console.log(`Replacement required '${rule}' => '${meta.replacedBy}'`);
 		}
 
-		/** @todo consider to add rules which are replaced by a plugin */
-		if (meta.deprecated && origin === 'eslint') {
+		if ((meta.deprecated || replaced) && !meta.unprefixed) {
 			targetConfigs.disableLegacy.rules[rule] = 0;
-		}
-
-		// console.log(!meta.deprecated && !meta.plugins && origin === 'eslint', !meta.deprecated, !meta.plugins, origin === 'eslint');
-
-		if (!meta.deprecated && !meta.plugins && origin === 'eslint') {
-			const targetKey = mapConfigKeys(meta.source);
-			targetConfigs[targetKey].rules[rule] = value;
-		}
-
-		if (!meta.plugins) {
 			return;
 		}
 
-		meta.plugins.forEach((metaPlugin) => {
-			if (metaPlugin.prefix === 'import' && meta.source === 'imports') {
-				const target = targetConfigs[meta.source];
-				target.rules[rule] = metaPlugin.deprecated ? 0 : value;
-				return;
-			}
+		if (meta.deprecated) {
+			return;
+		}
 
-			if (metaPlugin.prefix === 'type') {
-				const targetKey = mapConfigKeys(meta.source);
-				targetConfigs[targetKey].rules[rule] = value;
+		if (!meta.deprecated) {
+			const targetKey = mapConfigKeys(meta.source);
+			const targetValue = getRuleValue(rule, meta, sourceConfigs);
+			targetConfigs[targetKey].rules[rule] = targetValue;
+			return;
+		}
 
-				const prefixedRule = toPrefixedKey(metaPlugin.prefix, rule);
-				const target = targetConfigs.typescript;
-				target.rules[rule] = 0;
-				target.rules[prefixedRule] = metaPlugin.deprecated ? 0 : value;
-				return;
-			}
-
-			if (metaPlugin.prefix === 'node' || metaPlugin.prefix === 'style') {
-				const targetKey = mapPrefixToConfigKey(metaPlugin.prefix);
-				const target = targetConfigs[targetKey];
-				const prefixedRule = toPrefixedKey(metaPlugin.prefix, rule);
-				target.rules[prefixedRule] = metaPlugin.deprecated ? 0 : value;
-				return;
-			}
-
-			console.log(meta);
-			throw new Error(`Rule '${rule}' was not processed`);
-		});
-
-		// const config = mapPrefixToConfigKey(meta.prefix);
-		// const prefixedKey = toPrefixedKey(meta.prefix, rule);
-		// const pluginValue = meta.origin === 'import' && meta.deprecated ? 0 : value;
-		// targetConfigs[config].rules[prefixedKey] = pluginValue;
-
-		// throw new Error(`Rule '${rule}' was not processed`);
+		/** @note this should never happen */
+		console.log(rule, '\n', meta, '\n');
+		throw new Error('Could not apply all rules');
 	});
 
+	// sort rules
 	customConfigKeys.forEach((config) => {
 		/** @todo put plugin rules at the end */
 		const target = targetConfigs[config];
@@ -158,30 +106,105 @@ export function applyCustomMetaData(
 	});
 }
 
-// export function applyTypescriptMetaData(
-// 	sourceConfigs: ConvertedConfigs,
-// 	targetConfigs: CustomConfigs,
-// ) {
-// 	const unprefixed: Record<string, Linter.RuleEntry> = {};
-// 	const prefixed: Record<string, Linter.RuleEntry> = {};
+function handlePluginRule(
+	rule: string,
+	meta: MetaDataProps,
+	value: Linter.RuleEntry,
+	targetConfigs: CustomConfigs,
+): boolean {
+	if (!meta.plugins) return false;
 
-// 	customMetaDataTs.forEach((meta, key) => {
-// 		const prefixedKey = toPrefixedKey(pluginPrefix.type, key);
-// 		const value = getRuleValue(key, meta, sourceConfigs);
+	/**
+	 * @note if a note is replaced by a plugin rule it will be added to 'disableLegacy' config
+	 * rules which originate in eslint-plugin-import-x won't be replaced
+	 */
+	let replaced = false;
 
-// 		if (!meta.deprecated) {
-// 			unprefixed[key] = 0;
-// 			prefixed[prefixedKey] = value;
-// 		} else {
-// 			prefixed[prefixedKey] = 0;
-// 		}
-// 	});
+	meta.plugins
+		.filter((plugin) => plugin.prefix !== 'type')
+		.forEach((plugin) => {
+			/** @note assume the orrect origin of the plugin rule */
+			if ((meta.unprefixed && plugin.prefix !== 'import')
+						|| (!meta.unprefixed && plugin.prefix === 'import')) {
+				console.log(rule, meta);
+				throw new Error(message);
+			}
 
-// 	targetConfigs.typescript.rules = {
-// 		...unprefixed,
-// 		...prefixed,
-// 	};
-// }
+			const prefixedRule = meta.unprefixed
+				? getPrefixedRule(plugin.prefix, meta.unprefixed)
+				: getPrefixedRule(plugin.prefix, rule);
+
+			const targetKey = mapPrefixToConfigKey(plugin.prefix);
+			const targetValue = plugin.deprecated
+				? 0 : value;
+			targetConfigs[targetKey].rules[prefixedRule] = targetValue;
+
+			replaced = !meta.unprefixed;
+		});
+
+	if (replaced) return replaced;
+
+	if (meta.plugins.length === 1 && meta.plugins[0].prefix !== 'type') {
+		return replaced;
+	}
+
+	/** @note the remaing rules have overlaps */
+	// console.log('remaining\n', rule, '\n', meta);
+
+	/** @note assume that all plugin rules are applied and the remaining rules might be added to typescript config */
+	if (!meta.plugins.find((plugin) => plugin.prefix === 'type')) {
+		console.log(rule, meta);
+		throw new Error(message);
+	}
+
+	return replaced;
+}
+
+function handleTypescriptRule(
+	rule: string,
+	meta: MetaDataProps,
+	value: Linter.RuleEntry,
+	targetConfigs: CustomConfigs,
+) {
+	if (!meta.plugins) return;
+
+	if (!meta.plugins.find((plugin) => plugin.prefix === 'type')) return;
+
+	meta.plugins
+		.filter((plugin) => plugin.prefix === 'type')
+		.forEach((plugin) => {
+			if (meta.deprecated && !plugin.replacedBy) {
+				/** @note assume that all deprecated rules have a replacement */
+				throw new Error(message);
+			}
+
+			if (meta.deprecated && plugin.replacedBy) {
+				/** @note assume that the deprecated rules are replaced by stylistic */
+				plugin.replacedBy.forEach((key) => {
+					if (key in targetConfigs.style.rules) return;
+					throw new Error(message);
+				});
+			}
+
+			if (meta.unprefixed) {
+				/** @todo special case */
+				console.log(rule, '\n', meta, '\n');
+				// return;
+			}
+
+			const prefixedRule = meta.unprefixed
+				? getPrefixedRule(plugin.prefix, meta.unprefixed)
+				: getPrefixedRule(plugin.prefix, rule);
+
+			if (plugin.deprecated) {
+				targetConfigs.typescript.rules[prefixedRule] = 0;
+				return;
+			}
+
+			targetConfigs.typescript.rules[rule] = 0;
+			targetConfigs.typescript.rules[prefixedRule] = value;
+		});
+}
 
 export function applyOptionsAndSettings(
 	sourceConfigs: ConvertedConfigs,

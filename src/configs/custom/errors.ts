@@ -1,5 +1,6 @@
 // FILE GENERATED WITH SCRIPT
-import type { FlatConfig } from '../../../scripts/types/configs.ts';
+
+import type { Linter } from 'eslint';
 
 export default {
 	name: 'airbnb:errors',
@@ -48,4 +49,4 @@ export default {
 		'use-isnan': 'error',
 		'valid-typeof': ['error', { requireStringLiterals: true }],
 	},
-} as FlatConfig;
+} as Linter.FlatConfig;
