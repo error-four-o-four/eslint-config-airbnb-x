@@ -52,7 +52,7 @@
 		"lint:check": "eslint .",
 		"lint:fix": "eslint . --fix",
 		"//tmp": "node --no-warnings=ExperimentalWarning --loader ts-node/esm scripts/tmp.ts",
-		"node:convert": "node --no-warnings=ExperimentalWarning --loader ts-node/esm scripts/compatConfigs.ts",
+		"node:compat": "node --no-warnings=ExperimentalWarning --loader ts-node/esm scripts/compatConfigs.ts",
 		"node:extract": "node --no-warnings=ExperimentalWarning --loader ts-node/esm scripts/extractData.ts",
 		"node:generate": "node --no-warnings=ExperimentalWarning --loader ts-node/esm scripts/generateConfigs.ts",
 		"node:merge": "node --no-warnings=ExperimentalWarning --loader ts-node/esm scripts/mergeConfigs.ts",

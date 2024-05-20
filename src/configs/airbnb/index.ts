@@ -1,4 +1,5 @@
-// FILE GENERATED WITH SCRIPT
+/** @file GENERATED WITH SCRIPT */
+
 import bestPractices from './best-practices.ts';
 import errors from './errors.ts';
 import node from './node.ts';

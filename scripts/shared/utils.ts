@@ -100,7 +100,7 @@ export function sortArrOfObjsByProp<
 const linter = new Linter({ configType: 'flat' });
 const config = await promisedConfig;
 
-export const NOTICE = '// FILE GENERATED WITH SCRIPT';
+export const NOTICE = '/** @file GENERATED WITH SCRIPT */';
 
 const root = fileURLToPath(new URL('../..', import.meta.url));
 

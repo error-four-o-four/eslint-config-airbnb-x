@@ -1,6 +1,6 @@
 /**
- * initial script
- * converts and writes 'airbnb' flat config files
+ * @file initial script
+ * writes compat 'airbnb' flat config files
  * to 'src/configs/airbnb'
  */
 
@@ -66,20 +66,22 @@ function convertBaseConfigs(entries: BaseConfigEntry[]) {
 		.config(base)
 		.reduce(
 			(all, data) => {
-				// this apllies to 'imports' config only
+				/** @note 'imports' config has 'eslint-plugin-import' */
 				if (data.plugins) {
-					// remove plugins. they're attached later
+					/**
+					 * @note
+					 * remove the property 'plugins'
+					 * use the custom plugin prefix
+					 */
 					delete data.plugins;
 
-					// rename prefix
-					assertNotNull(data.rules);
-
-					const prefixRule = (
+					const iterator = (
 						[rule, value]: [string, Linter.RuleEntry | undefined],
 					) => [`${pluginPrefix.import}/${rule.split('/')[1]}`, value];
 
+					assertNotNull(data.rules);
 					data.rules = Object.fromEntries(
-						Object.entries(data.rules).map(prefixRule),
+						Object.entries(data.rules).map(iterator),
 					);
 				}
 
@@ -93,12 +95,15 @@ function convertBaseConfigs(entries: BaseConfigEntry[]) {
 	);
 }
 
-// @todo ? => shared utils ?
+/** @todo ? => shared utils ? */
 function createConfigData(config: Linter.FlatConfig) {
-	return `${NOTICE}
-import { Linter } from 'eslint';
-export default ${JSON.stringify(config)} as Linter.FlatConfig;
-`;
+	const output = [
+		`${NOTICE}\n`,
+		'import { Linter } from \'eslint\';',
+		`export default ${JSON.stringify(config)} as Linter.FlatConfig;`,
+	].join('\n');
+
+	return output;
 }
 
 async function writeCompatConfigs(
@@ -118,7 +123,7 @@ async function writeCompatConfigs(
 
 async function writeIndexFile(path: string, names: string[]) {
 	const camelCaseNames = names.map((name) => toCamelCase(name));
-	let data = `${NOTICE}\n`;
+	let data = `${NOTICE}\n\n`;
 
 	data += `${camelCaseNames
 		.map((camel, i) => `import ${camel} from './${names[i]}.ts';`)
