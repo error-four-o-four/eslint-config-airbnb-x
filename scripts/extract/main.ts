@@ -6,18 +6,12 @@ import type {
 	RawMetaData,
 } from '../shared/types.ts';
 
-import rawMetaData from '../shared/raw.ts';
-
 import { pluginPrefix } from '../setupGlobal.ts';
 
-import { assertNotNull, getUnprefixedRule } from '../shared/utils.ts';
-import { findPlugins, renameReplacedByPrefix } from './utils.ts';
+import rawMetaData from '../shared/raw.ts';
 
-/**
- *
- * @param configs airbnb config files
- * @returns all rules which are used in airbnb config
- */
+import { assertNotNull, getUnprefixedRule } from '../shared/utils.ts';
+
 export function extractRules(configs: ConvertedConfigs) {
 	const tmp: Record<string, keyof ConvertedConfigs> = {};
 
@@ -41,7 +35,9 @@ export function extractMetaData(
 ) {
 	const isImportRule = rule.startsWith(pluginPrefix.import);
 	const unprefixed = isImportRule ? getUnprefixedRule(rule) : rule;
-	const origin: keyof Pick<RawMetaData, 'eslint' | 'import'> = isImportRule ? 'import' : 'eslint';
+
+	type Picked = keyof Pick<RawMetaData, 'eslint' | 'import'>;
+	const origin: Picked = isImportRule ? 'import' : 'eslint';
 
 	const raw = rawMetaData[origin].get(unprefixed);
 	assertNotNull(raw, `Could not get '${rule}' meta`);
@@ -63,6 +59,19 @@ export function extractMetaData(
 	return result;
 }
 
+function findPlugins(unprefixed: string) {
+	const plugins: (keyof PluginPrefix)[] = [];
+
+	(Object.keys(pluginPrefix) as (keyof PluginPrefix)[]).forEach(
+		(key) => {
+			if (!rawMetaData[key].has(unprefixed)) return;
+			plugins.push(key);
+		},
+	);
+
+	return plugins;
+}
+
 function extractPluginMetaData(origin: keyof PluginPrefix, unprefixed: string) {
 	const raw = rawMetaData[origin].get(unprefixed);
 	assertNotNull(raw, `Could not get '${unprefixed}' meta in '${origin}'`);
@@ -77,6 +86,46 @@ function extractPluginMetaData(origin: keyof PluginPrefix, unprefixed: string) {
 	return extracted;
 }
 
+function renameReplacedByPrefix(source: readonly string[] | undefined) {
+	if (!source) {
+		return undefined;
+	}
+
+	const regexSlash = /\//;
+	const regexEntries = Object.entries({
+		node: /^n\//,
+		style: /^@stylistic/,
+		type: /^@typescript/,
+	}) as [keyof Omit<PluginPrefix, 'import'>, RegExp][];
+
+	const iterator = (str: string) => {
+		if (!regexSlash.test(str)) {
+			return str as string;
+		}
+
+		const replacedBy = regexEntries.reduce((
+			result: string | undefined,
+			[key, re],
+		) => {
+			if (result) return result;
+
+			if (re.test(str)) return `${pluginPrefix[key]}/${str.split('/').at(-1)}`;
+
+			return result;
+		}, undefined);
+
+		if (!replacedBy) {
+			throw new Error('Missed \'replacedBy\' prefix');
+		}
+
+		return replacedBy;
+	};
+
+	return [...source].map(iterator);
+}
+
+// #####
+
 export function extractLiterals() {
 	return (Object.keys(rawMetaData) as (keyof RawMetaData)[])
 		.sort()
@@ -85,3 +134,29 @@ export function extractLiterals() {
 			[key]: [...rawMetaData[key].keys()],
 		}), {} as Record<keyof RawMetaData, string[]>);
 }
+
+/** @todo */
+// export function logEslint(data: MetaDataItem[]) {
+// 	const eslintCount = data.filter((item) => item.origin === 'eslint').length;
+// 	const eslintCountMax = rawMetaData.eslint.size;
+// 	console.log(
+// 		'\n\rExtracted',
+// 		eslintCount,
+// 		'rules of',
+// 		eslintCountMax,
+// 		'possible ESLint rules',
+// 	);
+
+// 	const importCount = data.filter((item) => item.origin === 'import').length;
+// 	const importCountMax = rawMetaData.import.size;
+// 	console.log(
+// 		'Extracted',
+// 		importCount,
+// 		'rules of',
+// 		importCountMax,
+// 		'possible \'eslint-plugin-import-x\' rules',
+// 	);
+
+// 	const deprecatedCount = data.filter((item) => item.deprecated).length;
+// 	console.log(deprecatedCount, 'rules are deprecated');
+// }

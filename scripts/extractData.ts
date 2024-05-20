@@ -1,7 +1,9 @@
 /**
- * extracts and writes deprecated meta data to
- * 'scripts/metadata.ts'
- * 'data/*'
+ * @file
+ * extracts and writes meta data to
+ * 'scripts/extractedMetaData.ts'
+ * 'scripts/extractedLiteralsData.ts'
+ * 'data/*.json'
  *
  * @todo
  * https://github.com/eslint/rfcs/pull/116
@@ -12,6 +14,7 @@ import { join } from 'path';
 import type {
 	RawMetaData,
 	MetaDataItem,
+	MetaDataProps,
 	AnyRecord,
 	ObjectEntry,
 } from './shared/types.ts';
@@ -36,52 +39,101 @@ import {
 
 const { url } = import.meta;
 
+/**
+ * @note
+ * an array of object literals
+ * { rule: string, source: keyof ConvertedConfigs }
+ * these are the rules which are use in 'eslint-config-airbnb-base'
+ */
 const rules = extractRules(convertedConfigs);
+
+/**
+ * @note
+ * iterate over each of these rules
+ * to get the corresponding MetaDataItem
+ * @see MetaDataItem scripts/shared/types.ts
+ */
 const items = rules.map((item) => extractMetaData(item));
+
+/**
+ * @note
+ * store the rules as string literals
+ * to support autocomplete
+ */
 const literals = extractLiterals();
 
-const jsonData = createJsonData(items);
-const jsonDestination = resolvePath('../data/', url);
+/**
+ * @note
+ * create a Record of all rules and their props
+ * @see MetaDataProps scripts/shared/types.ts
+ */
+const rulesRecordUnsorted = items.reduce((result, item) => {
+	const {
+		rule,
+		source,
+		...vals
+	} = item;
 
-ensureFolder(jsonDestination);
-Object.keys(jsonData).forEach((key) => {
-	writeJson(
-		join(jsonDestination, `${key}.json`),
-		jsonData[key as keyof typeof jsonData],
-	);
-});
-
-const destination = resolvePath('./', url);
-writeFile(join(destination, 'extractedMetaData.ts'), createMetaData(items));
-writeFile(join(destination, 'extractedLiteralsData.ts'), createLiteralsData(literals));
-
-// #####
-
-function createJsonData(input: MetaDataItem[]) {
-	const metadata = input.reduce((all, item) => {
-		const { rule, ...vals } = item;
-		return {
-			...all,
-			[rule]: vals,
-		};
-	}, {} as AnyRecord);
-
-	const legacy = input.reduce((all, item) => {
-		if (!item.deprecated) return all;
-
-		const { rule, ...vals } = item;
-
-		return {
-			...all,
-			[rule]: vals,
-		};
-	}, {} as AnyRecord);
+	const target = (source in result) ? result[source] : {};
+	target[rule] = vals;
 
 	return {
-		metadata,
-		legacy,
+		...result,
+		...{ [source]: target },
 	};
-}
+}, {} as Record<
+	string,
+	Record<string, Partial<MetaDataProps>>
+>);
+
+const rulesRecord = Object.keys(rulesRecordUnsorted)
+	.sort()
+	.reduce((result, key) => ({
+		...result,
+		[key]: rulesRecordUnsorted[key],
+	}), {});
+
+/**
+ * @note
+ * create a Record of deprecated rules and their props
+ */
+const legacyRecord = items.reduce((all, item) => {
+	if (!item.deprecated) return all;
+
+	const { rule, ...vals } = item;
+
+	return {
+		...all,
+		[rule]: vals,
+	};
+}, {} as Record<string, MetaDataProps>);
+
+const jsonDestination = resolvePath('../data/', url);
+ensureFolder(jsonDestination);
+
+writeJson(
+	join(jsonDestination, 'metadata.json'),
+	rulesRecord,
+);
+writeJson(
+	join(jsonDestination, 'legacy.json'),
+	legacyRecord,
+);
+
+// ####
+
+const destination = resolvePath('./', url);
+
+writeFile(
+	join(destination, 'extractedMetaData.ts'),
+	createMetaData(items),
+);
+writeFile(
+	join(destination, 'extractedLiteralsData.ts'),
+	createLiteralsData(literals),
+);
+
+// #####
 
 function createMetaData(input: MetaDataItem[]) {
 	const data = input.reduce((all, item) => {
@@ -95,13 +147,19 @@ function createMetaData(input: MetaDataItem[]) {
 		};
 	}, {} as AnyRecord);
 
-	const declaration = 'customMetaData';
+	const dataDeclaration = 'customMetaData';
+	const typeDeclaration = 'MetaDataProps';
+	const typeAssertion = `Record<string, ${typeDeclaration}>`;
 
-	return `${NOTICE}\n
-	import type { MetaDataProps } from './shared/types.ts';\n
-	const data = ${JSON.stringify(data)} as Record<string, MetaDataProps>;\n
-	const ${declaration} = new Map(Object.entries(data));\n
-	export default ${declaration}\n`;
+	const output = [
+		NOTICE,
+		`import type { ${typeDeclaration} } from './shared/types.ts';`,
+		`const data = ${JSON.stringify(data)} as ${typeAssertion};`,
+		`const ${dataDeclaration} = new Map(Object.entries(data));`,
+		`export default ${dataDeclaration}`,
+	].join('\n\n');
+
+	return output;
 }
 
 function createLiteralsData(input: Record<keyof RawMetaData, string[]>) {
@@ -109,6 +167,7 @@ function createLiteralsData(input: Record<keyof RawMetaData, string[]>) {
 
 	const strRule = 'Rule';
 	const strRulesArray = 'RulesArray';
+	const strPluginRule = 'PluginRule';
 	const strUnprefixed = 'Unprefixed';
 
 	const map: Record<keyof RawMetaData, string> = {
@@ -144,25 +203,30 @@ function createLiteralsData(input: Record<keyof RawMetaData, string[]>) {
 		const isEslint = key === 'eslint';
 		const [varDeclaration, typeDeclaration] = declarations[key];
 
-		// eslint-disable-next-line stylistic/max-len
-		let output = `export const ${varDeclaration} = ${JSON.stringify(array)} as const;\n\n`;
+		const output = [
+			'\n',
+			// eslint-disable-next-line stylistic/max-len
+			`export const ${varDeclaration} = ${JSON.stringify(array)} as const;\n`,
+		];
 
 		if (isEslint) {
 			// eslint-disable-next-line stylistic/max-len
-			output += `export type ${typeDeclaration} = (typeof ${varDeclaration})[number];\n`;
+			output.push(`export type ${typeDeclaration} = (typeof ${varDeclaration})[number];`);
 		} else {
 			// eslint-disable-next-line stylistic/max-len
 			const typeDeclarationWithUnprefixed = `${strUnprefixed}${typeDeclaration}`;
 			// eslint-disable-next-line stylistic/max-len
 			const typeLiteralValue = `${pluginPrefix[key]}/\${${typeDeclarationWithUnprefixed}}`;
 			// eslint-disable-next-line stylistic/max-len
-			output += `export type ${typeDeclarationWithUnprefixed} = (typeof ${varDeclaration})[number];\n`;
+			output.push(`export type ${typeDeclarationWithUnprefixed} = (typeof ${varDeclaration})[number];`);
 			// eslint-disable-next-line stylistic/max-len
-			output += `export type ${typeDeclaration} = \`${typeLiteralValue}\`\n`;
+			output.push(`export type ${typeDeclaration} = \`${typeLiteralValue}\`\n`);
 		}
 
-		return output;
+		return output.join('\n');
 	};
+
+	const entries = Object.entries(input) as Entry[];
 
 	const unprefixedDeclarations = Object.keys(declarations)
 		.filter((key): key is keyof Omit<RawMetaData, 'eslint'> => key !== 'eslint')
@@ -172,9 +236,16 @@ function createLiteralsData(input: Record<keyof RawMetaData, string[]>) {
 			return `${strUnprefixed}${typeDeclaration}`;
 		}).join('\n\t| ');
 
-	const entries = Object.entries(input) as Entry[];
+	const pluginRuleDeclarations = Object.keys(declarations)
+		.filter((key): key is keyof Omit<RawMetaData, 'eslint'> => key !== 'eslint')
+		.map((key) => declarations[key][1]).join('\n\t| ');
 
-	return `${NOTICE}
-	${entries.map(iterator).join('\n')}
-	export type UnprefixedRule = ${unprefixedDeclarations};\n`;
+	const output = [
+		NOTICE,
+		entries.map(iterator).join('\n'),
+		`export type ${strUnprefixed}${strPluginRule} = ${unprefixedDeclarations};\n`,
+		`export type ${strPluginRule} = ${pluginRuleDeclarations};`,
+	].join('\n');
+
+	return output;
 }
