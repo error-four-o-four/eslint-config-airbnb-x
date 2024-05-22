@@ -1,7 +1,16 @@
-/* eslint-disable stylistic/indent */
 import type { Linter } from 'eslint';
 
-// import type { ConvertedConfigs } from '../shared/types.ts';
+/** @note created with 'node:extract' */
+import type {
+	ESLintRule,
+	PluginRule,
+} from '../extractedLiteralsData.ts';
+
+import type {
+	MetaDataProps,
+	MetaDataPluginProps,
+	PartiallyRequired,
+} from '../shared/types.ts';
 
 import {
 	customConfigKeys,
@@ -9,14 +18,6 @@ import {
 	configKeysWithOptions,
 	configKeysWithSettings,
 } from './setup.ts';
-
-// export type ConvertedConfigKeysWithOptions = keyof Pick<
-// 	ConvertedConfigs,
-// 	'es6' | 'imports' | 'node'
-// >;
-
-type PartiallyRequired<T, K extends keyof T> = Omit<T, K> &
-	Required<Pick<T, K>>;
 
 type ConfigWithRules = PartiallyRequired<Linter.FlatConfig, 'rules'>;
 
@@ -45,4 +46,21 @@ export type LanguageOptionsCreator = {
 
 export type SettingsCreator = {
 	[K in CustomConfigKeysWithSettings]: ({ settings }: Linter.FlatConfig) => Linter.FlatConfig['settings']
+};
+
+// #####
+
+export type RuleProps = {
+	key: keyof CustomConfigs,
+	rule: ESLintRule | PluginRule,
+	value: Linter.RuleEntry;
+};
+
+export type ReplacementOptions = {
+	meta: MetaDataProps;
+	value: Linter.RuleEntry;
+};
+
+export type OverwriteOptions = ReplacementOptions & {
+	plugin?: MetaDataPluginProps;
 };

@@ -63,14 +63,18 @@ export function toKebabCase(input: string) {
 		.toLowerCase();
 }
 
-export function getPrefixedRule<T extends string>(
+export function getPrefixedRule<T extends string = string>(
 	prefix: keyof PluginPrefix,
-	rule: T,
+	rule: string,
 ) {
-	return `${prefix}/${rule}`;
+	return `${prefix}/${rule}` as T;
 }
 
 const regExPrefixed = /\//;
+
+export function isPrefixed(rule: string) {
+	return (regExPrefixed.test(rule));
+}
 
 export function getUnprefixedRule<T extends string>(rule: T) {
 	return (regExPrefixed.test(rule)) ? rule.split('/')[1] : rule;

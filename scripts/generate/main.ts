@@ -1,11 +1,24 @@
 import type { Linter } from 'eslint';
-import type { CustomConfigs } from './types.ts';
 
-import type { ConvertedConfigs, MetaDataProps } from '../shared/types.ts';
+/** @note created with 'node:extract' */
+import type { PluginRule } from '../extractedLiteralsData.ts';
 
+import type {
+	ConvertedConfigs,
+	MetaDataProps,
+	MetaDataPluginProps,
+} from '../shared/types.ts';
+
+import type {
+	CustomConfigs,
+	RuleProps,
+} from './types.ts';
+
+/** @note created with 'node:extract' */
 import customMetaData from '../extractedMetaData.ts';
 
 import {
+	assertNotNull,
 	toKebabCase,
 	getPrefixedRule,
 } from '../shared/utils.ts';
@@ -22,8 +35,20 @@ import {
 } from './options.ts';
 
 import {
+	hasBeenReplaced,
+	requiresReplacement,
+	getReplacement,
+} from './replacements.ts';
+
+import {
+	requiresOverwrite,
+	getOverwrite,
+} from './overwrites.ts';
+
+import {
 	configHasOptions,
 	configHasSettings,
+	verify,
 	getRuleValue,
 	mapConfigKeys,
 	mapPrefixToConfigKey,
@@ -55,156 +80,222 @@ export function createCustomConfigs() {
 	);
 }
 
-const message = 'Made a wrong assumption';
-
 export function applyCustomMetaData(
 	sourceConfigs: ConvertedConfigs,
 	targetConfigs: CustomConfigs,
 ) {
 	customMetaData.forEach((meta, rule) => {
-		const value = getRuleValue(rule, meta, sourceConfigs);
-		const replaced = handlePluginRule(rule, meta, value, targetConfigs);
-		handleTypescriptRule(rule, meta, value, targetConfigs);
+		let replaced = false;
+		let handled = false;
 
-		if (meta.replacedBy) {
-			/** @todo create manual overwrite */
-			/** @todo consider to define replacements explicetly => 'replacements.ts' */
-			console.log(`Replacement required '${rule}' => '${meta.replacedBy}'`);
-		}
+		if (meta.plugins) {
+			replaced = handlePluginsRule(
+				rule,
+				meta,
+				sourceConfigs,
+				targetConfigs,
+			);
 
-		if ((meta.deprecated || replaced) && !meta.unprefixed) {
-			targetConfigs.disableLegacy.rules[rule] = 0;
-			return;
-		}
+			const pluginTS = meta.plugins.find((data) => data.prefix === 'type');
 
-		if (meta.deprecated) {
-			return;
-		}
-
-		if (!meta.deprecated) {
-			const targetKey = mapConfigKeys(meta.source);
-			const targetValue = getRuleValue(rule, meta, sourceConfigs);
-			targetConfigs[targetKey].rules[rule] = targetValue;
-			return;
-		}
-
-		/** @note this should never happen */
-		console.log(rule, '\n', meta, '\n');
-		throw new Error('Could not apply all rules');
-	});
-
-	// sort rules
-	customConfigKeys.forEach((config) => {
-		/** @todo put plugin rules at the end */
-		const target = targetConfigs[config];
-		target.rules = Object.keys(target.rules)
-			.sort()
-			.reduce((all, key) => ({
-				...all,
-				[key]: target.rules[key],
-			}), {});
-	});
-}
-
-function handlePluginRule(
-	rule: string,
-	meta: MetaDataProps,
-	value: Linter.RuleEntry,
-	targetConfigs: CustomConfigs,
-): boolean {
-	if (!meta.plugins) return false;
-
-	/**
-	 * @note if a note is replaced by a plugin rule it will be added to 'disableLegacy' config
-	 * rules which originate in eslint-plugin-import-x won't be replaced
-	 */
-	let replaced = false;
-
-	meta.plugins
-		.filter((plugin) => plugin.prefix !== 'type')
-		.forEach((plugin) => {
-			/** @note assume the orrect origin of the plugin rule */
-			if ((meta.unprefixed && plugin.prefix !== 'import')
-						|| (!meta.unprefixed && plugin.prefix === 'import')) {
-				console.log(rule, meta);
-				throw new Error(message);
+			if (pluginTS && verify.isImportXRule(rule)) {
+				/** @todo */
+				console.log(`Skipped overlapping rule '${rule}' in 'typescript'`, meta.plugins);
+				return;
 			}
 
-			const prefixedRule = meta.unprefixed
-				? getPrefixedRule(plugin.prefix, meta.unprefixed)
-				: getPrefixedRule(plugin.prefix, rule);
+			if (pluginTS) {
+				handleTypescriptRule(
+					rule,
+					meta,
+					pluginTS,
+					sourceConfigs,
+					targetConfigs,
+				);
+			}
 
-			const targetKey = mapPrefixToConfigKey(plugin.prefix);
-			const targetValue = plugin.deprecated
-				? 0 : value;
-			targetConfigs[targetKey].rules[prefixedRule] = targetValue;
+			if (verify.isImportXRule(rule)) {
+				/** @note exit early to narrow input of subsequent function */
+				return;
+			}
+		}
 
-			replaced = !meta.unprefixed;
-		});
+		/** @note 'replaced' is set to true when it should be added to 'disableLegacy' config */
+		handled = handleEslintRule(
+			rule,
+			meta,
+			sourceConfigs,
+			targetConfigs,
+			replaced,
+		);
 
-	if (replaced) return replaced;
+		if (!handled) {
+			/** @note this should never happen */
+			console.log(rule, '\n', meta, '\n');
+			throw new Error('Could not apply all rules');
+		}
+	});
 
-	if (meta.plugins.length === 1 && meta.plugins[0].prefix !== 'type') {
-		return replaced;
-	}
+	/** @note sort rules and prepend plugin rules */
+	sortRulesRecord(targetConfigs);
+}
 
-	/** @note the remaing rules have overlaps */
-	// console.log('remaining\n', rule, '\n', meta);
+const message = 'Made a wrong assumption';
 
-	/** @note assume that all plugin rules are applied and the remaining rules might be added to typescript config */
-	if (!meta.plugins.find((plugin) => plugin.prefix === 'type')) {
-		console.log(rule, meta);
+function handlePluginsRule(
+	rule: string,
+	meta: MetaDataProps,
+	sourceConfigs: ConvertedConfigs,
+	targetConfigs: CustomConfigs,
+): boolean {
+	assertNotNull(meta.plugins);
+
+	const plugins = meta.plugins.filter((plugin) => plugin.prefix !== 'type');
+
+	if (plugins.length === 0) return false;
+
+	if (plugins.length > 1) {
+		/** @todo */
+		console.log(`'${rule}' is included in several plugins`);
+		console.log(meta);
 		throw new Error(message);
 	}
 
-	return replaced;
+	const [plugin] = plugins;
+	const value = getRuleValue(rule, meta, sourceConfigs);
+	const props = getPluginRuleProps(rule, value, meta, plugin);
+	targetConfigs[props.key].rules[props.rule] = props.value;
+
+	return verify.isESLintRule(rule);
+}
+
+function getPluginRuleProps(
+	rule: string,
+	value: Linter.RuleEntry,
+	meta: MetaDataProps,
+	plugin: MetaDataPluginProps,
+) {
+	const prefixedRule = (verify.isImportXRule(rule))
+		? rule
+		: getPrefixedRule<PluginRule>(plugin.prefix, rule);
+
+	const result: RuleProps = {
+		key: mapPrefixToConfigKey(plugin.prefix),
+		rule: prefixedRule,
+		value,
+	};
+
+	if (requiresReplacement(prefixedRule)) {
+		return getReplacement(prefixedRule, meta, value);
+	}
+
+	if (requiresOverwrite(prefixedRule)) {
+		result.value = getOverwrite(prefixedRule, value, meta, plugin);
+		return result;
+	}
+
+	if (plugin.deprecated) {
+		result.value = 0;
+		return result;
+	}
+
+	result.value = value;
+	return result;
 }
 
 function handleTypescriptRule(
 	rule: string,
 	meta: MetaDataProps,
-	value: Linter.RuleEntry,
+	plugin: MetaDataPluginProps,
+	sourceConfigs: ConvertedConfigs,
 	targetConfigs: CustomConfigs,
 ) {
-	if (!meta.plugins) return;
+	/** @todo */
+	// if (verify.isImportXRule(rule)) {
+	// 	console.log('skipped overlapping rule in config \'typescript\'');
+	// 	console.log(rule, '\n', meta.plugins, '\n');
+	// 	return;
+	// }
 
-	if (!meta.plugins.find((plugin) => plugin.prefix === 'type')) return;
+	assertNotNull(meta.plugins);
 
-	meta.plugins
-		.filter((plugin) => plugin.prefix === 'type')
-		.forEach((plugin) => {
-			if (meta.deprecated && !plugin.replacedBy) {
-				/** @note assume that all deprecated rules have a replacement */
-				throw new Error(message);
-			}
+	const prefixedRule = getPrefixedRule(plugin.prefix, rule);
 
-			if (meta.deprecated && plugin.replacedBy) {
-				/** @note assume that the deprecated rules are replaced by stylistic */
-				plugin.replacedBy.forEach((key) => {
-					if (key in targetConfigs.style.rules) return;
-					throw new Error(message);
-				});
-			}
+	if (plugin.deprecated) {
+		targetConfigs.typescript.rules[prefixedRule] = 0;
+		return;
+	}
 
-			if (meta.unprefixed) {
-				/** @todo special case */
-				console.log(rule, '\n', meta, '\n');
-				// return;
-			}
+	if (meta.deprecated) {
+		return;
+	}
 
-			const prefixedRule = meta.unprefixed
-				? getPrefixedRule(plugin.prefix, meta.unprefixed)
-				: getPrefixedRule(plugin.prefix, rule);
+	const sourceValue = getRuleValue(rule, meta, sourceConfigs);
+	const targetValue = requiresOverwrite(prefixedRule)
+		? getOverwrite(prefixedRule, sourceValue, meta, plugin) : sourceValue;
 
-			if (plugin.deprecated) {
-				targetConfigs.typescript.rules[prefixedRule] = 0;
-				return;
-			}
-
-			targetConfigs.typescript.rules[rule] = 0;
-			targetConfigs.typescript.rules[prefixedRule] = value;
-		});
+	targetConfigs.typescript.rules[rule] = 0;
+	targetConfigs.typescript.rules[prefixedRule] = targetValue;
 }
+
+function handleEslintRule(
+	rule: string,
+	meta: MetaDataProps,
+	sourceConfigs: ConvertedConfigs,
+	targetConfigs: CustomConfigs,
+	wasReplaced: boolean,
+) {
+	if (verify.isImportXRule(rule)) {
+		throw new Error('Expected \'ESLintRule\' - received \'ImportXRule\'');
+	}
+
+	/** @note check if the rule has already been replaced in 'eslint-config-airbnb-base' */
+	if (meta.replacedBy && hasBeenReplaced(rule, meta, sourceConfigs)) {
+		wasReplaced = true;
+	}
+
+	/** @note check the manually added replacements */
+	/** @todo consider to add condition !wasReplaced */
+	if (requiresReplacement(rule)) {
+		const value = getRuleValue(rule, meta, sourceConfigs);
+		const props = getReplacement(rule, meta, value);
+		targetConfigs[props.key].rules[props.rule] = props.value;
+		wasReplaced = true;
+	}
+
+	/** @note add all deprecated and replaced rules to 'disableLegacy' config */
+	if (meta.deprecated || wasReplaced) {
+		targetConfigs.disableLegacy.rules[rule] = 0;
+		return true;
+	}
+
+	if (!meta.deprecated) {
+		const targetKey = mapConfigKeys(meta.source);
+		const sourceValue = getRuleValue(rule, meta, sourceConfigs);
+		const targetValue = requiresOverwrite(rule)
+			? getOverwrite(rule, sourceValue, meta) : sourceValue;
+		targetConfigs[targetKey].rules[rule] = targetValue;
+		return true;
+	}
+
+	return false;
+}
+
+function sortRulesRecord(targetConfigs: CustomConfigs) {
+	customConfigKeys.forEach((config) => {
+		const target = targetConfigs[config];
+		const unprefixed = Object.keys(target.rules).filter((rule) => !rule.includes('/'));
+		const prefixed = Object.keys(target.rules).filter((rule) => rule.includes('/'));
+		const sorted = [...unprefixed.sort(), ...prefixed.sort()];
+
+		target.rules = sorted.reduce((all, key) => ({
+			...all,
+			[key]: target.rules[key],
+		}), {});
+	});
+}
+
+// #####
 
 export function applyOptionsAndSettings(
 	sourceConfigs: ConvertedConfigs,

@@ -1,17 +1,27 @@
 import type { Linter } from 'eslint';
 
-import type { ImportXRule } from '../extractedLiteralsData.ts';
-import type { MetaDataPluginProps, MetaDataProps } from '../shared/types.ts';
+import type {
+	MetaDataProps,
+	MetaDataPluginProps,
+} from '../shared/types.ts';
 
-// import { assertNotNull } from '../shared/utils.ts';
+import type {
+	RuleProps,
+	OverwriteOptions,
+} from './types.ts';
 
-const overwrites: Partial<{
-	[K in ImportXRule]:
-	(
-		source?: Linter.RuleEntry,
-		meta?: MetaDataProps | MetaDataPluginProps
-	) => Linter.RuleLevel | Linter.RuleLevelAndOptions
-}> = {
+import { verify } from './utils.ts';
+
+const overwrites: Partial<
+	Record<
+		RuleProps['rule'],
+		({
+			value,
+			meta,
+			plugin,
+		}: OverwriteOptions) => Linter.RuleEntry
+	>
+> = {
 	/**
 	 * @todo
 	 * rule exists in import and typescript plugin
@@ -42,11 +52,8 @@ const overwrites: Partial<{
 
 	// 	return value;
 	// },
-
-	'import/no-extraneous-dependencies': (value) => {
-		if (!Array.isArray(value)) {
-			throw new Error('Expected \'RuleLevelAndOptions\' Array');
-		}
+	'import/no-extraneous-dependencies': ({ value }) => {
+		assertRuleLevelAndOptions(value);
 
 		const [severity, dependants] = value;
 
@@ -63,30 +70,132 @@ const overwrites: Partial<{
 			},
 		];
 	},
+
+	// enforce line breaks after opening and before closing array brackets
+	// https://eslint.org/docs/rules/array-bracket-newline
+	// TODO: enable? semver-major
+	// 'array-bracket-newline': ['off', 'consistent'],; // object option alternative: { multiline: true, minItems: 3 }
+	// https://eslint.style/rules/js/array-bracket-newline
+	'style/array-bracket-newline': () => ['error', 'consistent'],
+
+	// enforce line breaks between array elements
+	// https://eslint.org/docs/rules/array-element-newline
+	// TODO: enable? semver-major
+	// 'array-element-newline': ['off', { multiline: true, minItems: 3 }],
+	// https://eslint.style/rules/js/array-element-newline
+	'style/array-element-newline': ({ value }) => {
+		assertRuleLevelAndOptions(value);
+
+		const options = value[1];
+
+		return ['error', options];
+	},
+
+	// specify the maximum length of a line in your program
+	// https://eslint.org/docs/rules/max-len
+	// 'max-len': ['error', 100, 2, {
+	// 	ignoreUrls: true,
+	// 	ignoreComments: false,
+	// 	ignoreRegExpLiterals: true,
+	// 	ignoreStrings: true,
+	// 	ignoreTemplateLiterals: true,
+	// }],
+	// https://eslint.style/rules/js/max-len
+	'style/max-len': ({ value }) => {
+		assertRuleLevelAndOptions(value);
+
+		const [
+			severity,
+			code,
+			tabWidth,
+			options
+		] = value;
+
+		return [
+			severity,
+			{
+				code,
+				tabWidth,
+				...options,
+			},
+		];
+	},
+
+	// Require or disallow padding lines between statements
+	// https://eslint.org/docs/rules/padding-line-between-statements
+	// 'padding-line-between-statements': 'off',
+	// https://eslint.style/rules/ts/padding-line-between-statements
+	'style/padding-line-between-statements': () => [
+		'error',
+		{
+			blankLine: 'always',
+			prev: '*',
+			next: 'directive',
+		},
+		{
+			blankLine: 'always',
+			prev: 'directive',
+			next: '*',
+		},
+	],
+
+	// https://eslint.org/docs/latest/rules/no-template-curly-in-string
+	'template-curly-spacing': ({ value }) => {
+		assertRuleLevel(value);
+
+		return [value, 'never'];
+	},
 };
 
-// function assertMetaDataProps(
-// 	meta: MetaDataProps | MetaDataPluginProps,
-// ): meta is MetaDataProps {
-// 	return ('plugins' in meta);
-// }
-
-const keys = Object.keys(overwrites);
-
-export function hasOverwrite(rule: string): rule is ImportXRule {
-	return keys.includes(rule);
+function assertRuleLevel(
+	value: Linter.RuleEntry,
+): asserts value is Linter.RuleLevel {
+	if (Array.isArray(value)) {
+		throw new Error('Expected \'RuleLevelAndOptions\' Array');
+	}
 }
 
-export function overwrite<K extends ImportXRule>(
-	rule: K,
-	value?: Linter.RuleEntry,
-	meta?: MetaDataProps | MetaDataPluginProps,
-) {
-	const fn = overwrites[rule];
+function assertRuleLevelAndOptions(
+	value: Linter.RuleEntry,
+): asserts value is Linter.RuleLevelAndOptions {
+	if (!Array.isArray(value)) {
+		throw new Error('Expected \'RuleLevelAndOptions\' Array');
+	}
+}
 
-	if (fn) {
-		return fn(value, meta);
+const keys = Object.keys(overwrites);
+//  as (RuleProps['rule'])[];
+
+export function requiresOverwrite(rule: string) {
+	return keys.includes(rule as RuleProps['rule']);
+}
+
+export function getOverwrite(
+	rule: string,
+	value: RuleProps['value'],
+	meta: MetaDataProps,
+	plugin?: MetaDataPluginProps,
+): Linter.RuleEntry {
+	const isEslintRule = verify.isESLintRule(rule);
+	const isPluginRule = verify.isPluginRule(rule);
+
+	if (!isEslintRule && !isPluginRule) {
+		throw new Error(`Expected valid rule - '${rule}' is invalid`);
 	}
 
-	throw new Error(`Expected overwrite for '${rule}' to be defined`);
+	const fn = overwrites[rule];
+
+	if (!fn) {
+		throw new Error(`Expected overwrite for '${rule}' to be defined`);
+	}
+
+	const result = fn({
+		value,
+		meta,
+		plugin,
+	});
+
+	console.log(`Overwritten '${rule}' in '${meta.source}'`);
+
+	return result;
 }

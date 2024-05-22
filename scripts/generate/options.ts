@@ -1,6 +1,6 @@
 import globals from 'globals';
 
-import { Linter } from 'eslint';
+import type { Linter } from 'eslint';
 
 import type {
 	LanguageOptionsCreator,
