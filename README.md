@@ -1,4 +1,4 @@
-# eslint-config-airbnb-flat
+# eslint-config-airbnb-ts
 
 Unofficial migration of the airbnb styleguide from eslintrc format to [flat config ](https://eslint.org/docs/latest/use/configure/configuration-files-new) file format.
 
@@ -7,7 +7,7 @@ Unofficial migration of the airbnb styleguide from eslintrc format to [flat conf
 ### Install
 
 ```
-npm i -D eslint-config-airbnb-flat
+npm i -D eslint-config-airbnb-ts
 ```
 
 ### Configure
@@ -29,22 +29,22 @@ export default defineConfig({
 
 The default export is a function which accepts custom overrides and returns an optimized version of the [eslint-config-airbnb-base](https://github.com/airbnb/javascript/tree/master/packages/eslint-config-airbnb-base) config.
 
-- All [deprecated rules](./legacy.json) are disabled.
-- [eslint-plugin-import](https://github.com/import-js/eslint-plugin-import) was replaced by [eslint-plugin-i](https://github.com/un-es/eslint-plugin-i)
+- All [deprecated rules](./data/legacy.json) are disabled
+- [eslint-plugin-n](https://github.com/eslint-community/eslint-plugin-n) and [eslint-stylistic](https://github.com/eslint-stylistic/eslint-stylistic) were added
+- [eslint-plugin-import-x](https://github.com/import-js/eslint-plugin-import) was replaced by [eslint-plugin-import-x](https://github.com/un-ts/eslint-plugin-import-x)
 - [eslint-import-resolver-typescript](https://www.npmjs.com/package/eslint-import-resolver-typescript) is used by default to support ['imports' and 'exports' fields in package.json](https://github.com/import-js/eslint-plugin-import/issues/1868)
-- [eslint-plugin-n](https://github.com/eslint-community/eslint-plugin-n) and [eslint-stylistic](https://github.com/eslint-stylistic/eslint-stylistic) were added.
-- [typescript](https://www.typescriptlang.org/) is auto-detected and works out-of-box (heavily inspired by [Anthony Fu](https://github.com/antfu)s [config](https://github.com/antfu/eslint-config/tree/main)).
+- [typescript-eslint](https://github.com/typescript-eslint/typescript-eslint) is used to support [typescript](https://www.typescriptlang.org/). It's auto-detected and works out-of-box (heavily inspired by [Anthony Fu](https://github.com/antfu)s [config](https://github.com/antfu/eslint-config/tree/main)).
 
 ### Customize
 
 If you want to override one of the rules of the added plugins, make sure to use the corresponding prefix:
 
-| Original Prefix        | New prefix     |
-| ---------------------- | -------------- |
-| `i/*`                  | `import/*`     |
-| `n/*`                  | `node/*`       |
-| `@typescript-eslint/*` | `typescript/*` |
-| `@stylistic/*`         | `stylistic/*`  |
+| Original Prefix        | New prefix  |
+| ---------------------- | ----------- |
+| `import-x              | `import/*`  |
+| `n/*`                  | `node/*`    |
+| `@stylistic/*`         | `style/*`   |
+| `@typescript-eslint/*` | `type/*`    |
 
 You can also use only specific configuration files:
 
@@ -66,12 +66,6 @@ console.log(Object.keys(configs));
 
 ### Roadmap
 
-- ✅ bundle (with esbuild to esm)
-- ✅ convert (whole) codebase to typescript
-- ✅ ~~export~~ create type declarations (defineBaseConfig)
-- ✅ add stylistic plugin and rules
-- 🔳 add tests (esp. import/no-unresolved)
-- ✅ deprecated: node/no-hide-core-modules, node/no-unsupported-features
 - 🔳 node: differentiate esm and cjs globals (?)
 - 🔳 support typescript in monorepo (parserOptions.project is set to 'true')
 - 🔳 support React (jsx, tsx)
