@@ -7,7 +7,7 @@ import pluginImport from 'eslint-plugin-import-x';
 import pluginStylistic from '@stylistic/eslint-plugin';
 import pluginTypescript from '@typescript-eslint/eslint-plugin';
 
-import type { RawMetaData } from './types.ts';
+import type { RawMetaData } from './types/main.ts';
 
 import { assertNotNull } from './utils.ts';
 

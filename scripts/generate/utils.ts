@@ -19,7 +19,7 @@ import type {
 	ConvertedConfigs,
 	PluginPrefix,
 	MetaDataProps,
-} from '../shared/types.ts';
+} from '../shared/types/main.ts';
 
 import type {
 	CustomConfigs,

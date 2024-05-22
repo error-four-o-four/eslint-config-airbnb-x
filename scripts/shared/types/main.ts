@@ -1,8 +1,9 @@
 import type { Rule } from 'eslint';
 
-import convertedConfigs from '../../src/configs/airbnb/index.ts';
+/** @note created with 'node:compat' */
+import convertedConfigs from '../../../src/configs/airbnb/index.ts';
 
-import { pluginPrefix } from '../setupGlobal.ts';
+import { pluginPrefix } from '../../setupGlobal.ts';
 
 export type ConvertedConfigs = typeof convertedConfigs;
 
@@ -34,14 +35,3 @@ export type MetaDataPluginProps = BaseProps & {
 export type MetaDataItem = MetaDataProps & {
 	rule: string,
 };
-
-// ##### Utils
-
-export type AnyRecord = Record<string, any>;
-
-export type ObjectEntry<T> = [keyof T, T[keyof T]];
-
-export type ValueOf<T> = T[keyof T];
-
-export type PartiallyRequired<T, K extends keyof T> = Omit<T, K> &
-	Required<Pick<T, K>>;

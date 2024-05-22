@@ -9,8 +9,11 @@ import type {
 import type {
 	MetaDataProps,
 	MetaDataPluginProps,
+} from '../shared/types/main.ts';
+
+import type {
 	PartiallyRequired,
-} from '../shared/types.ts';
+} from '../shared/types/utils.ts';
 
 import {
 	customConfigKeys,

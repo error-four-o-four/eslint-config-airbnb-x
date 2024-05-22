@@ -4,7 +4,7 @@ import type {
 	MetaDataPluginProps,
 	PluginPrefix,
 	RawMetaData,
-} from '../shared/types.ts';
+} from '../shared/types/main.ts';
 
 import { pluginPrefix } from '../setupGlobal.ts';
 

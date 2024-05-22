@@ -15,9 +15,12 @@ import type {
 	RawMetaData,
 	MetaDataItem,
 	MetaDataProps,
+} from './shared/types/main.ts';
+
+import type {
 	AnyRecord,
 	ObjectEntry,
-} from './shared/types.ts';
+} from './shared/types/utils.ts';
 
 import convertedConfigs from '../src/configs/airbnb/index.ts';
 
@@ -153,7 +156,7 @@ function createMetaData(input: MetaDataItem[]) {
 
 	const output = [
 		NOTICE,
-		`import type { ${typeDeclaration} } from './shared/types.ts';`,
+		`import type { ${typeDeclaration} } from './shared/types/main.ts';`,
 		`const data = ${JSON.stringify(data)} as ${typeAssertion};`,
 		`const ${dataDeclaration} = new Map(Object.entries(data));`,
 		`export default ${dataDeclaration}`,

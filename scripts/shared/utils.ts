@@ -15,7 +15,7 @@ import { fileURLToPath } from 'node:url';
 
 import { Linter } from 'eslint';
 
-import type { PluginPrefix } from './types.ts';
+import type { PluginPrefix } from './types/main.ts';
 
 // @ts-ignore tmp
 import promisedConfig from '../../eslint.config.js';

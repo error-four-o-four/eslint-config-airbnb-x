@@ -3,7 +3,7 @@ import type { Linter } from 'eslint';
 import type {
 	ConvertedConfigs,
 	MetaDataProps,
-} from '../shared/types.ts';
+} from '../shared/types/main.ts';
 
 import type {
 	RuleProps,

@@ -1,4 +1,4 @@
-import type { ConvertedConfigs } from '../shared/types.ts';
+import type { ConvertedConfigs } from '../shared/types/main.ts';
 
 // import type {
 // 	ConvertedConfigKeysWithOptions,

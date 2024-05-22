@@ -4,7 +4,7 @@ import type {
 	ConvertedConfigs,
 	MetaDataProps,
 	MetaDataItem,
-} from '../shared/types.ts';
+} from '../shared/types/main.ts';
 
 export type DecoratedIterator = (
 	config: keyof ConvertedConfigs,

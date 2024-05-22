@@ -3,7 +3,7 @@ import type { Linter } from 'eslint';
 import type {
 	MetaDataProps,
 	MetaDataPluginProps,
-} from '../shared/types.ts';
+} from '../shared/types/main.ts';
 
 import type {
 	RuleProps,
@@ -108,7 +108,7 @@ const overwrites: Partial<
 			severity,
 			code,
 			tabWidth,
-			options
+			options,
 		] = value;
 
 		return [
