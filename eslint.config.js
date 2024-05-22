@@ -25,13 +25,21 @@ export default defineConfig(
 					ts: 'always',
 				},
 			],
+			// "flatTernaryExpressions": true (false by default) requires no indentation for ternary expressions which are nested in other ternary expressions.
+			// "offsetTernaryExpressions": true (false by default) requires indentation for values of ternary expressions.
 			'stylistic/indent': ['warn', 'tab'],
+			// https://eslint.style/rules/js/linebreak-style#using-this-rule-with-version-control-systems
 			'stylistic/linebreak-style': ['warn', 'windows'],
 			'stylistic/max-len': [
 				'warn',
 				{
-					ignoreStrings: true,
+					code: 80,
+					tabWidth: 2,
+					ignoreUrls: true,
 					ignoreComments: true,
+					ignoreRegExpLiterals: true,
+					ignoreStrings: true,
+					ignoreTemplateLiterals: true,
 				},
 			],
 			'stylistic/no-tabs': 0,
@@ -75,6 +83,7 @@ export default defineConfig(
 				},
 			],
 			'stylistic/object-property-newline': ['warn', { allowAllPropertiesOnSameLine: false }],
+			// https://eslint.style/rules/ts/lines-between-class-members#options
 		},
 	},
 	{
