@@ -9,7 +9,7 @@ import pluginTypescript from '@typescript-eslint/eslint-plugin';
 
 import type { RawMetaData } from './types/main.ts';
 
-import { assertNotNull } from './utils.ts';
+import { assertNotNull } from './utils/assert.ts';
 
 const eslintRules = new Linter().getRules();
 

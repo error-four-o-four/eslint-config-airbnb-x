@@ -10,7 +10,8 @@ import { pluginPrefix } from '../setupGlobal.ts';
 
 import rawMetaData from '../shared/raw.ts';
 
-import { assertNotNull, getUnprefixedRule } from '../shared/utils.ts';
+import { getUnprefixedRule } from '../shared/utils/main.ts';
+import { assertNotNull } from '../shared/utils/assert.ts';
 
 export function extractRules(configs: ConvertedConfigs) {
 	const tmp: Record<string, keyof ConvertedConfigs> = {};

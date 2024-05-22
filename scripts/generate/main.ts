@@ -17,11 +17,12 @@ import type {
 /** @note created with 'node:extract' */
 import customMetaData from '../extractedMetaData.ts';
 
+import { assertNotNull } from '../shared/utils/assert.ts';
+
 import {
-	assertNotNull,
 	toKebabCase,
 	getPrefixedRule,
-} from '../shared/utils.ts';
+} from '../shared/utils/main.ts';
 
 import {
 	customConfigKeys,

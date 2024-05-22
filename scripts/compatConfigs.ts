@@ -14,15 +14,15 @@ import { FlatCompat } from '@eslint/eslintrc';
 import airbnb from 'eslint-config-airbnb-base';
 
 import { pluginPrefix } from './setupGlobal.ts';
+import { toCamelCase } from './shared/utils/main.ts';
+import { assertNotNull } from './shared/utils/assert.ts';
 
 import {
 	NOTICE,
 	resolvePath,
 	ensureFolder,
 	writeFile,
-	toCamelCase,
-	assertNotNull,
-} from './shared/utils.ts';
+} from './shared/utils/write.ts';
 
 // #####
 

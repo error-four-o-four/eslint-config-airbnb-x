@@ -22,6 +22,7 @@ import type {
 	ObjectEntry,
 } from './shared/types/utils.ts';
 
+/** @note created with 'node:comnpat' */
 import convertedConfigs from '../src/configs/airbnb/index.ts';
 
 import { pluginPrefix } from './setupGlobal.ts';
@@ -32,7 +33,7 @@ import {
 	ensureFolder,
 	writeJson,
 	writeFile,
-} from './shared/utils.ts';
+} from './shared/utils/write.ts';
 
 import {
 	extractLiterals,

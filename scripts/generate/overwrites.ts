@@ -10,6 +10,11 @@ import type {
 	OverwriteOptions,
 } from './types.ts';
 
+import {
+	assertRuleLevel,
+	assertRuleLevelAndOptions,
+} from '../shared/utils/assert.ts';
+
 import { verify } from './utils.ts';
 
 const overwrites: Partial<
@@ -146,22 +151,6 @@ const overwrites: Partial<
 		return [value, 'never'];
 	},
 };
-
-function assertRuleLevel(
-	value: Linter.RuleEntry,
-): asserts value is Linter.RuleLevel {
-	if (Array.isArray(value)) {
-		throw new Error('Expected \'RuleLevelAndOptions\' Array');
-	}
-}
-
-function assertRuleLevelAndOptions(
-	value: Linter.RuleEntry,
-): asserts value is Linter.RuleLevelAndOptions {
-	if (!Array.isArray(value)) {
-		throw new Error('Expected \'RuleLevelAndOptions\' Array');
-	}
-}
 
 const keys = Object.keys(overwrites);
 //  as (RuleProps['rule'])[];

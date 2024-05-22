@@ -1,46 +1,40 @@
-import type { Linter } from 'eslint';
+// import type { Linter } from 'eslint';
 
-import {
-	addedConfigKeyValues,
-	airbnbConfigKeyValues,
-	configWithPluginKeyValues,
-	customConfigKeyValues,
-	mergedConfigKeyValues,
-} from '../utils/constants.ts';
+// import {
+// 	configWithPluginKeyValues,
+// 	mergedConfigKeyValues,
+// } from '../utils/constants.ts';
 
-import { PartiallyRequired } from './utils.ts';
+// import type { PartiallyRequired } from './utils.ts';
 
-export interface BaseConfig extends Linter.BaseConfig {}
-export type BaseConfigEntry = [AirbnbConfigKeys, BaseConfig];
+// import { addedConfigKeys, customConfigKeys } from '../generate/setup.ts';
 
-export type AddedConfigKeys = (typeof addedConfigKeyValues)[number];
-export type AirbnbConfigKeys = (typeof airbnbConfigKeyValues)[number];
-export type CustomConfigKeys = (typeof customConfigKeyValues)[number];
+// import convertedConfigs from '../../src/configs/airbnb/index.ts';
 
-export interface FlatConfig extends Linter.FlatConfig {}
+// export type ConvertedConfigs = typeof convertedConfigs;
+// export type ConvertedConfigKeys = keyof ConvertedConfigs;
 
-export type AirbnbConfigs = {
-	[K in AirbnbConfigKeys]: FlatConfig
-};
+// export type AddedConfigKeys = (typeof addedConfigKeys)[number];
+// export type CustomConfigKeys = (typeof customConfigKeys)[number];
 
-export type CustomConfigs = {
-	[K in CustomConfigKeys]: FlatConfig
-};
+// export type CustomConfigs = {
+// 	[K in CustomConfigKeys]: Linter.FlatConfig
+// };
 
-export type ConfigWithPluginKeys = (typeof configWithPluginKeyValues)[number];
+// export type ConfigWithPluginKeys = (typeof configWithPluginKeyValues)[number];
 
-//
-// mergeConfigs.ts
-//
+// //
+// // mergeConfigs.ts
+// //
 
-export type ConfigWithLanguageOptions = PartiallyRequired<FlatConfig, 'languageOptions'>;
+// export type ConfigWithLanguageOptions = PartiallyRequired<Linter.FlatConfig, 'languageOptions'>;
 
-export type MergedConfigKeys = (typeof mergedConfigKeyValues)[number];
+// export type MergedConfigKeys = (typeof mergedConfigKeyValues)[number];
 
-export type MergedConfigs = {
-	[K in MergedConfigKeys]: K extends 'base-mixed'
-		? PartiallyRequired<FlatConfig, 'languageOptions' | 'rules'>
-		: K extends 'base-js'
-			? PartiallyRequired<FlatConfig, 'settings' | 'rules'>
-			: PartiallyRequired<FlatConfig, 'languageOptions' | 'settings' | 'rules'>;
-};
+// export type MergedConfigs = {
+// 	[K in MergedConfigKeys]: K extends 'base-mixed'
+// 	? PartiallyRequired<Linter.FlatConfig, 'languageOptions' | 'rules'>
+// 	: K extends 'base-js'
+// 	? PartiallyRequired<Linter.FlatConfig, 'settings' | 'rules'>
+// 	: PartiallyRequired<Linter.FlatConfig, 'languageOptions' | 'settings' | 'rules'>;
+// };

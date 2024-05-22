@@ -10,7 +10,8 @@ import type {
 	ReplacementOptions,
 } from './types.ts';
 
-import { assertNotNull } from '../shared/utils.ts';
+import { assertNotNull } from '../shared/utils/assert.ts';
+
 import { mapConfigKeys, verify } from './utils.ts';
 
 /** @todo */

@@ -24,11 +24,10 @@ import {
 	NOTICE,
 	ensureFolder,
 	resolvePath,
-	toKebabCase,
 	writeFile,
-} from './shared/utils.ts';
+} from './shared/utils/write.ts';
 
-// #####
+import { toKebabCase } from './shared/utils/main.ts';
 
 /**
  *  @note

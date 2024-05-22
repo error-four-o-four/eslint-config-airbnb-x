@@ -38,10 +38,11 @@ import {
 } from '../extractedLiteralsData.ts';
 
 import {
-	assertNotNull,
 	isPrefixed,
 	getUnprefixedRule,
-} from '../shared/utils.ts';
+} from '../shared/utils/main.ts';
+
+import { assertNotNull } from '../shared/utils/assert.ts';
 
 import { pluginPrefix } from '../setupGlobal.ts';
 
