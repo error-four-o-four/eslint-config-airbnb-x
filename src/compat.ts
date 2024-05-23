@@ -1,7 +1,10 @@
-import { pluginImport, pluginPrefix } from './plugins.ts';
+import pluginImport from 'eslint-plugin-import-x';
+
+import { pluginPrefix } from '../scripts/setupGlobal.ts';
 
 import configs from './configs/airbnb/index.ts';
 
+// @ts-expect-error
 configs.imports.plugins = { [pluginPrefix.import]: pluginImport };
 
 const {

@@ -18,7 +18,6 @@ import { Linter } from 'eslint';
 // @ts-ignore tmp
 import promisedConfig from '../../../eslint.config.js';
 
-
 const linter = new Linter({ configType: 'flat' });
 const config = await promisedConfig;
 

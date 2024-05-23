@@ -207,11 +207,7 @@ function createLiteralsData(input: Record<keyof RawMetaData, string[]>) {
 		const isEslint = key === 'eslint';
 		const [varDeclaration, typeDeclaration] = declarations[key];
 
-		const output = [
-			'\n',
-			// eslint-disable-next-line stylistic/max-len
-			`export const ${varDeclaration} = ${JSON.stringify(array)} as const;\n`,
-		];
+		const output = ['\n', `export const ${varDeclaration} = ${JSON.stringify(array)} as const;\n`];
 
 		if (isEslint) {
 			// eslint-disable-next-line stylistic/max-len

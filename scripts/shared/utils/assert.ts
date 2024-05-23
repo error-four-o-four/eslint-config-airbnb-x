@@ -7,6 +7,15 @@ export function assertNotNull(
 	if (value === null || value === undefined) throw new Error(message);
 }
 
+export function assertIsString(
+	value: unknown,
+	message: string = 'Nope',
+): asserts value is string {
+	if (typeof value !== 'string') {
+		throw new Error(message);
+	}
+}
+
 export function assertRuleLevel(
 	value: Linter.RuleEntry,
 ): asserts value is Linter.RuleLevel {
