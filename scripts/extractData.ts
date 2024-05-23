@@ -12,15 +12,15 @@
 import { join } from 'path';
 
 import type {
+	Entry,
+	UnknownRecord,
+} from 'type-fest';
+
+import type {
 	RawMetaData,
 	MetaDataItem,
 	MetaDataProps,
 } from './shared/types/main.ts';
-
-import type {
-	AnyRecord,
-	ObjectEntry,
-} from './shared/types/utils.ts';
 
 /** @note created with 'node:comnpat' */
 import convertedConfigs from '../src/configs/airbnb/index.ts';
@@ -149,7 +149,7 @@ function createMetaData(input: MetaDataItem[]) {
 			...all,
 			[rule]: { ...vals },
 		};
-	}, {} as AnyRecord);
+	}, {} as UnknownRecord);
 
 	const dataDeclaration = 'customMetaData';
 	const typeDeclaration = 'MetaDataProps';
@@ -167,7 +167,7 @@ function createMetaData(input: MetaDataItem[]) {
 }
 
 function createLiteralsData(input: Record<keyof RawMetaData, string[]>) {
-	type Entry = ObjectEntry<typeof input>;
+	type MetaDataEntry = Entry<typeof input>;
 
 	const strRule = 'Rule';
 	const strRulesArray = 'RulesArray';
@@ -203,7 +203,7 @@ function createLiteralsData(input: Record<keyof RawMetaData, string[]>) {
 		Object.keys(map) as (keyof RawMetaData)[]
 	).reduce(mapReducer, {} as Record<keyof RawMetaData, string[]>);
 
-	const iterator = ([key, array]: Entry) => {
+	const iterator = ([key, array]: MetaDataEntry) => {
 		const isEslint = key === 'eslint';
 		const [varDeclaration, typeDeclaration] = declarations[key];
 
@@ -230,7 +230,7 @@ function createLiteralsData(input: Record<keyof RawMetaData, string[]>) {
 		return output.join('\n');
 	};
 
-	const entries = Object.entries(input) as Entry[];
+	const entries = Object.entries(input) as MetaDataEntry[];
 
 	const unprefixedDeclarations = Object.keys(declarations)
 		.filter((key): key is keyof Omit<RawMetaData, 'eslint'> => key !== 'eslint')
