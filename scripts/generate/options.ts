@@ -2,17 +2,18 @@ import globals from 'globals';
 
 import type { Linter } from 'eslint';
 
+import type { ImportSettings } from '../shared/types/main.ts';
+
 import type {
 	LanguageOptionsCreator,
 	SettingsCreator,
 } from './types.ts';
 
 import {
-	pluginPrefix,
 	ECMA_VERSION,
 	SOURCE_TYPE,
 	EXTS_JS,
-	EXTS_TS,
+	EXTS_MIXED,
 } from '../setupGlobal.ts';
 
 // #####
@@ -66,35 +67,24 @@ export const getLanguageOptions = {
 
 // #####
 
-const importSettingsKeys = {
-	extensions: `${pluginPrefix.import}/extensions`,
-	externalModuleFolders: `${pluginPrefix.import}/external-module-folders`,
-	parsers: `${pluginPrefix.import}/parsers`,
-	resolver: `${pluginPrefix.import}/resolver`,
-};
-
 export const getSettings = {
-	imports: ({ settings }) => ({
+	imports: ({ settings }): ImportSettings => ({
 		...settings,
-		[importSettingsKeys.extensions]: EXTS_JS,
-		[importSettingsKeys.parsers]: { espree: EXTS_JS },
-		[importSettingsKeys.resolver]: {
+		'import/extensions': EXTS_JS,
+		'import/parsers': { espree: EXTS_JS },
+		'import/resolver': {
 			node: { extensions: ['.json'] },
-			typescript: { extensions: EXTS_JS },
+			typescript: { extensions: EXTS_JS as string[] },
 		},
 	}),
-	typescript: ({ settings }) => {
-		const exts = [...EXTS_JS, ...EXTS_TS];
-
-		return {
-			...settings,
-			[importSettingsKeys.extensions]: exts,
-			[importSettingsKeys.externalModuleFolders]: ['node_modules', 'node_modules/@types'],
-			[importSettingsKeys.parsers]: { '@typescript-eslint/parser': exts },
-			[importSettingsKeys.resolver]: {
-				node: { extensions: ['.json'] },
-				typescript: { extensions: exts },
-			},
-		};
-	},
+	typescript: ({ settings }): ImportSettings => ({
+		...settings,
+		'import/extensions': EXTS_MIXED,
+		'import/external-module-folders': ['node_modules', 'node_modules/@types'],
+		'import/parsers': { '@typescript-eslint/parser': EXTS_MIXED },
+		'import/resolver': {
+			node: { extensions: ['.json'] },
+			typescript: { extensions: EXTS_MIXED as string[] },
+		},
+	}),
 } as SettingsCreator;
