@@ -6,11 +6,6 @@
  * it's necessary to run these beforehand
  */
 
-import { join } from 'path';
-
-import type { Linter } from 'eslint';
-import type { CustomConfigs } from './generate/types.ts';
-
 /** @note created with 'node:compat' */
 import convertedConfigs from '../src/configs/airbnb/index.ts';
 
@@ -20,14 +15,7 @@ import {
 	applyOptionsAndSettings,
 } from './generate/main.ts';
 
-import {
-	NOTICE,
-	ensureFolder,
-	resolvePath,
-	writeFile,
-} from './shared/utils/write.ts';
-
-import { toKebabCase } from './shared/utils/main.ts';
+import { write } from './shared/utils/write.ts';
 
 /**
  *  @note
@@ -59,65 +47,7 @@ applyOptionsAndSettings(convertedConfigs, customConfigs);
 
 // #####
 
-const destination = resolvePath('../src/configs/custom/', import.meta.url);
+const destination = './src/configs/custom';
 
-ensureFolder(destination);
-await writeCustomConfigs(destination, customConfigs);
-await writeIndexFile(`${destination}index.ts`, Object.keys(customConfigs));
-
-// #####
-
-function toData(config: Linter.FlatConfig) {
-	return [
-		NOTICE,
-		/** @todo */
-		// `import type { FlatConfig } from '../../../scripts/types/configs.ts';`,
-		'import type { Linter } from \'eslint\';',
-		`export default ${JSON.stringify(config)} as Linter.FlatConfig;`,
-	].join('\n\n');
-}
-
-async function writeCustomConfigs(folder: string, configs: CustomConfigs) {
-	await Object.entries(configs)
-		.reduce(async (chain, entry) => {
-			await chain;
-			const [name, config] = entry;
-
-			const path = join(folder, `${toKebabCase(name)}.ts`);
-			const data = toData(config);
-
-			return writeFile(path, data);
-		}, Promise.resolve());
-}
-
-async function writeIndexFile(path: string, names: string[]) {
-	const kebabCaseNames = names.map((name) => toKebabCase(name));
-
-	const importStatements = kebabCaseNames
-		.map((kebab, i) => `import ${names[i]} from './${kebab}.ts';`)
-		.join('\n');
-
-	const declaration = 'configs';
-
-	const configsDeclaration = [
-		`const ${declaration} = {`,
-		names.map((name) => `\t${name},`).join('\n'),
-		'};',
-	].join('\n');
-
-	const exportStatements = [
-		'export {',
-		`${names.map((name) => `\t${name},`).join('\n')}`,
-		'};',
-	].join('\n');
-
-	const data = [
-		NOTICE,
-		importStatements,
-		configsDeclaration,
-		exportStatements,
-		`export default ${declaration};`,
-	].join('\n\n');
-
-	await writeFile(path, data);
-}
+await write.configFiles(destination, customConfigs);
+write.indexFile(`${destination}/index.ts`, customConfigs);

@@ -7,7 +7,7 @@ import pluginTypescript from '@typescript-eslint/eslint-plugin';
 
 import parser from '@typescript-eslint/parser';
 
-import { pluginPrefix } from '../scripts/setupGlobal.ts';
+import { pluginPrefix } from './globalSetup.ts';
 
 import configs from './configs/custom/index.ts';
 

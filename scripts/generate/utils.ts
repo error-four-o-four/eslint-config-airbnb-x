@@ -44,7 +44,7 @@ import {
 
 import { assertNotNull } from '../shared/utils/assert.ts';
 
-import { pluginPrefix } from '../setupGlobal.ts';
+import { pluginPrefix } from '../../src/globalSetup.ts';
 
 import {
 	configKeysWithPlugin,

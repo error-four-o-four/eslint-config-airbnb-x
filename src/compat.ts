@@ -1,6 +1,6 @@
 import pluginImport from 'eslint-plugin-import-x';
 
-import { pluginPrefix } from '../scripts/setupGlobal.ts';
+import { pluginPrefix } from './globalSetup.ts';
 
 import configs from './configs/airbnb/index.ts';
 

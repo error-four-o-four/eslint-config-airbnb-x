@@ -2,9 +2,13 @@
  * @file initial script
  * writes compat 'airbnb' flat config files
  * to 'src/configs/airbnb'
+ *
+ * this script should run independently
+ * all subsequent scripts depend on the written config files
+ * e.g. type ConvertedConfigs
  */
 
-import { basename, join } from 'node:path';
+import { basename } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 import { Linter } from 'eslint';
@@ -13,16 +17,10 @@ import { FlatCompat } from '@eslint/eslintrc';
 // @ts-expect-error missing types
 import airbnb from 'eslint-config-airbnb-base';
 
-import { pluginPrefix } from './setupGlobal.ts';
-import { toCamelCase } from './shared/utils/main.ts';
-import { assertNotNull } from './shared/utils/assert.ts';
+import { pluginPrefix } from '../src/globalSetup.ts';
 
-import {
-	NOTICE,
-	resolvePath,
-	ensureFolder,
-	writeFile,
-} from './shared/utils/write.ts';
+import { assertNotNull } from './shared/utils/assert.ts';
+import { write } from './shared/utils/write.ts';
 
 // #####
 
@@ -32,12 +30,10 @@ type FlatConfigEntry = [string, Linter.FlatConfig];
 const baseConfigs = await importBaseConfigs();
 const flatConfigs = convertBaseConfigs(baseConfigs);
 
-const configKeys = baseConfigs.map(([key]) => key);
-const destination = resolvePath('../src/configs/airbnb/', import.meta.url);
+const destination = './src/configs/airbnb';
 
-ensureFolder(destination);
-writeCompatConfigs(destination, flatConfigs);
-writeIndexFile(`${destination}index.ts`, configKeys);
+await write.configFiles(destination, flatConfigs);
+write.indexFile(`${destination}/index.ts`, flatConfigs);
 
 // #####
 
@@ -57,7 +53,9 @@ async function importBaseConfigs(): Promise<BaseConfigEntry[]> {
 	return Promise.all(airbnb.extends.map(promiseBaseConfig));
 }
 
-function convertBaseConfigs(entries: BaseConfigEntry[]) {
+function convertBaseConfigs(
+	entries: BaseConfigEntry[],
+): FlatConfigEntry[] {
 	const compat = new FlatCompat({ baseDirectory: process.cwd() });
 
 	const convertBase2Flat = (
@@ -65,79 +63,42 @@ function convertBaseConfigs(entries: BaseConfigEntry[]) {
 	): Linter.FlatConfig => compat
 		.config(base)
 		.reduce(
-			(all, data) => {
-				/** @note 'imports' config has 'eslint-plugin-import' */
-				if (data.plugins) {
-					/**
-					 * @note
-					 * remove the property 'plugins'
-					 * use the custom plugin prefix
-					 */
-					delete data.plugins;
-
-					const iterator = (
-						[rule, value]: [string, Linter.RuleEntry | undefined],
-					) => [`${pluginPrefix.import}/${rule.split('/')[1]}`, value];
-
-					assertNotNull(data.rules);
-					data.rules = Object.fromEntries(
-						Object.entries(data.rules).map(iterator),
-					);
+			(all, config) => {
+				/**
+				 * @note
+				 * 'imports' config has 'eslint-plugin-import'
+				 * remove the property 'plugins'
+				 * use the custom plugin prefix
+				 * for rules and settings
+				 */
+				if (config.plugins) {
+					handleExceptions(config);
 				}
 
-				return Object.assign(all, data);
+				return Object.assign(all, config);
 			},
 			{},
 		);
 
 	return entries.map(
-		([name, base]) => [name, convertBase2Flat(base)] as FlatConfigEntry,
+		([name, base]) => ([name, convertBase2Flat(base)]),
 	);
 }
 
-/** @todo ? => shared utils ? */
-function createConfigData(config: Linter.FlatConfig) {
-	const output = [
-		`${NOTICE}\n`,
-		'import { Linter } from \'eslint\';',
-		`export default ${JSON.stringify(config)} as Linter.FlatConfig;`,
-	].join('\n');
+function handleExceptions(config: Linter.FlatConfig) {
+	delete config.plugins;
 
-	return output;
-}
+	const iterator = (
+		[rule, value]: [string, unknown],
+	) => [`${pluginPrefix.import}/${rule.split('/')[1]}`, value];
 
-async function writeCompatConfigs(
-	folder: string,
-	entries: FlatConfigEntry[],
-) {
-	await entries.reduce(async (chain, entry) => {
-		await chain;
-		const [name, config] = entry;
+	assertNotNull(config.rules);
+	config.rules = Object.fromEntries(
+		Object.entries(config.rules).map(iterator),
+	);
 
-		const path = join(folder, `${name}.ts`);
-		const data = createConfigData(config);
-
-		return writeFile(path, data);
-	}, Promise.resolve());
-}
-
-async function writeIndexFile(path: string, names: string[]) {
-	const camelCaseNames = names.map((name) => toCamelCase(name));
-	let data = `${NOTICE}\n\n`;
-
-	data += `${camelCaseNames
-		.map((camel, i) => `import ${camel} from './${names[i]}.ts';`)
-		.join('\n')}\n\n`;
-
-	data += 'const configs = {\n';
-	data += `${camelCaseNames.map((camel) => `\t${camel},`).join('\n')}\n`;
-	data += '};\n\n';
-
-	data += 'export {\n';
-	data += `${camelCaseNames.map((camel) => `\t${camel},`).join('\n')}\n`;
-	data += '};\n\n';
-
-	data += 'export default configs;';
-
-	await writeFile(path, data);
+	assertNotNull(config.settings);
+	config.settings = Object.fromEntries(
+		Object.entries(config.settings).map(iterator),
+	);
 }

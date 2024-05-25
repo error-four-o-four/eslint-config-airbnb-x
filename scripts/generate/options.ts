@@ -14,7 +14,7 @@ import {
 	SOURCE_TYPE,
 	EXTS_JS,
 	EXTS_MIXED,
-} from '../setupGlobal.ts';
+} from '../../src/globalSetup.ts';
 
 // #####
 

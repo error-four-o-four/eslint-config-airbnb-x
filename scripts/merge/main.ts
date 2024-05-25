@@ -15,7 +15,7 @@ import { customConfigKeys } from '../generate/setup.ts';
 import { mergedConfigKeys } from './setup.ts';
 import {
 	GLOBS_JS, GLOBS_MIXED, GLOBS_TS,
-} from '../setupGlobal.ts';
+} from '../../src/globalSetup.ts';
 
 export function createMergedConfigs() {
 	return mergedConfigKeys.reduce(

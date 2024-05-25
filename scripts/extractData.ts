@@ -9,8 +9,6 @@
  * https://github.com/eslint/rfcs/pull/116
  */
 
-import { join } from 'path';
-
 import type {
 	Entry,
 	UnknownRecord,
@@ -25,23 +23,14 @@ import type {
 /** @note created with 'node:comnpat' */
 import convertedConfigs from '../src/configs/airbnb/index.ts';
 
-import { pluginPrefix } from './setupGlobal.ts';
-
-import {
-	NOTICE,
-	resolvePath,
-	ensureFolder,
-	writeJson,
-	writeFile,
-} from './shared/utils/write.ts';
+import { pluginPrefix } from '../src/globalSetup.ts';
+import { NOTICE, write } from './shared/utils/write.ts';
 
 import {
 	extractLiterals,
 	extractMetaData,
 	extractRules,
 } from './extract/main.ts';
-
-const { url } = import.meta;
 
 /**
  * @note
@@ -112,30 +101,13 @@ const legacyRecord = items.reduce((all, item) => {
 	};
 }, {} as Record<string, MetaDataProps>);
 
-const jsonDestination = resolvePath('../data/', url);
-ensureFolder(jsonDestination);
+const jsonDestination = './data';
+write.json(`${jsonDestination}/metadata.json`, rulesRecord);
+write.json(`${jsonDestination}/legacy.json`, legacyRecord);
 
-writeJson(
-	join(jsonDestination, 'metadata.json'),
-	rulesRecord,
-);
-writeJson(
-	join(jsonDestination, 'legacy.json'),
-	legacyRecord,
-);
-
-// ####
-
-const destination = resolvePath('./', url);
-
-writeFile(
-	join(destination, 'extractedMetaData.ts'),
-	createMetaData(items),
-);
-writeFile(
-	join(destination, 'extractedLiteralsData.ts'),
-	createLiteralsData(literals),
-);
+const fileDestination = './scripts';
+write.file(`${fileDestination}/extractedMetaData.ts`, createMetaData(items));
+write.file(`${fileDestination}/extractedLiteralsData.ts`, createLiteralsData(literals));
 
 // #####
 

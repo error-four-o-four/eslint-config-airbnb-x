@@ -1,12 +1,12 @@
 import type {
 	ConvertedConfigs,
-	MetaDataItem,
-	MetaDataPluginProps,
 	PluginPrefix,
 	RawMetaData,
+	MetaDataItem,
+	MetaDataPluginProps,
 } from '../shared/types/main.ts';
 
-import { pluginPrefix } from '../setupGlobal.ts';
+import { pluginPrefix } from '../../src/globalSetup.ts';
 
 import rawMetaData from '../shared/raw.ts';
 

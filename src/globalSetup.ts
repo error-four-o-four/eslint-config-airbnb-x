@@ -8,11 +8,13 @@ export const EXTS_JS: readonly FileExtension[] = [
 	'.mjs',
 	'.cjs',
 ];
+
 export const EXTS_TS: readonly FileExtension[] = [
 	'.ts',
 	'.mts',
 	'.cts',
 ];
+
 export const EXTS_MIXED = [...EXTS_JS, ...EXTS_TS];
 
 export const GLOBS_JS = EXTS_JS.map((ext) => `**/*${ext}`);

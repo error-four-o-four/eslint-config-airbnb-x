@@ -7,7 +7,7 @@ import type { KebabCase } from 'type-fest';
 /** @note created with 'node:compat' */
 import convertedConfigs from '../../../src/configs/airbnb/index.ts';
 
-import { pluginPrefix } from '../../setupGlobal.ts';
+import { pluginPrefix } from '../../../src/globalSetup.ts';
 
 export type ConvertedConfigs = typeof convertedConfigs;
 
