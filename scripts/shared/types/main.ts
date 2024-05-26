@@ -7,7 +7,7 @@ import type { KebabCase } from 'type-fest';
 /** @note created with 'node:compat' */
 import convertedConfigs from '../../../src/configs/airbnb/index.ts';
 
-import { pluginPrefix } from '../../../src/globalSetup.ts';
+import { pluginNames, pluginPrefix } from '../../../src/globalSetup.ts';
 
 export type ConvertedConfigs = typeof convertedConfigs;
 
@@ -19,7 +19,7 @@ export type ImportSettings = {
 
 export type RawMetaData = Readonly<
 	Record<
-		'eslint' | keyof PluginPrefix,
+		keyof typeof pluginNames,
 		Map<string, Rule.RuleMetaData>
 	>
 >;

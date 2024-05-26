@@ -23,7 +23,11 @@ import type {
 /** @note created with 'node:comnpat' */
 import convertedConfigs from '../src/configs/airbnb/index.ts';
 
-import { pluginPrefix } from '../src/globalSetup.ts';
+import {
+	pluginNames,
+	pluginPrefix,
+} from '../src/globalSetup.ts';
+
 import { NOTICE, write } from './shared/utils/write.ts';
 
 import {
@@ -146,20 +150,12 @@ function createLiteralsData(input: Record<keyof RawMetaData, string[]>) {
 	const strPluginRule = 'PluginRule';
 	const strUnprefixed = 'Unprefixed';
 
-	const map: Record<keyof RawMetaData, string> = {
-		eslint: 'ESLint',
-		import: 'ImportX',
-		node: 'Node',
-		style: 'Stylistic',
-		type: 'TypeScript',
-	} as const;
-
 	const mapReducer = (
 		all: Record<keyof RawMetaData, string[]>,
 		key: keyof RawMetaData,
 	) => {
 		// e.g. ImportX
-		const value = map[key];
+		const value = pluginNames[key];
 		// e.g. importRulesArray
 		const varDeclaration = `${key}${strRulesArray}`;
 		// e.g. ImportXRule
@@ -172,7 +168,7 @@ function createLiteralsData(input: Record<keyof RawMetaData, string[]>) {
 	};
 
 	const declarations = (
-		Object.keys(map) as (keyof RawMetaData)[]
+		Object.keys(pluginNames) as (keyof RawMetaData)[]
 	).reduce(mapReducer, {} as Record<keyof RawMetaData, string[]>);
 
 	const iterator = ([key, array]: MetaDataEntry) => {

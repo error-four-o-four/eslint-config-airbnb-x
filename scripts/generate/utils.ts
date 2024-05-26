@@ -189,17 +189,23 @@ export function getRuleValue(
 		: value as Linter.RuleLevel;
 }
 
-// export const configPrefixMap = {
-// 	imports: 'import',
-// 	node: 'node',
-// 	style: 'style',
-// 	typescript: 'type',
-// } as Record<CustomConfigKeysWithPlugin, keyof PluginPrefix>;
-
 export function mapConfigKeys(
 	key: keyof ConvertedConfigs,
 ): keyof CustomConfigs {
 	return (key === 'es6' ? 'es2022' : key);
+}
+
+const configPrefixMap = {
+	imports: 'import',
+	node: 'node',
+	style: 'style',
+	typescript: 'type',
+} as Record<CustomConfigKeysWithPlugin, keyof PluginPrefix>;
+
+export function mapConfigKeyToPrefix(
+	config: CustomConfigKeysWithPlugin,
+) {
+	return configPrefixMap[config];
 }
 
 const prefixConfigMap = {

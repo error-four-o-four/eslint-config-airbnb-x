@@ -86,19 +86,34 @@ function convertBaseConfigs(
 }
 
 function handleExceptions(config: Linter.FlatConfig) {
-	delete config.plugins;
+	const {
+		languageOptions,
+		settings,
+		rules,
+	} = config;
+
+	(Object.keys(config) as (keyof Linter.FlatConfig)[])
+		.forEach((key) => delete config[key]);
 
 	const iterator = (
 		[rule, value]: [string, unknown],
 	) => [`${pluginPrefix.import}/${rule.split('/')[1]}`, value];
 
-	assertNotNull(config.rules);
-	config.rules = Object.fromEntries(
-		Object.entries(config.rules).map(iterator),
+	config.plugins = {
+		// @ts-expect-error
+		[pluginPrefix.import]: pluginPrefix.import,
+	};
+
+	assertNotNull(languageOptions);
+	config.languageOptions = languageOptions;
+
+	assertNotNull(settings);
+	config.settings = Object.fromEntries(
+		Object.entries(settings).map(iterator),
 	);
 
-	assertNotNull(config.settings);
-	config.settings = Object.fromEntries(
-		Object.entries(config.settings).map(iterator),
+	assertNotNull(rules);
+	config.rules = Object.fromEntries(
+		Object.entries(rules).map(iterator),
 	);
 }

@@ -17,6 +17,8 @@ import type {
 /** @note created with 'node:extract' */
 import customMetaData from '../extractedMetaData.ts';
 
+import { pluginPrefix } from '../../src/globalSetup.ts';
+
 import { assertNotNull } from '../shared/utils/assert.ts';
 
 import {
@@ -47,12 +49,14 @@ import {
 } from './overwrites.ts';
 
 import {
+	configHasPlugin,
 	configHasOptions,
 	configHasSettings,
 	verify,
 	getRuleValue,
 	mapConfigKeys,
 	mapPrefixToConfigKey,
+	mapConfigKeyToPrefix,
 } from './utils.ts';
 
 export function createCustomConfigs() {
@@ -61,6 +65,13 @@ export function createCustomConfigs() {
 			const tmp: Linter.FlatConfig = {};
 
 			tmp.name = `airbnb:${toKebabCase(key)}`;
+
+			if (configHasPlugin(key)) {
+				const plugin = mapConfigKeyToPrefix(key);
+				/** @todo */
+				// @ts-expect-error
+				tmp.plugins = { [pluginPrefix[plugin]]: plugin };
+			}
 
 			if (configHasOptions(key)) {
 				tmp.languageOptions = {};

@@ -20,9 +20,12 @@ import { Linter } from 'eslint';
 
 // @ts-ignore tmp
 import promisedConfig from '../../../eslint.config.js';
+import { pluginPaths } from '../../../src/globalSetup.ts';
 
 import { toCamelCase, toKebabCase } from './main.ts';
 import { assertIsString, assertIsRecord } from './assert.ts';
+
+import type { PluginPrefix } from '../types/main.ts';
 
 const linter = new Linter({ configType: 'flat' });
 const linterConfig = await promisedConfig;
@@ -195,58 +198,51 @@ export const write = {
 	},
 };
 
-export function writeJson(filePath: string, data: any) {
-	writeFileSync(
-		filePath,
-		JSON.stringify(data, null, 2),
-		{ flag: 'w+' },
-	);
-}
-
-export async function writeFile(filePath: string, fileData: string) {
-	const dirPath = dirname(filePath);
-	const strPath = filePath.replace(process.cwd(), '');
-	const msgInit = `Writing data to '${strPath}'`;
-
-	if (!existsSync(dirPath)) mkdirSync(dirPath);
-
-	console.log(msgInit);
-	writeFileSync(filePath, fileData, { flag: 'w+' });
-
-	const result = linter.verifyAndFix(fileData, linterConfig, filePath);
-
-	// console.log('fixed:', result.fixed);
-
-	if (result.messages.length > 0) {
-		console.log(
-			result.messages.length,
-			`issue${result.messages.length > 1 ? 's' : ''} remaining:`,
-		);
-
-		result.messages.forEach(
-			(msgLint) => console.log(`* ${msgLint.message}`),
-		);
-	}
-
-	if (result.fixed && result.output) {
-		writeFileSync(filePath, result.output, { flag: 'w+' });
-	}
-
-	// console.log('done');
-}
-
 function parseConfig(
 	folder: string,
-	config: UnknownRecord,
+	data: UnknownRecord,
 ) {
 	const importPath = relative(folder, './src').split(sep).join('/');
 	const importFile = `${importPath}/globalTypes.ts`;
+	const typeConfig = 'FlatConfig';
+	const typePlugin = 'ESLintPlugin';
 
-	const output = [
-		`${NOTICE}\n`,
-		`import { FlatConfig } from '${importFile}';`,
-		`export default ${JSON.stringify(config)} as FlatConfig;`,
-	].join('\n');
+	const output = [`${NOTICE}\n`];
 
-	return output;
+	let importStatement: string;
+	let exportStatement: string;
+
+	if ('plugins' in data) {
+		assertIsRecord(data.plugins);
+
+		const plugins = Object.keys(data.plugins) as (keyof PluginPrefix)[];
+
+		if (plugins.length > 1) {
+			throw new Error('Expected no overlapping plugins');
+		}
+
+		const [plugin] = plugins;
+		const pluginPath = pluginPaths[plugin];
+		const pluginName = toCamelCase(pluginPath);
+
+		output.push(
+			`import ${pluginName} from '${pluginPath}'\n`,
+		);
+
+		const stringified = JSON
+			.stringify(data).replace(
+				`"${plugin}":"${plugin}"`,
+				`\n"${plugin}":${pluginName} as unknown as ${typePlugin}\n`,
+			);
+
+		importStatement = `import type { ${typeConfig}, ${typePlugin} } from '${importFile}';`;
+		exportStatement = `export default ${stringified} as ${typeConfig};`;
+	} else {
+		importStatement = `import type { ${typeConfig} } from '${importFile}';`;
+		exportStatement = `export default ${JSON.stringify(data)} as ${typeConfig};`;
+	}
+
+	output.push(importStatement, exportStatement);
+
+	return output.join('\n');
 }

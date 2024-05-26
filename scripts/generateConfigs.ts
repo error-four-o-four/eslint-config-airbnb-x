@@ -21,8 +21,11 @@ import { write } from './shared/utils/write.ts';
  *  @note
  * create an object literal with
  * the exported configs of 'eslint-config-airbnb-base' as the property key and
- * an empty 'Linter.FlatConfig' object literal as the corresponding property value
- * @see CustomConfigs
+ * an empty 'Linter.FlatConfig' object literal as a placeholder
+ * with the sorted, corresponding property values  @see CustomConfigs
+ *
+ * set a placeholder for the corresponding plugin
+ * which is parsed later @see write.configFiles
  */
 const customConfigs = createCustomConfigs();
 

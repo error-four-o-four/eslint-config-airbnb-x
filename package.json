@@ -58,9 +58,9 @@
 		"clean:base": "rimraf dist/base",
 		"build:base": "tsup-node --entry.index src/defineBaseConfig.ts --format esm --minify --dts -d ./dist/base",
 		"clean:compat": "rimraf dist/compat",
-		"build:compat": "tsup-node --entry.index src/compat.ts --format esm --minify --dts -d ./dist/compat",
+		"build:compat": "tsup-node --entry.index src/configs/airbnb/index.ts --format esm --minify --dts -d ./dist/compat",
 		"clean:configs": "rimraf dist/configs",
-		"build:configs": "tsup-node --entry.index src/configs.ts --format esm --minify --dts -d ./dist/configs",
+		"build:configs": "tsup-node --entry.index src/configs/custom/index.ts --format esm --minify --dts -d ./dist/configs",
 		"clean": "rimraf dist/",
 		"build": "npm run clean && npm run build:all",
 		"build:all": "npm run build:base && npm run build:compat && npm run build:configs"
