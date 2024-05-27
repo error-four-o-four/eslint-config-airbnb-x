@@ -8,31 +8,18 @@ import type { MergedConfigs } from './types.ts';
 /** @note created with 'node:generate' */
 import customConfigs from '../../src/configs/custom/index.ts';
 
-import { toKebabCase } from '../shared/utils/main.ts';
 import { assertNotNull } from '../shared/utils/assert.ts';
 
 import { customConfigKeys } from '../generate/setup.ts';
-import { mergedConfigKeys } from './setup.ts';
-import {
-	GLOBS_JS, GLOBS_MIXED, GLOBS_TS,
-} from '../../src/globalSetup.ts';
+import { mergedConfigKeys, tsOnlyRules } from './setup.ts';
 
 export function createMergedConfigs() {
 	return mergedConfigKeys.reduce(
 		(all, key) => {
 			const tmp: Linter.FlatConfig = {};
 
-			tmp.name = `airbnb:${toKebabCase(key)}`;
-
-			tmp.files = key === 'baseMixed'
-				? GLOBS_MIXED : key === 'baseJs'
-					? GLOBS_JS : GLOBS_TS;
-
-			if (key === 'baseMixed' || key === 'baseTs') {
-				tmp.languageOptions = {};
-			}
-
 			if (key === 'baseJs' || key === 'baseTs') {
+				tmp.languageOptions = {};
 				tmp.settings = {};
 			}
 
@@ -50,9 +37,20 @@ export function createMergedConfigs() {
 export function mergeLanguageOptions(
 	targetConfigs: MergedConfigs,
 ) {
-	targetConfigs.baseMixed.languageOptions = (
+	assertNotNull(customConfigs.node.languageOptions);
+	assertNotNull(customConfigs.typescript.languageOptions);
+
+	const { globals } = customConfigs.node.languageOptions;
+	assertNotNull(globals);
+
+	targetConfigs.base.languageOptions = {
+		globals,
+	};
+
+	targetConfigs.baseJs.languageOptions = (
 		Object.keys(customConfigs) as (keyof CustomConfigs)[]
 	)
+		/** @todo */
 		// .filter((key) => key !== 'node' && key !== 'typescript')
 		.filter((key) => key !== 'typescript')
 		.reduce((result, key) => {
@@ -63,9 +61,12 @@ export function mergeLanguageOptions(
 			return merge(result, config.languageOptions);
 		}, {});
 
-	targetConfigs.baseTs.languageOptions = {
-		...customConfigs.typescript.languageOptions,
-	};
+	delete targetConfigs.baseJs.languageOptions.globals;
+
+	targetConfigs.baseTs.languageOptions = merge(
+		targetConfigs.baseJs.languageOptions,
+		customConfigs.typescript.languageOptions,
+	);
 }
 
 export function mergeSettings(
@@ -86,8 +87,9 @@ export function mergeSettings(
 export function mergeRules(
 	targetConfigs: MergedConfigs,
 ) {
-	const tsRules = customConfigs.typescript.rules;
-	assertNotNull(tsRules);
+	assertNotNull(customConfigs.typescript.rules);
+
+	const tsRules = new Set(Object.keys(customConfigs.typescript.rules));
 
 	customConfigKeys.forEach((key) => {
 		const config = customConfigs[key];
@@ -95,28 +97,27 @@ export function mergeRules(
 
 		Object.entries(config.rules)
 			.forEach(([rule, value]) => {
+				if (key !== 'typescript' && tsOnlyRules.has(rule)) {
+					targetConfigs.baseJs.rules[rule] = value;
+					return;
+				}
+
+				if (key === 'typescript' && tsOnlyRules.has(rule)) {
+					targetConfigs.baseTsOnly.rules[rule] = value;
+					return;
+				}
+
 				if (key === 'typescript') {
 					targetConfigs.baseTs.rules[rule] = value;
 					return;
 				}
 
-				if (rule in tsRules) {
+				if (tsRules.has(rule)) {
 					targetConfigs.baseJs.rules[rule] = value;
 					return;
 				}
 
-				/**
-				 * @todo
-				 * handle exceptions
-				 * especially 'import' config rules overwrite for ts files
-				 */
-
-				// import/extensions
-				// import/no-extraneous-dependencies
-				// import/named: 'error'
-				// ...
-
-				targetConfigs.baseMixed.rules[rule] = value;
+				targetConfigs.base.rules[rule] = value;
 			});
 	});
 }

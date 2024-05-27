@@ -8,17 +8,26 @@ import {
 	sortRules,
 } from './merge/main.ts';
 
-/** @note */
-// * mixed => applies to both .js & .ts
-// * js-specific
-// * ts-override (which turns off js-specific)
+/**
+ * @todo
+ * create configs, which apply to different code bases, like
+ * js-only, js-mixed, ts-mixed, ts-only
+ *
+ */
+
+/**
+ * @note
+ * mixed => applies to both .js & .ts
+ * js-specific
+ * ts-override (which turns off js-specific)
+ */
 
 const mergedConfigs = createMergedConfigs();
 
 /**
  * @note
  * merge languageOptions
- * except from 'node' and 'typescript'
+ * except from ('node' and) 'typescript'
  *
  * @todo
  * consider to add a config to differentiate environments node/browser
