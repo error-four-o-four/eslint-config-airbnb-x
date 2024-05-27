@@ -39,14 +39,16 @@ import {
 
 import {
 	hasBeenReplaced,
-	requiresReplacement,
-	getReplacement,
+	replacement,
 } from './replacements.ts';
 
+import { overwrite } from './overwrites.ts';
+
 import {
-	requiresOverwrite,
-	getOverwrite,
-} from './overwrites.ts';
+	handleTypescriptRule,
+	applyTypescript,
+	overwriteTypescriptIsRequired,
+} from './typescript/main.ts';
 
 import {
 	configHasPlugin,
@@ -109,14 +111,15 @@ export function applyCustomMetaData(
 			);
 
 			const pluginTS = meta.plugins.find((data) => data.prefix === 'type');
+			const overwriteIsRequired = overwriteTypescriptIsRequired(rule);
 
-			if (pluginTS && verify.isImportXRule(rule)) {
-				/** @todo */
-				console.log(`Skipped overlapping rule '${rule}' in 'typescript'`, meta.plugins);
-				return;
-			}
+			// if (pluginTS && verify.isImportXRule(rule)) {
+			// 	/** @todo */
+			// 	console.log(`Skipped overlapping rule '${rule}' in 'typescript'`, meta.plugins);
+			// 	return;
+			// }
 
-			if (pluginTS) {
+			if (pluginTS || overwriteIsRequired) {
 				handleTypescriptRule(
 					rule,
 					meta,
@@ -147,6 +150,8 @@ export function applyCustomMetaData(
 			throw new Error('Could not apply all rules');
 		}
 	});
+
+	applyTypescript(targetConfigs);
 
 	/** @note sort rules and prepend plugin rules */
 	sortRulesRecord(targetConfigs);
@@ -197,12 +202,12 @@ function getPluginRuleProps(
 		value,
 	};
 
-	if (requiresReplacement(prefixedRule)) {
-		return getReplacement(prefixedRule, meta, value);
+	if (replacement.isRequired(prefixedRule)) {
+		return replacement.get(prefixedRule, meta, value);
 	}
 
-	if (requiresOverwrite(prefixedRule)) {
-		result.value = getOverwrite(prefixedRule, value, meta, plugin);
+	if (overwrite.isRequired(prefixedRule)) {
+		result.value = overwrite.get(prefixedRule, value, meta, plugin);
 		return result;
 	}
 
@@ -213,41 +218,6 @@ function getPluginRuleProps(
 
 	result.value = value;
 	return result;
-}
-
-function handleTypescriptRule(
-	rule: string,
-	meta: MetaDataProps,
-	plugin: MetaDataPluginProps,
-	sourceConfigs: ConvertedConfigs,
-	targetConfigs: CustomConfigs,
-) {
-	/** @todo */
-	// if (verify.isImportXRule(rule)) {
-	// 	console.log('skipped overlapping rule in config \'typescript\'');
-	// 	console.log(rule, '\n', meta.plugins, '\n');
-	// 	return;
-	// }
-
-	assertNotNull(meta.plugins);
-
-	const prefixedRule = getPrefixedRule(plugin.prefix, rule);
-
-	if (plugin.deprecated) {
-		targetConfigs.typescript.rules[prefixedRule] = 0;
-		return;
-	}
-
-	if (meta.deprecated) {
-		return;
-	}
-
-	const sourceValue = getRuleValue(rule, meta, sourceConfigs);
-	const targetValue = requiresOverwrite(prefixedRule)
-		? getOverwrite(prefixedRule, sourceValue, meta, plugin) : sourceValue;
-
-	targetConfigs.typescript.rules[rule] = 0;
-	targetConfigs.typescript.rules[prefixedRule] = targetValue;
 }
 
 function handleEslintRule(
@@ -268,9 +238,9 @@ function handleEslintRule(
 
 	/** @note check the manually added replacements */
 	/** @todo consider to add condition !wasReplaced */
-	if (requiresReplacement(rule)) {
+	if (replacement.isRequired(rule)) {
 		const value = getRuleValue(rule, meta, sourceConfigs);
-		const props = getReplacement(rule, meta, value);
+		const props = replacement.get(rule, meta, value);
 		targetConfigs[props.key].rules[props.rule] = props.value;
 		wasReplaced = true;
 	}
@@ -284,8 +254,8 @@ function handleEslintRule(
 	if (!meta.deprecated) {
 		const targetKey = mapConfigKeys(meta.source);
 		const sourceValue = getRuleValue(rule, meta, sourceConfigs);
-		const targetValue = requiresOverwrite(rule)
-			? getOverwrite(rule, sourceValue, meta) : sourceValue;
+		const targetValue = overwrite.isRequired(rule)
+			? overwrite.get(rule, sourceValue, meta) : sourceValue;
 		targetConfigs[targetKey].rules[rule] = targetValue;
 		return true;
 	}

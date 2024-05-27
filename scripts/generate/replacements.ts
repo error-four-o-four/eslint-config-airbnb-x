@@ -50,29 +50,21 @@ const replacements: Partial<
 		({ meta, value }: ReplacementOptions) => RuleProps
 	>
 > = {
-	'no-new-object': ({ meta }) => {
-		assertNotNull(meta);
-
-		return {
-			key: mapConfigKeys(meta.source),
-			rule: 'no-object-constructor',
-			value: 'error',
-		};
-	},
+	'no-new-object': ({ meta }) => ({
+		key: mapConfigKeys(meta.source),
+		rule: 'no-object-constructor',
+		value: 'error',
+	}),
 
 	/**
 	 * also replaces
 	 * 'no-spaced-func': 'error',
 	 */
-	'style/func-call-spacing': ({ value }) => {
-		assertNotNull(value);
-
-		return {
-			key: 'style',
-			rule: 'style/function-call-spacing',
-			value,
-		};
-	},
+	'style/func-call-spacing': ({ value }) => ({
+		key: 'style',
+		rule: 'style/function-call-spacing',
+		value,
+	}),
 };
 
 export function hasBeenReplaced(
@@ -141,37 +133,71 @@ export function hasBeenReplaced(
 	};
 }
 
-const keys = Object.keys(replacements);
+const replaced = new Set(Object.keys(replacements));
 
-export function requiresReplacement(rule: string) {
-	return keys.includes(rule as RuleProps['rule']);
-}
+export const replacement = {
+	isRequired(rule: string) {
+		return replaced.has(rule as RuleProps['rule']);
+	},
+	get(
+		rule: string,
+		meta: MetaDataProps,
+		value: Linter.RuleEntry,
+	): RuleProps {
+		const isEslintRule = verify.isESLintRule(rule);
+		const isPluginRule = verify.isPluginRule(rule);
 
-export function getReplacement(
-	rule: string,
-	meta: MetaDataProps,
-	value: Linter.RuleEntry,
-): RuleProps {
-	const isEslintRule = verify.isESLintRule(rule);
-	const isPluginRule = verify.isPluginRule(rule);
+		if (!isEslintRule && !isPluginRule) {
+			throw new Error(`Expected valid rule - '${rule}' is invalid`);
+		}
 
-	if (!isEslintRule && !isPluginRule) {
-		throw new Error(`Expected valid rule - '${rule}' is invalid`);
-	}
+		const fn = replacements[rule];
 
-	const fn = replacements[rule];
+		if (!fn) {
+			throw new Error(`Expected replacement for '${rule}' to be defined`);
+		}
 
-	if (!fn) {
-		throw new Error(`Expected replacement for '${rule}' to be defined`);
-	}
+		const result = fn({
+			meta,
+			value,
+		});
 
-	const result = fn({
-		meta,
-		value,
-	});
+		console.log(`Replaced '${rule}' by '${result.rule}' in '${result.key}'`);
+		// console.log(result.value, '\n');
 
-	console.log(`Replaced '${rule}' by '${result.rule}' in '${result.key}'`);
-	// console.log(result.value, '\n');
+		return result;
+	},
+};
 
-	return result;
-}
+// export function requiresReplacement(rule: string) {
+// 	return replaced.has(rule as RuleProps['rule']);
+// }
+
+// export function getReplacement(
+// 	rule: string,
+// 	meta: MetaDataProps,
+// 	value: Linter.RuleEntry,
+// ): RuleProps {
+// 	const isEslintRule = verify.isESLintRule(rule);
+// 	const isPluginRule = verify.isPluginRule(rule);
+
+// 	if (!isEslintRule && !isPluginRule) {
+// 		throw new Error(`Expected valid rule - '${rule}' is invalid`);
+// 	}
+
+// 	const fn = replacements[rule];
+
+// 	if (!fn) {
+// 		throw new Error(`Expected replacement for '${rule}' to be defined`);
+// 	}
+
+// 	const result = fn({
+// 		meta,
+// 		value,
+// 	});
+
+// 	console.log(`Replaced '${rule}' by '${result.rule}' in '${result.key}'`);
+// 	// console.log(result.value, '\n');
+
+// 	return result;
+// }

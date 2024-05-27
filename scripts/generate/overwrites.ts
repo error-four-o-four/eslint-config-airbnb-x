@@ -27,36 +27,6 @@ const overwrites: Partial<
 		}: OverwriteOptions) => Linter.RuleEntry
 	>
 > = {
-	/**
-	 * @todo
-	 * rule exists in import and typescript plugin
-	 */
-	// 'import/no-namespace': () => {
-	// 	return 0
-	// },
-
-	/**
-	 * @todo special case 'import/named'
-	 * should be disabled for typescript files
-	 */
-	// 'import/named': (value, meta) => {
-	// 	assertNotNull(value, '\'RuleEntry\' are required');
-	// 	assertNotNull(meta, '\'MetaData\' is required');
-
-	// 	if (Array.isArray(value)) {
-	// 		throw new Error('Expected \'RuleLevel\' param');
-	// 	}
-
-	// 	if (assertMetaDataProps(meta)) {
-	// 		throw new Error('Expected \'MetaDataPluginProps\' param');
-	// 	}
-
-	// 	if (meta.prefix === 'type') {
-	// 		return 0;
-	// 	}
-
-	// 	return value;
-	// },
 	'import/no-extraneous-dependencies': ({ value }) => {
 		assertRuleLevelAndOptions(value);
 
@@ -152,39 +122,82 @@ const overwrites: Partial<
 	},
 };
 
-const keys = Object.keys(overwrites);
-//  as (RuleProps['rule'])[];
+const overwritten = new Set(Object.keys(overwrites));
 
-export function requiresOverwrite(rule: string) {
-	return keys.includes(rule as RuleProps['rule']);
-}
+// function assertRequiresOverwrite(
+// 	rule: string,
+// ): asserts rule is keyof typeof overwrites {
+// 	if (overwritten.has(rule)) return;
 
-export function getOverwrite(
-	rule: string,
-	value: RuleProps['value'],
-	meta: MetaDataProps,
-	plugin?: MetaDataPluginProps,
-): Linter.RuleEntry {
-	const isEslintRule = verify.isESLintRule(rule);
-	const isPluginRule = verify.isPluginRule(rule);
+// 	throw new Error(`Expected overwrite for '${rule}' to be required`);
+// }
 
-	if (!isEslintRule && !isPluginRule) {
-		throw new Error(`Expected valid rule - '${rule}' is invalid`);
-	}
+// eslint-disable-next-line import/prefer-default-export
+export const overwrite = {
+	isRequired(rule: string) {
+		return overwritten.has(rule);
+	},
+	get(
+		rule: string,
+		value: RuleProps['value'],
+		meta: MetaDataProps,
+		plugin?: MetaDataPluginProps,
+	): Linter.RuleEntry {
+		const isEslintRule = verify.isESLintRule(rule);
+		const isPluginRule = verify.isPluginRule(rule);
 
-	const fn = overwrites[rule];
+		if (!isEslintRule && !isPluginRule) {
+			throw new Error(`Expected valid rule - '${rule}' is invalid`);
+		}
 
-	if (!fn) {
-		throw new Error(`Expected overwrite for '${rule}' to be defined`);
-	}
+		const fn = overwrites[rule];
 
-	const result = fn({
-		value,
-		meta,
-		plugin,
-	});
+		if (!fn) {
+			throw new Error(`Expected overwrite for '${rule}' to be defined`);
+		}
 
-	console.log(`Overwritten '${rule}' in '${meta.source}'`);
+		const result = fn({
+			value,
+			meta,
+			plugin,
+		});
 
-	return result;
-}
+		console.log(`Overwritten '${rule}' in '${meta.source}'`);
+
+		return result;
+	},
+};
+
+// export function requiresOverwrite(rule: string) {
+// 	return overwritten.has(rule as RuleProps['rule']);
+// }
+
+// export function getOverwrite(
+// 	rule: string,
+// 	value: RuleProps['value'],
+// 	meta: MetaDataProps,
+// 	plugin?: MetaDataPluginProps,
+// ): Linter.RuleEntry {
+// 	const isEslintRule = verify.isESLintRule(rule);
+// 	const isPluginRule = verify.isPluginRule(rule);
+
+// 	if (!isEslintRule && !isPluginRule) {
+// 		throw new Error(`Expected valid rule - '${rule}' is invalid`);
+// 	}
+
+// 	const fn = overwrites[rule];
+
+// 	if (!fn) {
+// 		throw new Error(`Expected overwrite for '${rule}' to be defined`);
+// 	}
+
+// 	const result = fn({
+// 		value,
+// 		meta,
+// 		plugin,
+// 	});
+
+// 	console.log(`Overwritten '${rule}' in '${meta.source}'`);
+
+// 	return result;
+// }
