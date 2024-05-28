@@ -1,11 +1,12 @@
-import defineConfig from './tmp/index.js';
+import defineBaseConfig from './tmp/index.js';
+// import defineBaseConfig from './dist/base/index.js';
 
 const message = 'linting ...';
 
 /* eslint-disable no-console */
 console.log(`\u001b[33m${message}\u001b[0m`);
 
-export default defineConfig(
+export default defineBaseConfig(
 	{
 		ignores: [
 			'**/tmp/*',
@@ -27,10 +28,10 @@ export default defineConfig(
 			],
 			// "flatTernaryExpressions": true (false by default) requires no indentation for ternary expressions which are nested in other ternary expressions.
 			// "offsetTernaryExpressions": true (false by default) requires indentation for values of ternary expressions.
-			'stylistic/indent': ['warn', 'tab'],
+			'style/indent': ['warn', 'tab'],
 			// https://eslint.style/rules/js/linebreak-style#using-this-rule-with-version-control-systems
-			'stylistic/linebreak-style': ['warn', 'windows'],
-			'stylistic/max-len': [
+			'style/linebreak-style': ['warn', 'windows'],
+			'style/max-len': [
 				'warn',
 				{
 					code: 80,
@@ -42,22 +43,22 @@ export default defineConfig(
 					ignoreTemplateLiterals: true,
 				},
 			],
-			'stylistic/no-tabs': 0,
-			'stylistic/array-bracket-newline': [
+			'style/no-tabs': 0,
+			'style/array-bracket-newline': [
 				'warn',
 				{
 					multiline: true,
 					minItems: 3,
 				},
 			],
-			'stylistic/array-element-newline': [
+			'style/array-element-newline': [
 				'warn',
 				{
 					multiline: true,
 					minItems: 3,
 				},
 			],
-			'stylistic/object-curly-newline': [
+			'style/object-curly-newline': [
 				'warn',
 				{
 					ObjectExpression: {
@@ -82,7 +83,7 @@ export default defineConfig(
 					},
 				},
 			],
-			'stylistic/object-property-newline': ['warn', { allowAllPropertiesOnSameLine: false }],
+			'style/object-property-newline': ['warn', { allowAllPropertiesOnSameLine: false }],
 			// https://eslint.style/rules/ts/lines-between-class-members#options
 		},
 	},

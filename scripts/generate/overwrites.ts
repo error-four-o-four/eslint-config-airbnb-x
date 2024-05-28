@@ -66,6 +66,8 @@ const overwrites: Partial<
 		return ['error', options];
 	},
 
+	'style/comma-dangle': () => ['error', 'always-multiline'],
+
 	// specify the maximum length of a line in your program
 	// https://eslint.org/docs/rules/max-len
 	// 'max-len': ['error', 100, 2, {

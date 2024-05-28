@@ -113,6 +113,14 @@ const rules = {
 	type: new Set(typeRulesArray),
 } as Record<'eslint' | keyof PluginPrefix, Set<string>>;
 
+function getUnprefixedPluginRule(rule: string, prefix: keyof PluginPrefix) {
+	if (!isPrefixed(rule)) return false;
+
+	if (!rule.startsWith(prefix)) return false;
+
+	return getUnprefixedRule(rule) as UnprefixedPluginRule;
+}
+
 export const verify = {
 	isESLintRule(rule: string): rule is ESLintRule {
 		return rules.eslint.has(rule);
@@ -164,14 +172,6 @@ export const verify = {
 			|| this.isUnprefixedTypescriptRule(unprefixed);
 	},
 };
-
-function getUnprefixedPluginRule(rule: string, prefix: keyof PluginPrefix) {
-	if (!isPrefixed(rule)) return false;
-
-	if (!rule.startsWith(prefix)) return false;
-
-	return getUnprefixedRule(rule) as UnprefixedPluginRule;
-}
 
 export function getRuleValue(
 	rule: string,

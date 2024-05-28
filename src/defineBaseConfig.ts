@@ -1,70 +1,86 @@
-// import { isPackageExists } from 'local-pkg';
+import { isPackageExists } from 'local-pkg';
 
-// import type { FlatConfig } from '../scripts/types/configs.ts';
+import pluginImport from 'eslint-plugin-import-x';
+import pluginNode from 'eslint-plugin-n';
+import pluginStyle from '@stylistic/eslint-plugin';
 
-// import { EXTS_JS, EXTS_TS } from '../scripts/utils/constants.ts';
+import type { FlatConfig } from './globalTypes.ts';
 
-// import plugins, { pluginPrefix } from './plugins.ts';
+import {
+	GLOBS_JS,
+	GLOBS_TS,
+	GLOBS_MIXED,
+	pluginPrefix,
+} from './globalSetup.ts';
 
-// import baseMixed from './configs/merged/base-mixed.ts';
-// import baseJS from './configs/merged/base-js.ts';
+import base from './configs/merged/base.ts';
+import baseJs from './configs/merged/base-js.ts';
 
-// const tsExists = isPackageExists('typescript');
+const tsExists = isPackageExists('typescript');
 
-// const GLOBS_JS = EXTS_JS.map((ext) => `**/*${ext}`);
-// const GLOBS_TS = EXTS_TS.map((ext) => `**/*${ext}`);
+// https://github.com/antfu/eslint-config/blob/main/src/utils.ts
+const interopDefault = async <T>(
+	m: Awaitable<T>,
+): Promise<T extends { default: infer U; } ? U : T> => {
+	const resolved = await m;
+	return (resolved as any).default || resolved;
+};
 
-// // https://github.com/antfu/eslint-config/blob/main/src/utils.ts
-// const interopDefault = async <T>(
-// 	m: Awaitable<T>,
-// ): Promise<T extends { default: infer U } ? U : T> => {
-// 	const resolved = await m;
-// 	return (resolved as any).default || resolved;
-// };
+type Awaitable<T> = T | Promise<T>;
 
-// type Awaitable<T> = T | Promise<T>;
+export default async (...overrides: FlatConfig[]) => {
+	if (!tsExists) {
+		base.files = GLOBS_JS;
+		base.plugins = {
+			// @ts-expect-error
+			[pluginPrefix.import]: pluginImport,
+			[pluginPrefix.node]: pluginNode,
+			// @ts-expect-error
+			[pluginPrefix.style]: pluginStyle,
+		};
 
-// // add plugins
-// baseMixed.plugins = {
-// 	[pluginPrefix.import]: plugins.import,
-// 	[pluginPrefix.node]: plugins.node,
-// 	[pluginPrefix.stylistic]: plugins.stylistic,
-// };
+		baseJs.files = GLOBS_JS;
 
-// export default async (...overrides: FlatConfig[]) => {
-// 	if (!tsExists) {
-// 		baseMixed.files = GLOBS_JS;
-// 		baseJS.files = GLOBS_JS;
+		return [
+			base,
+			baseJs,
+			...overrides,
+		];
+	}
 
-// 		return [
-// 			baseMixed,
-// 			baseJS,
-// 			...overrides,
-// 		];
-// 	}
+	base.files = GLOBS_MIXED;
+	baseJs.files = GLOBS_JS;
 
-// 	const [pluginTS, parserTS] = await Promise.all(
-// 		['@typescript-eslint/eslint-plugin', '@typescript-eslint/parser'].map((src) => interopDefault(import(src))),
-// 	);
+	const [pluginTS, parserTS] = await Promise.all(
+		['@typescript-eslint/eslint-plugin', '@typescript-eslint/parser'].map((src) => interopDefault(import(src))),
+	);
 
-// 	// https://esbuild.github.io/api/#glob !!!
-// 	const baseTS = await interopDefault(import('./configs/merged/base-ts.ts'));
+	// https://esbuild.github.io/api/#glob !!!
+	const baseTs = await interopDefault(import('./configs/merged/base-ts.ts'));
+	const baseTsOnly = await interopDefault(import('./configs/merged/base-ts-only.ts'));
 
-// 	// apply files
-// 	baseMixed.files = [...GLOBS_JS, ...GLOBS_TS];
+	base.plugins = {
+		// @ts-expect-error
+		[pluginPrefix.import]: pluginImport,
+		[pluginPrefix.node]: pluginNode,
+		// @ts-expect-error
+		[pluginPrefix.style]: pluginStyle,
+		[pluginPrefix.type]: pluginTS
+	};
 
-// 	baseJS.files = GLOBS_JS;
-// 	baseTS.files = GLOBS_TS;
+	baseTs.files = GLOBS_MIXED;
+	// baseTs.plugins = { [pluginPrefix.type]: pluginTS };
 
-// 	baseTS.plugins = { [pluginPrefix.typescript]: pluginTS };
+	baseTs.languageOptions!.parser = parserTS;
+	baseTs.languageOptions!.parserOptions!.tsconfigPath = process.cwd();
 
-// 	baseTS.languageOptions!.parser = parserTS;
-// 	baseTS.languageOptions!.parserOptions!.tsconfigPath = process.cwd();
+	baseTsOnly.files = GLOBS_TS;
 
-// 	return [
-// 		baseMixed,
-// 		baseJS,
-// 		baseTS,
-// 		...overrides,
-// 	];
-// };
+	return [
+		base,
+		baseJs,
+		baseTs,
+		baseTsOnly,
+		...overrides,
+	];
+};

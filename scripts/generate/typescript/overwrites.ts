@@ -176,27 +176,27 @@ const replacements: Partial<
 	>
 > = {
 	// https://github.com/iamturns/eslint-config-airbnb-typescript/blob/766a2b975055bd827b72cbb538643e9103c1bdd4/lib/shared.js#L64
-	'comma-dangle': (value) => {
-		assertNotNull(value);
-		assertRuleLevelAndOptions(value);
+	// 'comma-dangle': (value) => {
+	// 	assertNotNull(value);
+	// 	assertRuleLevelAndOptions(value);
 
-		const [severity, options] = value;
-		const property = options.arrays;
+	// 	const [severity, options] = value;
+	// 	const property = options.arrays;
 
-		return {
-			key: 'typescript',
-			rule: 'style/comma-dangle',
-			value: [
-				severity,
-				{
-					...options,
-					enum: property,
-					generics: property,
-					tuples: property,
-				},
-			],
-		};
-	},
+	// 	return {
+	// 		key: 'typescript',
+	// 		rule: 'style/comma-dangle',
+	// 		value: [
+	// 			severity,
+	// 			{
+	// 				...options,
+	// 				enum: property,
+	// 				generics: property,
+	// 				tuples: property,
+	// 			},
+	// 		],
+	// 	};
+	// },
 };
 
 const replaced = new Set(Object.keys(replacements));
