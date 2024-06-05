@@ -1,10 +1,21 @@
 {
 	"extends": "@tsconfig/node18/tsconfig.json",
 	"compilerOptions": {
+		"module": "NodeNext",
+		"resolveJsonModule": true,
 		"importHelpers": true,
 		"noEmit": true,
 		"emitDeclarationOnly": false,
 		"allowImportingTsExtensions": true,
 	},
-	"include": ["scripts/**/*.ts", "src/**/*.ts", "eslint.config.js"]
+	"include": [
+		"scripts/**/*.ts",
+		"src/**/*.ts",
+		"eslint.config.js",
+		"eslint.style.js",
+	],
+	"exclude": [
+		"**/dist/*",
+		"**/node_modules/*"
+	]
 }
