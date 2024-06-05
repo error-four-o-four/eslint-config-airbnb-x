@@ -3,7 +3,7 @@ import tslint from 'typescript-eslint';
 
 /** @type {import('eslint').Linter.FlatConfig} */
 export default {
-	files: ['**/*.js', '**/*.js'],
+	files: ['**/*.js', '**/*.ts'],
 	plugins: {
 		style: pluginStyle,
 	},
@@ -159,7 +159,7 @@ export default {
 				code: 100,
 				tabWidth: 2,
 				ignoreUrls: true,
-				ignoreComments: false,
+				ignoreComments: true,
 				ignoreRegExpLiterals: true,
 				ignoreStrings: true,
 				ignoreTemplateLiterals: true,
@@ -218,7 +218,7 @@ export default {
 			},
 		],
 		'style/object-curly-spacing': ['error', 'always'],
-		'style/object-property-newline': ['error', { allowAllPropertiesOnSameLine: false }],
+		'style/object-property-newline': ['error', { allowAllPropertiesOnSameLine: true }],
 		'style/operator-linebreak': [
 			'error',
 			'before',
