@@ -1,5 +1,3 @@
-import type { Entries, UnknownRecord } from 'type-fest';
-
 import {
 	existsSync,
 	mkdirSync,
@@ -10,32 +8,20 @@ import {
 	dirname,
 	extname,
 	isAbsolute,
-	relative,
-	sep,
 } from 'node:path';
 
 import { fileURLToPath } from 'node:url';
 
-import { Linter } from 'eslint';
+import { toKebabCase } from './main.ts';
+import { assertIsString } from './assert.ts';
 
-// @ts-ignore tmp
-import promisedConfig from '../../../eslint.config.js';
-import { pluginPaths } from '../../../src/globalSetup.ts';
+import parse from './parse.ts';
 
-import { toCamelCase, toKebabCase } from './main.ts';
-import { assertIsString, assertIsRecord } from './assert.ts';
-
-import type { PluginPrefix } from '../types/main.ts';
-
-const linter = new Linter({ configType: 'flat' });
-const linterConfig = await promisedConfig;
-
-export const NOTICE = '/** @file GENERATED WITH SCRIPT */';
-
-const baseURL = new URL('../../..', import.meta.url);
+const NOTICE = '/** @file GENERATED WITH SCRIPT */';
 
 // has trailing slash (!)
 // const base = fileURLToPath(baseURL);
+const baseURL = new URL('../../..', import.meta.url);
 
 // resolve relative to root if meta is undefined
 function resolvePath(filePath: string, url?: string) {
@@ -65,14 +51,14 @@ type RequiredFileString = `./${string}.${'js' | 'ts'}`;
 
 type GenericString<
 	T extends string,
-	U extends string
+	U extends string,
 > = T extends U ? T : never;
 
 type BannedExtensionString = `${string}.${string}`;
 type RequiredFolderString<
 	T extends string> = `./${T extends BannedExtensionString ? never : T}`;
 
-export const write = {
+export default {
 	json<T extends string>(
 		file: GenericString<T, RequiredJsonString>,
 		input: unknown,
@@ -88,161 +74,36 @@ export const write = {
 			{ flag: 'w+' },
 		);
 	},
-	file<T extends string>(
+	async file<T extends string>(
 		file: GenericString<T, RequiredFileString>,
 		data: string,
-	) {
+	): Promise<void> {
 		const path = resolvePath(file);
 		ensureFolder(path);
+
+		const parsed = await parse.file(NOTICE, data);
 
 		console.log(`Writing data to '${file}'`);
 		writeFileSync(
 			path,
-			data,
+			parsed,
 			{ flag: 'w+' },
 		);
-
-		const result = linter.verifyAndFix(data, linterConfig, file);
-
-		// console.log('fixed:', result.fixed);
-
-		if (result.messages.length > 0) {
-			console.log(
-				result.messages.length,
-				`issue${result.messages.length > 1 ? 's' : ''} remaining:`,
-			);
-
-			result.messages.forEach(
-				(linted) => console.log(`* ${linted.message}`),
-			);
-		}
-
-		if (result.fixed && result.output) {
-			writeFileSync(file, result.output, { flag: 'w+' });
-		}
 	},
-	async configFiles<
-		T extends string,
-		U extends UnknownRecord | Entries<UnknownRecord>
-	>(
+	async files< T extends string >(
 		folder: RequiredFolderString<T>,
-		input: U,
+		input: [string, string][],
 	) {
-		const entries: Entries<UnknownRecord> = (
-			Array.isArray(input)
-				? input
-				: Object.entries(input)
-		);
-
-		await entries
+		await input
 			.reduce(async (chain, entry) => {
 				await chain;
 				const [name, config] = entry;
 
 				assertIsString(name);
-				assertIsRecord(config);
+				assertIsString(config);
 
 				const path: RequiredFileString = `${folder}/${toKebabCase(name)}.ts`;
-				const data = parseConfig(folder, config);
-
-				return this.file(path, data);
+				return this.file(path, config);
 			}, Promise.resolve());
 	},
-	indexFile<
-		T extends string,
-		U extends UnknownRecord | Entries<UnknownRecord>
-	>(
-		file: GenericString<T, RequiredFileString>,
-		input: U,
-	) {
-		const entries: Entries<UnknownRecord> = (
-			Array.isArray(input)
-				? input
-				: Object.entries(input)
-		);
-
-		const kebabCaseNames = entries.map(([name]) => {
-			assertIsString(name);
-			return toKebabCase(name);
-		}).sort();
-
-		const camelCaseNames = kebabCaseNames.map((name) => toCamelCase(name));
-
-		const importStatement = `${camelCaseNames
-			.map((camel, i) => `import ${camel} from './${kebabCaseNames[i]}.ts';`)
-			.join('\n')}`;
-
-		const declaration = 'configs';
-
-		const declarationStatement = [
-			`const ${declaration} = {`,
-			`${camelCaseNames.map((camel) => `\t${camel},`).join('\n')}`,
-			'};',
-		].join('\n');
-
-		const exportStatement = [
-			'export {',
-			`${camelCaseNames.map((camel) => `\t${camel},`).join('\n')}`,
-			'};',
-		].join('\n');
-
-		const data = [
-			`${NOTICE}`,
-			importStatement,
-			declarationStatement,
-			exportStatement,
-			`export default ${declaration}`,
-		].join('\n\n');
-
-		this.file(file, data);
-	},
 };
-
-function parseConfig(
-	folder: string,
-	data: UnknownRecord,
-) {
-	const importPath = relative(folder, './src').split(sep).join('/');
-	const importFile = `${importPath}/globalTypes.ts`;
-	const typeConfig = 'FlatConfig';
-	const typePlugin = 'ESLintPlugin';
-
-	const output = [`${NOTICE}\n`];
-
-	let importStatement: string;
-	let exportStatement: string;
-
-	if ('plugins' in data) {
-		assertIsRecord(data.plugins);
-
-		const plugins = Object.keys(data.plugins) as (keyof PluginPrefix)[];
-
-		if (plugins.length > 1) {
-			throw new Error('Expected no overlapping plugins');
-		}
-
-		const [plugin] = plugins;
-		const pluginPath = pluginPaths[plugin];
-		const pluginName = toCamelCase(pluginPath);
-
-		output.push(
-			`import ${pluginName} from '${pluginPath}'\n`,
-		);
-
-		const stringified = JSON
-			.stringify(data).replace(
-				`"${plugin}":"${plugin}"`,
-				`\n"${plugin}":${pluginName} as unknown as ${typePlugin}\n`,
-			);
-
-		importStatement = `import type { ${typeConfig}, ${typePlugin} } from '${importFile}';`;
-		exportStatement = `export default ${stringified} as ${typeConfig};`;
-	} else {
-		importStatement = `import type { ${typeConfig} } from '${importFile}';`;
-		exportStatement = `export default ${JSON.stringify(data)} as ${typeConfig};`;
-	}
-
-	output.push(importStatement, exportStatement);
-
-	return output.join('\n');
-}

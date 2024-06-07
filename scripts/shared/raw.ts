@@ -1,17 +1,14 @@
 import type { ESLint, Rule } from 'eslint';
 
-import { Linter } from 'eslint';
-
+import { builtinRules } from 'eslint/use-at-your-own-risk';
 import pluginNode from 'eslint-plugin-n';
 import pluginImport from 'eslint-plugin-import-x';
 import pluginStylistic from '@stylistic/eslint-plugin';
-import pluginTypescript from '@typescript-eslint/eslint-plugin';
+import { plugin as pluginTypescript } from 'typescript-eslint';
 
 import type { RawMetaData } from './types/main.ts';
 
 import { assertNotNull } from './utils/assert.ts';
-
-const eslintRules = new Linter().getRules();
 
 const createEslintMap = (source: Map<string, Rule.RuleModule>) => {
 	const entries = Array.from(source).map(([rule, item]) => {
@@ -49,8 +46,10 @@ const createPluginMap = ({ rules }: ESLint.Plugin) => {
 	return new Map(data);
 };
 
+export const removedRules = ['require-jsdoc', 'valid-jsdoc'];
+
 const rawMetaData = {
-	eslint: createEslintMap(eslintRules),
+	eslint: createEslintMap(builtinRules),
 	// @ts-expect-error
 	import: createPluginMap(pluginImport),
 	node: createPluginMap(pluginNode),

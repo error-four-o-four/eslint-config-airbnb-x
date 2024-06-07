@@ -1,5 +1,5 @@
 import type { Linter } from 'eslint';
-import type { UnknownRecord } from 'type-fest';
+import type { UnknownRecord, UnknownArray } from 'type-fest';
 
 export function assertNotNull(
 	value: unknown,
@@ -29,6 +29,17 @@ export function assertIsRecord(
 
 	Object.keys(input as UnknownRecord)
 		.forEach((key) => assertIsString(key, message));
+}
+
+export function assertIsArray(
+	input: unknown,
+	message: string = 'Expected input to be an \'array\'',
+): asserts input is UnknownArray {
+	assertNotNull(input);
+
+	if (!Array.isArray(input)) {
+		throw new Error(message);
+	}
 }
 
 export function assertRuleLevel(
