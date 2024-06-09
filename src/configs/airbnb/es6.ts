@@ -1,6 +1,5 @@
 /** @file GENERATED WITH SCRIPT */
-
-import { Linter } from 'eslint';
+import type { FlatConfig } from '../../globalTypes.ts';
 
 export default {
 	languageOptions: {
@@ -17,7 +16,9 @@ export default {
 		'arrow-body-style': [
 			'error',
 			'as-needed',
-			{ requireReturnForObjectLiteral: false },
+			{
+				requireReturnForObjectLiteral: false,
+			},
 		],
 		'arrow-parens': ['error', 'always'],
 		'arrow-spacing': [
@@ -36,12 +37,22 @@ export default {
 			},
 		],
 		'no-class-assign': 'error',
-		'no-confusing-arrow': ['error', { allowParens: true }],
+		'no-confusing-arrow': [
+			'error',
+			{
+				allowParens: true,
+			},
+		],
 		'no-const-assign': 'error',
 		'no-dupe-class-members': 'error',
 		'no-duplicate-imports': 'off',
 		'no-new-symbol': 'error',
-		'no-restricted-exports': ['error', { restrictedNamedExports: ['default', 'then'] }],
+		'no-restricted-exports': [
+			'error',
+			{
+				restrictedNamedExports: ['default', 'then'],
+			},
+		],
 		'no-restricted-imports': [
 			'off',
 			{
@@ -95,7 +106,9 @@ export default {
 					object: false,
 				},
 			},
-			{ enforceForRenamedProperties: false },
+			{
+				enforceForRenamedProperties: false,
+			},
 		],
 		'prefer-numeric-literals': 'error',
 		'prefer-reflect': 'off',
@@ -122,4 +135,4 @@ export default {
 		'template-curly-spacing': 'error',
 		'yield-star-spacing': ['error', 'after'],
 	},
-} as Linter.FlatConfig;
+} satisfies FlatConfig;

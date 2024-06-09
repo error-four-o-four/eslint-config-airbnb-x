@@ -1,8 +1,11 @@
 /** @file GENERATED WITH SCRIPT */
-
-import { Linter } from 'eslint';
+import type { FlatConfig, ESLintPlugin } from '../../globalTypes.ts';
+import eslintPluginImportX from 'eslint-plugin-import-x';
 
 export default {
+	plugins: {
+		import: eslintPluginImportX as unknown as ESLintPlugin,
+	},
 	languageOptions: {
 		ecmaVersion: 6,
 		sourceType: 'module',
@@ -102,10 +105,20 @@ export default {
 		'import/newline-after-import': 'error',
 		'import/prefer-default-export': 'error',
 		'import/no-restricted-paths': 'off',
-		'import/max-dependencies': ['off', { max: 10 }],
+		'import/max-dependencies': [
+			'off',
+			{
+				max: 10,
+			},
+		],
 		'import/no-absolute-path': 'error',
 		'import/no-dynamic-require': 'error',
-		'import/no-internal-modules': ['off', { allow: [] }],
+		'import/no-internal-modules': [
+			'off',
+			{
+				allow: [],
+			},
+		],
 		'import/unambiguous': 'off',
 		'import/no-webpack-loader-syntax': 'error',
 		'import/no-unassigned-import': 'off',
@@ -126,8 +139,18 @@ export default {
 		'import/no-default-export': 'off',
 		'import/no-named-export': 'off',
 		'import/no-self-import': 'error',
-		'import/no-cycle': ['error', { maxDepth: '∞' }],
-		'import/no-useless-path-segments': ['error', { commonjs: true }],
+		'import/no-cycle': [
+			'error',
+			{
+				maxDepth: '∞',
+			},
+		],
+		'import/no-useless-path-segments': [
+			'error',
+			{
+				commonjs: true,
+			},
+		],
 		'import/dynamic-import-chunkname': [
 			'off',
 			{
@@ -144,7 +167,12 @@ export default {
 				unusedExports: true,
 			},
 		],
-		'import/no-import-module-exports': ['error', { exceptions: [] }],
+		'import/no-import-module-exports': [
+			'error',
+			{
+				exceptions: [],
+			},
+		],
 		'import/no-relative-packages': 'error',
 	},
-} as Linter.FlatConfig;
+} satisfies FlatConfig;

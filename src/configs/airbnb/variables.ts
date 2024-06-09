@@ -1,6 +1,5 @@
 /** @file GENERATED WITH SCRIPT */
-
-import { Linter } from 'eslint';
+import type { FlatConfig } from '../../globalTypes.ts';
 
 export default {
 	rules: {
@@ -99,4 +98,4 @@ export default {
 			},
 		],
 	},
-} as Linter.FlatConfig;
+} satisfies FlatConfig;

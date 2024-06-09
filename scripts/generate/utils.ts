@@ -181,7 +181,7 @@ export function getRuleValue(
 	const config = source[meta.source];
 	assertNotNull(config.rules);
 
-	const value = config.rules[rule];
+	const value: unknown = config.rules[rule as keyof typeof config.rules];
 	assertNotNull(value);
 
 	return Array.isArray(value)

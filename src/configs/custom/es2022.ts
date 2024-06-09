@@ -1,33 +1,27 @@
-// FILE GENERATED WITH SCRIPT
-
-import type { Linter } from 'eslint';
+/** @file GENERATED WITH SCRIPT */
+import type { FlatConfig } from '../../globalTypes.ts';
 
 export default {
 	name: 'airbnb:es2022',
-	languageOptions: {
-		ecmaVersion: 2022,
-		sourceType: 'module',
-		parserOptions: {
-			ecmaFeatures: {
-				jsx: false,
-				generators: false,
-				objectLiteralDuplicateProperties: false,
-			},
-		},
-	},
 	rules: {
 		'arrow-body-style': [
 			'error',
 			'as-needed',
-			{ requireReturnForObjectLiteral: false },
+			{
+				requireReturnForObjectLiteral: false,
+			},
 		],
 		'constructor-super': 'error',
 		'no-class-assign': 'error',
 		'no-const-assign': 'error',
 		'no-dupe-class-members': 'error',
 		'no-duplicate-imports': 'off',
-		'no-new-symbol': 'error',
-		'no-restricted-exports': ['error', { restrictedNamedExports: ['default', 'then'] }],
+		'no-restricted-exports': [
+			'error',
+			{
+				restrictedNamedExports: ['default', 'then'],
+			},
+		],
 		'no-restricted-imports': [
 			'off',
 			{
@@ -81,7 +75,9 @@ export default {
 					object: false,
 				},
 			},
-			{ enforceForRenamedProperties: false },
+			{
+				enforceForRenamedProperties: false,
+			},
 		],
 		'prefer-numeric-literals': 'error',
 		'prefer-rest-params': 'error',
@@ -104,4 +100,4 @@ export default {
 		],
 		'symbol-description': 'error',
 	},
-} as Linter.FlatConfig;
+} satisfies FlatConfig;

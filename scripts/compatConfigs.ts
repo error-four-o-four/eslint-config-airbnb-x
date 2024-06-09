@@ -19,38 +19,49 @@ import airbnb from 'eslint-config-airbnb-base';
 
 import { pluginPrefix } from '../src/globalSetup.ts';
 
-import { assertNotNull } from './shared/utils/assert.ts';
-import { write } from './shared/utils/write.ts';
+import {
+	assertNotNull,
+	assertIsArray,
+	assertIsRecord,
+} from './shared/utils/assert.ts';
+
+import parse from './shared/utils/parse.ts';
+import write from './shared/utils/write.ts';
+import { merge } from 'ts-deepmerge';
+import { sortConfigRules } from './shared/utils/main.ts';
 
 // #####
 
 type BaseConfigEntry = [string, Linter.BaseConfig];
 type FlatConfigEntry = [string, Linter.FlatConfig];
 
-const baseConfigs = await importBaseConfigs();
-const flatConfigs = convertBaseConfigs(baseConfigs);
-
 const destination = './src/configs/airbnb';
 
-await write.configFiles(destination, flatConfigs);
-write.indexFile(`${destination}/index.ts`, flatConfigs);
+const baseConfigs = await importBaseConfigs();
+const flatConfigs = convertBaseConfigs(baseConfigs);
+const parsedConfigs = parseFlatConfigs(flatConfigs, destination);
+
+await write.files(destination, parsedConfigs);
 
 // #####
 
 async function importBaseConfigs(): Promise<BaseConfigEntry[]> {
-	const promiseBaseConfig = (item: string): Promise<BaseConfigEntry> => {
+	const getPromisedBaseConfig = async (item: string): Promise<BaseConfigEntry> => {
 		const name = basename(item, '.js');
 		const file = pathToFileURL(item).href;
 
-		return new Promise((res) => {
-			import(file).then((module) => {
-				const entry = [name, module.default] as BaseConfigEntry;
-				res(entry);
-			});
-		});
+		const module = await import(file);
+
+		assertIsRecord(module);
+
+		const value = ('default' in module ? module.default : module);
+		return [name, value] as BaseConfigEntry;
 	};
 
-	return Promise.all(airbnb.extends.map(promiseBaseConfig));
+	const source: Linter.BaseConfig = airbnb;
+	assertIsArray(source.extends);
+
+	return Promise.all(source.extends.map(getPromisedBaseConfig));
 }
 
 function convertBaseConfigs(
@@ -99,11 +110,6 @@ function handleExceptions(config: Linter.FlatConfig) {
 		[rule, value]: [string, unknown],
 	) => [`${pluginPrefix.import}/${rule.split('/')[1]}`, value];
 
-	config.plugins = {
-		// @ts-expect-error
-		[pluginPrefix.import]: pluginPrefix.import,
-	};
-
 	assertNotNull(languageOptions);
 	config.languageOptions = languageOptions;
 
@@ -116,4 +122,31 @@ function handleExceptions(config: Linter.FlatConfig) {
 	config.rules = Object.fromEntries(
 		Object.entries(rules).map(iterator),
 	);
+}
+
+function mergeFlatConfigs(entries: FlatConfigEntry[]) {
+	const result = entries.map((entry) => entry[1]).reduce((result, config) => {
+		return merge(result, config);
+	}, {});
+
+	sortConfigRules(result);
+
+	return result;
+}
+
+function parseFlatConfigs(entries: FlatConfigEntry[], folder: string) {
+	const parsed = entries.map((entry) => {
+		const [name, config] = entry;
+		const data = (name === 'imports')
+			? parse.config(config, folder, ['import'])
+			: parse.config(config, folder);
+		return [name, data] as [string, string];
+	});
+
+	parsed.push(['index', parse.index(entries)]);
+
+	const merged = mergeFlatConfigs(entries);
+	parsed.push(['all', parse.config(merged, folder, ['import'])]);
+
+	return parsed;
 }

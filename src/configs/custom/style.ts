@@ -1,8 +1,11 @@
-// FILE GENERATED WITH SCRIPT
-
-import type { Linter } from 'eslint';
+/** @file GENERATED WITH SCRIPT */
+import type { FlatConfig, ESLintPlugin } from '../../globalTypes.ts';
+import stylisticEslintPlugin from '@stylistic/eslint-plugin';
 
 export default {
+	plugins: {
+		style: stylisticEslintPlugin as unknown as ESLintPlugin,
+	},
 	name: 'airbnb:style',
 	rules: {
 		camelcase: [
@@ -42,14 +45,6 @@ export default {
 		'id-denylist': 'off',
 		'id-length': 'off',
 		'id-match': 'off',
-		'line-comment-position': [
-			'off',
-			{
-				position: 'above',
-				ignorePattern: '',
-				applyDefaultPatterns: true,
-			},
-		],
 		'max-depth': ['off', 4],
 		'max-lines': [
 			'off',
@@ -71,7 +66,6 @@ export default {
 		'max-nested-callbacks': 'off',
 		'max-params': ['off', 3],
 		'max-statements': ['off', 10],
-		'multiline-comment-style': ['off', 'starred-block'],
 		'new-cap': [
 			'error',
 			{
@@ -93,6 +87,7 @@ export default {
 		'no-multi-assign': ['error'],
 		'no-negated-condition': 'off',
 		'no-nested-ternary': 'error',
+		'no-object-constructor': 'error',
 		'no-plusplus': 'error',
 		'no-restricted-syntax': [
 			'error',
@@ -123,7 +118,12 @@ export default {
 				enforceInMethodNames: true,
 			},
 		],
-		'no-unneeded-ternary': ['error', { defaultAssignment: false }],
+		'no-unneeded-ternary': [
+			'error',
+			{
+				defaultAssignment: false,
+			},
+		],
 		'one-var': ['error', 'never'],
 		'operator-assignment': ['error', 'always'],
 		'prefer-exponentiation-operator': 'error',
@@ -137,10 +137,11 @@ export default {
 			},
 		],
 		'sort-vars': 'off',
-		'style/array-bracket-newline': ['off', 'consistent'],
+		'unicode-bom': ['error', 'never'],
+		'style/array-bracket-newline': ['error', 'consistent'],
 		'style/array-bracket-spacing': ['error', 'never'],
 		'style/array-element-newline': [
-			'off',
+			'error',
 			{
 				multiline: true,
 				minItems: 3,
@@ -158,18 +159,11 @@ export default {
 		'style/brace-style': [
 			'error',
 			'1tbs',
-			{ allowSingleLine: true },
-		],
-		'style/comma-dangle': [
-			'error',
 			{
-				arrays: 'always-multiline',
-				objects: 'always-multiline',
-				imports: 'always-multiline',
-				exports: 'always-multiline',
-				functions: 'always-multiline',
+				allowSingleLine: true,
 			},
 		],
+		'style/comma-dangle': ['error', 'always-multiline'],
 		'style/comma-spacing': [
 			'error',
 			{
@@ -199,8 +193,8 @@ export default {
 		'style/computed-property-spacing': ['error', 'never'],
 		'style/dot-location': ['error', 'property'],
 		'style/eol-last': ['error', 'always'],
-		'style/func-call-spacing': ['error', 'never'],
 		'style/function-call-argument-newline': ['error', 'consistent'],
+		'style/function-call-spacing': ['error', 'never'],
 		'style/function-paren-newline': ['error', 'multiline-arguments'],
 		'style/generator-star-spacing': [
 			'error',
@@ -225,7 +219,9 @@ export default {
 					parameters: 1,
 					body: 1,
 				},
-				CallExpression: { arguments: 1 },
+				CallExpression: {
+					arguments: 1,
+				},
 				ArrayExpression: 1,
 				ObjectExpression: 1,
 				ImportDeclaration: 1,
@@ -265,10 +261,24 @@ export default {
 				before: true,
 				after: true,
 				overrides: {
-					return: { after: true },
-					throw: { after: true },
-					case: { after: true },
+					return: {
+						after: true,
+					},
+					throw: {
+						after: true,
+					},
+					case: {
+						after: true,
+					},
 				},
+			},
+		],
+		'style/line-comment-position': [
+			'off',
+			{
+				position: 'above',
+				ignorePattern: '',
+				applyDefaultPatterns: true,
 			},
 		],
 		'style/linebreak-style': ['error', 'unix'],
@@ -276,13 +286,15 @@ export default {
 		'style/lines-between-class-members': [
 			'error',
 			'always',
-			{ exceptAfterSingleLine: false },
+			{
+				exceptAfterSingleLine: false,
+			},
 		],
 		'style/max-len': [
 			'error',
-			100,
-			2,
 			{
+				code: 100,
+				tabWidth: 2,
 				ignoreUrls: true,
 				ignoreComments: false,
 				ignoreRegExpLiterals: true,
@@ -290,11 +302,27 @@ export default {
 				ignoreTemplateLiterals: true,
 			},
 		],
-		'style/max-statements-per-line': ['off', { max: 1 }],
+		'style/max-statements-per-line': [
+			'off',
+			{
+				max: 1,
+			},
+		],
+		'style/multiline-comment-style': ['off', 'starred-block'],
 		'style/multiline-ternary': ['off', 'never'],
 		'style/new-parens': 'error',
-		'style/newline-per-chained-call': ['error', { ignoreChainWithDepth: 4 }],
-		'style/no-confusing-arrow': ['error', { allowParens: true }],
+		'style/newline-per-chained-call': [
+			'error',
+			{
+				ignoreChainWithDepth: 4,
+			},
+		],
+		'style/no-confusing-arrow': [
+			'error',
+			{
+				allowParens: true,
+			},
+		],
 		'style/no-extra-parens': [
 			'off',
 			'all',
@@ -337,7 +365,12 @@ export default {
 			},
 		],
 		'style/no-mixed-spaces-and-tabs': 'error',
-		'style/no-multi-spaces': ['error', { ignoreEOLComments: false }],
+		'style/no-multi-spaces': [
+			'error',
+			{
+				ignoreEOLComments: false,
+			},
+		],
 		'style/no-multiple-empty-lines': [
 			'error',
 			{
@@ -358,7 +391,9 @@ export default {
 		'style/nonblock-statement-body-position': [
 			'error',
 			'beside',
-			{ overrides: {} },
+			{
+				overrides: {},
+			},
 		],
 		'style/object-curly-newline': [
 			'error',
@@ -386,12 +421,21 @@ export default {
 			},
 		],
 		'style/object-curly-spacing': ['error', 'always'],
-		'style/object-property-newline': ['error', { allowAllPropertiesOnSameLine: true }],
+		'style/object-property-newline': [
+			'error',
+			{
+				allowAllPropertiesOnSameLine: true,
+			},
+		],
 		'style/one-var-declaration-per-line': ['error', 'always'],
 		'style/operator-linebreak': [
 			'error',
 			'before',
-			{ overrides: { '=': 'none' } },
+			{
+				overrides: {
+					'=': 'none',
+				},
+			},
 		],
 		'style/padded-blocks': [
 			'error',
@@ -400,9 +444,23 @@ export default {
 				classes: 'never',
 				switches: 'never',
 			},
-			{ allowSingleLineBlocks: true },
+			{
+				allowSingleLineBlocks: true,
+			},
 		],
-		'style/padding-line-between-statements': 'off',
+		'style/padding-line-between-statements': [
+			'error',
+			{
+				blankLine: 'always',
+				prev: '*',
+				next: 'directive',
+			},
+			{
+				blankLine: 'always',
+				prev: 'directive',
+				next: '*',
+			},
+		],
 		'style/quote-props': [
 			'error',
 			'as-needed',
@@ -415,7 +473,9 @@ export default {
 		'style/quotes': [
 			'error',
 			'single',
-			{ avoidEscape: true },
+			{
+				avoidEscape: true,
+			},
 		],
 		'style/rest-spread-spacing': ['error', 'never'],
 		'style/semi': ['error', 'always'],
@@ -477,15 +537,16 @@ export default {
 				before: false,
 			},
 		],
-		'style/template-curly-spacing': 'error',
+		'style/template-curly-spacing': ['error', 'never'],
 		'style/template-tag-spacing': ['error', 'never'],
 		'style/wrap-iife': [
 			'error',
 			'outside',
-			{ functionPrototypeMethods: false },
+			{
+				functionPrototypeMethods: false,
+			},
 		],
 		'style/wrap-regex': 'off',
 		'style/yield-star-spacing': ['error', 'after'],
-		'unicode-bom': ['error', 'never'],
 	},
-} as Linter.FlatConfig;
+} satisfies FlatConfig;

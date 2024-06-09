@@ -1,4 +1,3 @@
-/* eslint-disable stylistic/indent */
 import type { Linter } from 'eslint';
 
 import type { SetRequired } from 'type-fest';

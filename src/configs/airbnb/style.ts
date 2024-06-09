@@ -1,6 +1,5 @@
 /** @file GENERATED WITH SCRIPT */
-
-import { Linter } from 'eslint';
+import type { FlatConfig } from '../../globalTypes.ts';
 
 export default {
 	rules: {
@@ -17,7 +16,9 @@ export default {
 		'brace-style': [
 			'error',
 			'1tbs',
-			{ allowSingleLine: true },
+			{
+				allowSingleLine: true,
+			},
 		],
 		camelcase: [
 			'error',
@@ -113,7 +114,9 @@ export default {
 					parameters: 1,
 					body: 1,
 				},
-				CallExpression: { arguments: 1 },
+				CallExpression: {
+					arguments: 1,
+				},
 				ArrayExpression: 1,
 				ObjectExpression: 1,
 				ImportDeclaration: 1,
@@ -153,9 +156,15 @@ export default {
 				before: true,
 				after: true,
 				overrides: {
-					return: { after: true },
-					throw: { after: true },
-					case: { after: true },
+					return: {
+						after: true,
+					},
+					throw: {
+						after: true,
+					},
+					case: {
+						after: true,
+					},
 				},
 			},
 		],
@@ -171,7 +180,9 @@ export default {
 		'lines-between-class-members': [
 			'error',
 			'always',
-			{ exceptAfterSingleLine: false },
+			{
+				exceptAfterSingleLine: false,
+			},
 		],
 		'lines-around-comment': 'off',
 		'lines-around-directive': [
@@ -214,7 +225,12 @@ export default {
 		'max-nested-callbacks': 'off',
 		'max-params': ['off', 3],
 		'max-statements': ['off', 10],
-		'max-statements-per-line': ['off', { max: 1 }],
+		'max-statements-per-line': [
+			'off',
+			{
+				max: 1,
+			},
+		],
 		'multiline-comment-style': ['off', 'starred-block'],
 		'multiline-ternary': ['off', 'never'],
 		'new-cap': [
@@ -233,7 +249,12 @@ export default {
 		'new-parens': 'error',
 		'newline-after-var': 'off',
 		'newline-before-return': 'off',
-		'newline-per-chained-call': ['error', { ignoreChainWithDepth: 4 }],
+		'newline-per-chained-call': [
+			'error',
+			{
+				ignoreChainWithDepth: 4,
+			},
+		],
 		'no-array-constructor': 'error',
 		'no-bitwise': 'error',
 		'no-continue': 'error',
@@ -319,12 +340,19 @@ export default {
 				enforceInMethodNames: true,
 			},
 		],
-		'no-unneeded-ternary': ['error', { defaultAssignment: false }],
+		'no-unneeded-ternary': [
+			'error',
+			{
+				defaultAssignment: false,
+			},
+		],
 		'no-whitespace-before-property': 'error',
 		'nonblock-statement-body-position': [
 			'error',
 			'beside',
-			{ overrides: {} },
+			{
+				overrides: {},
+			},
 		],
 		'object-curly-spacing': ['error', 'always'],
 		'object-curly-newline': [
@@ -352,14 +380,23 @@ export default {
 				},
 			},
 		],
-		'object-property-newline': ['error', { allowAllPropertiesOnSameLine: true }],
+		'object-property-newline': [
+			'error',
+			{
+				allowAllPropertiesOnSameLine: true,
+			},
+		],
 		'one-var': ['error', 'never'],
 		'one-var-declaration-per-line': ['error', 'always'],
 		'operator-assignment': ['error', 'always'],
 		'operator-linebreak': [
 			'error',
 			'before',
-			{ overrides: { '=': 'none' } },
+			{
+				overrides: {
+					'=': 'none',
+				},
+			},
 		],
 		'padded-blocks': [
 			'error',
@@ -368,7 +405,9 @@ export default {
 				classes: 'never',
 				switches: 'never',
 			},
-			{ allowSingleLineBlocks: true },
+			{
+				allowSingleLineBlocks: true,
+			},
 		],
 		'padding-line-between-statements': 'off',
 		'prefer-exponentiation-operator': 'error',
@@ -385,7 +424,9 @@ export default {
 		quotes: [
 			'error',
 			'single',
-			{ avoidEscape: true },
+			{
+				avoidEscape: true,
+			},
 		],
 		'require-jsdoc': 'off',
 		semi: ['error', 'always'],
@@ -460,4 +501,4 @@ export default {
 		'unicode-bom': ['error', 'never'],
 		'wrap-regex': 'off',
 	},
-} as Linter.FlatConfig;
+} satisfies FlatConfig;

@@ -1,6 +1,5 @@
 /** @file GENERATED WITH SCRIPT */
-
-import { Linter } from 'eslint';
+import type { FlatConfig } from '../../globalTypes.ts';
 
 export default {
 	languageOptions: {
@@ -76,7 +75,11 @@ export default {
 			WritableStreamDefaultController: false,
 			WritableStreamDefaultWriter: false,
 		},
-		parserOptions: { ecmaFeatures: { globalReturn: true } },
+		parserOptions: {
+			ecmaFeatures: {
+				globalReturn: true,
+			},
+		},
 	},
 	rules: {
 		'callback-return': 'off',
@@ -91,4 +94,4 @@ export default {
 		'no-restricted-modules': 'off',
 		'no-sync': 'off',
 	},
-} as Linter.FlatConfig;
+} satisfies FlatConfig;

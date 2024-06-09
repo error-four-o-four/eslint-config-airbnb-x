@@ -1,6 +1,13 @@
 import type { Linter } from 'eslint';
 import type { UnknownRecord, UnknownArray } from 'type-fest';
 
+export function assertCondition(
+	condition: boolean,
+	message: string = 'Expoected condition to be true',
+): asserts condition is true {
+	if (!condition) throw new Error(message);
+}
+
 export function assertNotNull(
 	value: unknown,
 	message: string = 'Expected input to be not \'null\' or \'undefined\'',

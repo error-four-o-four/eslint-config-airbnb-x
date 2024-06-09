@@ -1,18 +1,19 @@
-import type { Linter } from 'eslint';
+import type { Linter, Rule } from 'eslint';
 
-import type {
-	ConvertedConfigs,
-	MetaDataProps,
-} from '../shared/types/main.ts';
+import type { PluginPrefix } from '../../src/globalTypes.ts';
+import type { ConvertedConfigs } from '../shared/types/main.ts';
 
-import type {
-	RuleProps,
-	ReplacementOptions,
-} from './types.ts';
+import { pluginPrefix } from '../../src/globalSetup.ts';
 
-import { assertNotNull } from '../shared/utils/assert.ts';
+import rawMetaData from '../shared/raw.ts';
 
-import { mapConfigKeys, verify } from './utils.ts';
+import { assertCondition } from '../shared/utils/assert.ts';
+import { getPrefixedRule } from '../shared/utils/main.ts';
+
+import { sourceConfig } from './setup.ts';
+import { CustomConfigs } from './types.ts';
+import { mapConfigKeys, mapPrefixToConfigKey } from './utils.ts';
+import { getOverwrite, requiresOverwrite } from './overwrites.ts';
 
 /** @todo */
 
@@ -44,34 +45,57 @@ import { mapConfigKeys, verify } from './utils.ts';
 // ❗ upgrade @stylistic
 // 'multiline-comment-style': ['off', 'starred-block'],
 
-const replacements: Partial<
-	Record<
-		RuleProps['rule'],
-		({ meta, value }: ReplacementOptions) => RuleProps
-	>
-> = {
-	'no-new-object': ({ meta }) => ({
-		key: mapConfigKeys(meta.source),
-		rule: 'no-object-constructor',
-		value: 'error',
-	}),
+// const replacements: Partial<
+// 	Record<
+// 		RuleProps['rule'],
+// 		({ meta, value }: ReplacementOptions) => RuleProps
+// 	>
+// > = {
+// 	'no-new-object': ({ meta }) => ({
+// 		key: mapConfigKeys(meta.source),
+// 		rule: 'no-object-constructor',
+// 		value: 'error',
+// 	}),
 
-	/**
-	 * also replaces
-	 * 'no-spaced-func': 'error',
-	 */
-	'style/func-call-spacing': ({ value }) => ({
-		key: 'style',
-		rule: 'style/function-call-spacing',
-		value,
-	}),
+// 	/**
+// 	 * also replaces
+// 	 * 'no-spaced-func': 'error',
+// 	 */
+// 	'style/func-call-spacing': ({ value }) => ({
+// 		key: 'style',
+// 		rule: 'style/function-call-spacing',
+// 		value,
+// 	}),
+// };
+
+export type RuleItem = [string, Linter.RuleEntry];
+
+type BaseProps = {
+	unprefixed?: string,
+	value: Linter.RuleEntry,
+	source: keyof ConvertedConfigs
 };
 
-export function hasBeenReplaced(
+export type MaybeInvalidProps = BaseProps & {
 	rule: string,
-	meta: MetaDataProps,
-	sourceConfigs: ConvertedConfigs,
-): RuleProps | null {
+	meta: Rule.RuleMetaData | undefined,
+};
+
+export type RuleProps = BaseProps & {
+	rule: keyof typeof sourceConfig.rules,
+	meta: Rule.RuleMetaData,
+};
+
+export type ReplacedProps = RuleProps & {
+	replacedBy: string,
+	target: keyof CustomConfigs
+};
+
+function isValidSourceRule(rule: string): rule is keyof typeof sourceConfig.rules {
+	return (rule in sourceConfig.rules);
+}
+
+function hasBeenReplaced(item: RuleProps): string | false {
 	/**
 	 * @note
 	 * there's no need to replace the rule, when
@@ -87,117 +111,94 @@ export function hasBeenReplaced(
 	 * 'newline-before-return'		\ => 'padding-line-between-statements'
 	 */
 
-	assertNotNull(meta.replacedBy);
-
-	const [replacedBy] = meta.replacedBy;
-	assertNotNull(replacedBy);
-
-	const sourceKeys = Object.keys(sourceConfigs) as (keyof ConvertedConfigs)[];
-
-	const matchedKey = sourceKeys.reduce((
-		result: undefined | keyof ConvertedConfigs,
-		key,
-	) => {
-		if (result) return result;
-
-		const source = sourceConfigs[key];
-		assertNotNull(source.rules);
-
-		if (replacedBy in source.rules) {
-			return key;
-		}
-
-		return result;
-	}, undefined);
-
-	if (!matchedKey) {
-		return null;
+	if (!item.meta.replacedBy || item.meta.replacedBy.length === 0) {
+		return false;
 	}
 
-	const matchedSource = sourceConfigs[matchedKey];
-	assertNotNull(matchedSource.rules);
+	assertCondition(item.meta.replacedBy.length === 1);
+	const replacedBy = item.meta.replacedBy[0];
 
-	const matchedValue = matchedSource.rules[rule];
-
-	if (!matchedValue) {
-		return null;
+	if (!isValidSourceRule(replacedBy)) {
+		return false;
 	}
 
-	console.log(`'${rule}' has already been replaced by '${replacedBy}' in '${matchedKey}'`);
-	// console.log(matchedValue, '\n');
+	if (sourceConfig.rules[replacedBy]) {
+		return replacedBy;
+	}
 
-	return {
-		key: mapConfigKeys(matchedKey),
-		rule: replacedBy as RuleProps['rule'],
-		value: matchedValue,
-	};
+	return false;
 }
 
-const replaced = new Set(Object.keys(replacements));
-
-export const replacement = {
-	isRequired(rule: string) {
-		return replaced.has(rule as RuleProps['rule']);
-	},
-	get(
-		rule: string,
-		meta: MetaDataProps,
-		value: Linter.RuleEntry,
-	): RuleProps {
-		const isEslintRule = verify.isESLintRule(rule);
-		const isPluginRule = verify.isPluginRule(rule);
-
-		if (!isEslintRule && !isPluginRule) {
-			throw new Error(`Expected valid rule - '${rule}' is invalid`);
-		}
-
-		const fn = replacements[rule];
-
-		if (!fn) {
-			throw new Error(`Expected replacement for '${rule}' to be defined`);
-		}
-
-		const result = fn({
-			meta,
-			value,
-		});
-
-		console.log(`Replaced '${rule}' by '${result.rule}' in '${result.key}'`);
-		// console.log(result.value, '\n');
-
-		return result;
-	},
+const aliases = {
+	'no-new-object': 'no-object-constructor',
+	'func-call-spacing': pluginPrefix.style + '/function-call-spacing',
 };
 
-// export function requiresReplacement(rule: string) {
-// 	return replaced.has(rule as RuleProps['rule']);
-// }
+const aliasedMap = new Map(Object.entries(aliases));
+const replacementsMap = new Map<string, ReplacedProps>();
 
-// export function getReplacement(
-// 	rule: string,
-// 	meta: MetaDataProps,
-// 	value: Linter.RuleEntry,
-// ): RuleProps {
-// 	const isEslintRule = verify.isESLintRule(rule);
-// 	const isPluginRule = verify.isPluginRule(rule);
+export function requiresReplacement(item: RuleProps) {
+	const alias = aliasedMap.get(item.rule);
 
-// 	if (!isEslintRule && !isPluginRule) {
-// 		throw new Error(`Expected valid rule - '${rule}' is invalid`);
-// 	}
+	if (alias) {
+		item.meta.deprecated = true;
 
-// 	const fn = replacements[rule];
+		const replacement: ReplacedProps = {
+			...item,
+			replacedBy: alias,
+			target: mapConfigKeys(item.source),
+		};
 
-// 	if (!fn) {
-// 		throw new Error(`Expected replacement for '${rule}' to be defined`);
-// 	}
+		/** @todo required ?? */
+		if (requiresOverwrite(item)) {
+			replacement.value = getOverwrite(item);
+		}
 
-// 	const result = fn({
-// 		meta,
-// 		value,
-// 	});
+		replacementsMap.set(item.rule, replacement);
+		return true;
+	}
 
-// 	console.log(`Replaced '${rule}' by '${result.rule}' in '${result.key}'`);
-// 	// console.log(result.value, '\n');
+	const replacedBy = hasBeenReplaced(item);
 
-// 	return result;
-// }
+	if (replacedBy) {
+		item.meta.deprecated = true;
+		console.log(`'${item.rule}' has been deprecated in favour of '${replacedBy}'`);
+		return false;
+	}
+
+	const plugins: (keyof PluginPrefix)[] = ['node', 'style'];
+	const prefixes = plugins.reduce((all, plugin) => {
+		if (rawMetaData[plugin].has(item.rule)) {
+			all.push(plugin);
+		}
+
+		return all;
+	}, [] as (keyof PluginPrefix)[]);
+
+	assertCondition(prefixes.length <= 1, 'Expected no overlaps');
+
+	if (prefixes.length === 1) {
+		item.meta.deprecated = true;
+
+		const prefix = prefixes[0];
+		const replacement: ReplacedProps = {
+			...item,
+			replacedBy: getPrefixedRule(prefix, item.rule),
+			target: mapPrefixToConfigKey(prefix),
+		};
+
+		if (requiresOverwrite(item)) {
+			replacement.value = getOverwrite(item);
+		}
+
+		replacementsMap.set(item.rule, replacement);
+		// console.log(`'${item.rule}' requires to be replaced by '${item.replacedBy}'`);
+		return true;
+	}
+
+	return false;
+}
+
+export function getReplacement(item: RuleProps) {
+	return replacementsMap.get(item.rule);
+}

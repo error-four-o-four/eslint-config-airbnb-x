@@ -1,6 +1,5 @@
-// FILE GENERATED WITH SCRIPT
-
-import type { Linter } from 'eslint';
+/** @file GENERATED WITH SCRIPT */
+import type { FlatConfig } from '../../globalTypes.ts';
 
 export default {
 	name: 'airbnb:variables',
@@ -99,4 +98,4 @@ export default {
 			},
 		],
 	},
-} as Linter.FlatConfig;
+} satisfies FlatConfig;

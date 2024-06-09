@@ -1,11 +1,15 @@
 /** @file GENERATED WITH SCRIPT */
-
-import { Linter } from 'eslint';
+import type { FlatConfig } from '../../globalTypes.ts';
 
 export default {
 	rules: {
 		'for-direction': 'error',
-		'getter-return': ['error', { allowImplicit: true }],
+		'getter-return': [
+			'error',
+			{
+				allowImplicit: true,
+			},
+		],
 		'no-async-promise-executor': 'error',
 		'no-await-in-loop': 'error',
 		'no-compare-neg-zero': 'error',
@@ -50,16 +54,31 @@ export default {
 		'no-template-curly-in-string': 'error',
 		'no-unexpected-multiline': 'error',
 		'no-unreachable': 'error',
-		'no-unreachable-loop': ['error', { ignore: [] }],
+		'no-unreachable-loop': [
+			'error',
+			{
+				ignore: [],
+			},
+		],
 		'no-unsafe-finally': 'error',
 		'no-unsafe-negation': 'error',
-		'no-unsafe-optional-chaining': ['error', { disallowArithmeticOperators: true }],
+		'no-unsafe-optional-chaining': [
+			'error',
+			{
+				disallowArithmeticOperators: true,
+			},
+		],
 		'no-unused-private-class-members': 'off',
 		'no-useless-backreference': 'error',
 		'no-negated-in-lhs': 'off',
 		'require-atomic-updates': 'off',
 		'use-isnan': 'error',
 		'valid-jsdoc': 'off',
-		'valid-typeof': ['error', { requireStringLiterals: true }],
+		'valid-typeof': [
+			'error',
+			{
+				requireStringLiterals: true,
+			},
+		],
 	},
-} as Linter.FlatConfig;
+} satisfies FlatConfig;

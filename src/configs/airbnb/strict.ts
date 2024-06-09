@@ -1,5 +1,8 @@
 /** @file GENERATED WITH SCRIPT */
+import type { FlatConfig } from '../../globalTypes.ts';
 
-import { Linter } from 'eslint';
-
-export default { rules: { strict: ['error', 'never'] } } as Linter.FlatConfig;
+export default {
+	rules: {
+		strict: ['error', 'never'],
+	},
+} satisfies FlatConfig;

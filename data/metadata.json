@@ -267,17 +267,7 @@
       "url": "https://eslint.org/docs/latest/rules/no-sequences"
     },
     "no-throw-literal": {
-      "url": "https://eslint.org/docs/latest/rules/no-throw-literal",
-      "plugins": [
-        {
-          "prefix": "type",
-          "deprecated": true,
-          "replacedBy": [
-            "type/only-throw-error"
-          ],
-          "url": "https://typescript-eslint.io/rules/no-throw-literal"
-        }
-      ]
+      "url": "https://eslint.org/docs/latest/rules/no-throw-literal"
     },
     "no-unmodified-loop-condition": {
       "url": "https://eslint.org/docs/latest/rules/no-unmodified-loop-condition"
@@ -427,14 +417,6 @@
         {
           "prefix": "style",
           "url": "https://eslint.style/rules/ts/no-extra-parens"
-        },
-        {
-          "prefix": "type",
-          "deprecated": true,
-          "replacedBy": [
-            "style/no-extra-parens"
-          ],
-          "url": "https://typescript-eslint.io/rules/no-extra-parens"
         }
       ]
     },
@@ -445,14 +427,6 @@
         {
           "prefix": "style",
           "url": "https://eslint.style/rules/ts/no-extra-semi"
-        },
-        {
-          "prefix": "type",
-          "deprecated": true,
-          "replacedBy": [
-            "style/no-extra-semi"
-          ],
-          "url": "https://typescript-eslint.io/rules/no-extra-semi"
         }
       ]
     },
@@ -476,6 +450,7 @@
       "plugins": [
         {
           "prefix": "type",
+          "deprecated": true,
           "url": "https://typescript-eslint.io/rules/no-loss-of-precision"
         }
       ]
@@ -542,8 +517,7 @@
       "url": "https://eslint.org/docs/latest/rules/use-isnan"
     },
     "valid-jsdoc": {
-      "deprecated": true,
-      "url": "https://eslint.org/docs/latest/rules/valid-jsdoc"
+      "deprecated": true
     },
     "valid-typeof": {
       "url": "https://eslint.org/docs/latest/rules/valid-typeof"
@@ -615,6 +589,10 @@
       "url": "https://eslint.org/docs/latest/rules/no-duplicate-imports"
     },
     "no-new-symbol": {
+      "deprecated": true,
+      "replacedBy": [
+        "no-new-native-nonconstructor"
+      ],
       "url": "https://eslint.org/docs/latest/rules/no-new-symbol"
     },
     "no-restricted-exports": {
@@ -727,71 +705,71 @@
   "imports": {
     "import/default": {
       "unprefixed": "default",
-      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/default.md",
+      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/default.md",
       "plugins": [
         {
           "prefix": "import",
-          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/default.md"
+          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/default.md"
         }
       ]
     },
     "import/dynamic-import-chunkname": {
       "unprefixed": "dynamic-import-chunkname",
-      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/dynamic-import-chunkname.md",
+      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/dynamic-import-chunkname.md",
       "plugins": [
         {
           "prefix": "import",
-          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/dynamic-import-chunkname.md"
+          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/dynamic-import-chunkname.md"
         }
       ]
     },
     "import/export": {
       "unprefixed": "export",
-      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/export.md",
+      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/export.md",
       "plugins": [
         {
           "prefix": "import",
-          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/export.md"
+          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/export.md"
         }
       ]
     },
     "import/exports-last": {
       "unprefixed": "exports-last",
-      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/exports-last.md",
+      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/exports-last.md",
       "plugins": [
         {
           "prefix": "import",
-          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/exports-last.md"
+          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/exports-last.md"
         }
       ]
     },
     "import/extensions": {
       "unprefixed": "extensions",
-      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/extensions.md",
+      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/extensions.md",
       "plugins": [
         {
           "prefix": "import",
-          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/extensions.md"
+          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/extensions.md"
         }
       ]
     },
     "import/first": {
       "unprefixed": "first",
-      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/first.md",
+      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/first.md",
       "plugins": [
         {
           "prefix": "import",
-          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/first.md"
+          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/first.md"
         }
       ]
     },
     "import/group-exports": {
       "unprefixed": "group-exports",
-      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/group-exports.md",
+      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/group-exports.md",
       "plugins": [
         {
           "prefix": "import",
-          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/group-exports.md"
+          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/group-exports.md"
         }
       ]
     },
@@ -809,221 +787,221 @@
     },
     "import/max-dependencies": {
       "unprefixed": "max-dependencies",
-      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/max-dependencies.md",
+      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/max-dependencies.md",
       "plugins": [
         {
           "prefix": "import",
-          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/max-dependencies.md"
+          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/max-dependencies.md"
         }
       ]
     },
     "import/named": {
       "unprefixed": "named",
-      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/named.md",
+      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/named.md",
       "plugins": [
         {
           "prefix": "import",
-          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/named.md"
+          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/named.md"
         }
       ]
     },
     "import/namespace": {
       "unprefixed": "namespace",
-      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/namespace.md",
+      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/namespace.md",
       "plugins": [
         {
           "prefix": "import",
-          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/namespace.md"
+          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/namespace.md"
         }
       ]
     },
     "import/newline-after-import": {
       "unprefixed": "newline-after-import",
-      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/newline-after-import.md",
+      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/newline-after-import.md",
       "plugins": [
         {
           "prefix": "import",
-          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/newline-after-import.md"
+          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/newline-after-import.md"
         }
       ]
     },
     "import/no-absolute-path": {
       "unprefixed": "no-absolute-path",
-      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-absolute-path.md",
+      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-absolute-path.md",
       "plugins": [
         {
           "prefix": "import",
-          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-absolute-path.md"
+          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-absolute-path.md"
         }
       ]
     },
     "import/no-amd": {
       "unprefixed": "no-amd",
-      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-amd.md",
+      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-amd.md",
       "plugins": [
         {
           "prefix": "import",
-          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-amd.md"
+          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-amd.md"
         }
       ]
     },
     "import/no-anonymous-default-export": {
       "unprefixed": "no-anonymous-default-export",
-      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-anonymous-default-export.md",
+      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-anonymous-default-export.md",
       "plugins": [
         {
           "prefix": "import",
-          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-anonymous-default-export.md"
+          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-anonymous-default-export.md"
         }
       ]
     },
     "import/no-commonjs": {
       "unprefixed": "no-commonjs",
-      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-commonjs.md",
+      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-commonjs.md",
       "plugins": [
         {
           "prefix": "import",
-          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-commonjs.md"
+          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-commonjs.md"
         }
       ]
     },
     "import/no-cycle": {
       "unprefixed": "no-cycle",
-      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-cycle.md",
+      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-cycle.md",
       "plugins": [
         {
           "prefix": "import",
-          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-cycle.md"
+          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-cycle.md"
         }
       ]
     },
     "import/no-default-export": {
       "unprefixed": "no-default-export",
-      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-default-export.md",
+      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-default-export.md",
       "plugins": [
         {
           "prefix": "import",
-          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-default-export.md"
+          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-default-export.md"
         }
       ]
     },
     "import/no-deprecated": {
       "unprefixed": "no-deprecated",
-      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-deprecated.md",
+      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-deprecated.md",
       "plugins": [
         {
           "prefix": "import",
-          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-deprecated.md"
+          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-deprecated.md"
         }
       ]
     },
     "import/no-duplicates": {
       "unprefixed": "no-duplicates",
-      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-duplicates.md",
+      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-duplicates.md",
       "plugins": [
         {
           "prefix": "import",
-          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-duplicates.md"
+          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-duplicates.md"
         }
       ]
     },
     "import/no-dynamic-require": {
       "unprefixed": "no-dynamic-require",
-      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-dynamic-require.md",
+      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-dynamic-require.md",
       "plugins": [
         {
           "prefix": "import",
-          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-dynamic-require.md"
+          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-dynamic-require.md"
         }
       ]
     },
     "import/no-extraneous-dependencies": {
       "unprefixed": "no-extraneous-dependencies",
-      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-extraneous-dependencies.md",
+      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-extraneous-dependencies.md",
       "plugins": [
         {
           "prefix": "import",
-          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-extraneous-dependencies.md"
+          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-extraneous-dependencies.md"
         }
       ]
     },
     "import/no-import-module-exports": {
       "unprefixed": "no-import-module-exports",
-      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-import-module-exports.md",
+      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-import-module-exports.md",
       "plugins": [
         {
           "prefix": "import",
-          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-import-module-exports.md"
+          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-import-module-exports.md"
         }
       ]
     },
     "import/no-internal-modules": {
       "unprefixed": "no-internal-modules",
-      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-internal-modules.md",
+      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-internal-modules.md",
       "plugins": [
         {
           "prefix": "import",
-          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-internal-modules.md"
+          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-internal-modules.md"
         }
       ]
     },
     "import/no-mutable-exports": {
       "unprefixed": "no-mutable-exports",
-      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-mutable-exports.md",
+      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-mutable-exports.md",
       "plugins": [
         {
           "prefix": "import",
-          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-mutable-exports.md"
+          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-mutable-exports.md"
         }
       ]
     },
     "import/no-named-as-default": {
       "unprefixed": "no-named-as-default",
-      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-named-as-default.md",
+      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-named-as-default.md",
       "plugins": [
         {
           "prefix": "import",
-          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-named-as-default.md"
+          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-named-as-default.md"
         }
       ]
     },
     "import/no-named-as-default-member": {
       "unprefixed": "no-named-as-default-member",
-      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-named-as-default-member.md",
+      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-named-as-default-member.md",
       "plugins": [
         {
           "prefix": "import",
-          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-named-as-default-member.md"
+          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-named-as-default-member.md"
         }
       ]
     },
     "import/no-named-default": {
       "unprefixed": "no-named-default",
-      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-named-default.md",
+      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-named-default.md",
       "plugins": [
         {
           "prefix": "import",
-          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-named-default.md"
+          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-named-default.md"
         }
       ]
     },
     "import/no-named-export": {
       "unprefixed": "no-named-export",
-      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-named-export.md",
+      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-named-export.md",
       "plugins": [
         {
           "prefix": "import",
-          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-named-export.md"
+          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-named-export.md"
         }
       ]
     },
     "import/no-namespace": {
       "unprefixed": "no-namespace",
-      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-namespace.md",
+      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-namespace.md",
       "plugins": [
         {
           "prefix": "import",
-          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-namespace.md"
+          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-namespace.md"
         },
         {
           "prefix": "type",
@@ -1033,131 +1011,131 @@
     },
     "import/no-nodejs-modules": {
       "unprefixed": "no-nodejs-modules",
-      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-nodejs-modules.md",
+      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-nodejs-modules.md",
       "plugins": [
         {
           "prefix": "import",
-          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-nodejs-modules.md"
+          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-nodejs-modules.md"
         }
       ]
     },
     "import/no-relative-packages": {
       "unprefixed": "no-relative-packages",
-      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-relative-packages.md",
+      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-relative-packages.md",
       "plugins": [
         {
           "prefix": "import",
-          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-relative-packages.md"
+          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-relative-packages.md"
         }
       ]
     },
     "import/no-relative-parent-imports": {
       "unprefixed": "no-relative-parent-imports",
-      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-relative-parent-imports.md",
+      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-relative-parent-imports.md",
       "plugins": [
         {
           "prefix": "import",
-          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-relative-parent-imports.md"
+          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-relative-parent-imports.md"
         }
       ]
     },
     "import/no-restricted-paths": {
       "unprefixed": "no-restricted-paths",
-      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-restricted-paths.md",
+      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-restricted-paths.md",
       "plugins": [
         {
           "prefix": "import",
-          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-restricted-paths.md"
+          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-restricted-paths.md"
         }
       ]
     },
     "import/no-self-import": {
       "unprefixed": "no-self-import",
-      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-self-import.md",
+      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-self-import.md",
       "plugins": [
         {
           "prefix": "import",
-          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-self-import.md"
+          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-self-import.md"
         }
       ]
     },
     "import/no-unassigned-import": {
       "unprefixed": "no-unassigned-import",
-      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-unassigned-import.md",
+      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-unassigned-import.md",
       "plugins": [
         {
           "prefix": "import",
-          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-unassigned-import.md"
+          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-unassigned-import.md"
         }
       ]
     },
     "import/no-unresolved": {
       "unprefixed": "no-unresolved",
-      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-unresolved.md",
+      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-unresolved.md",
       "plugins": [
         {
           "prefix": "import",
-          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-unresolved.md"
+          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-unresolved.md"
         }
       ]
     },
     "import/no-unused-modules": {
       "unprefixed": "no-unused-modules",
-      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-unused-modules.md",
+      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-unused-modules.md",
       "plugins": [
         {
           "prefix": "import",
-          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-unused-modules.md"
+          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-unused-modules.md"
         }
       ]
     },
     "import/no-useless-path-segments": {
       "unprefixed": "no-useless-path-segments",
-      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-useless-path-segments.md",
+      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-useless-path-segments.md",
       "plugins": [
         {
           "prefix": "import",
-          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-useless-path-segments.md"
+          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-useless-path-segments.md"
         }
       ]
     },
     "import/no-webpack-loader-syntax": {
       "unprefixed": "no-webpack-loader-syntax",
-      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-webpack-loader-syntax.md",
+      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-webpack-loader-syntax.md",
       "plugins": [
         {
           "prefix": "import",
-          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/no-webpack-loader-syntax.md"
+          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/no-webpack-loader-syntax.md"
         }
       ]
     },
     "import/order": {
       "unprefixed": "order",
-      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/order.md",
+      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/order.md",
       "plugins": [
         {
           "prefix": "import",
-          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/order.md"
+          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/order.md"
         }
       ]
     },
     "import/prefer-default-export": {
       "unprefixed": "prefer-default-export",
-      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/prefer-default-export.md",
+      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/prefer-default-export.md",
       "plugins": [
         {
           "prefix": "import",
-          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/prefer-default-export.md"
+          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/prefer-default-export.md"
         }
       ]
     },
     "import/unambiguous": {
       "unprefixed": "unambiguous",
-      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/unambiguous.md",
+      "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/unambiguous.md",
       "plugins": [
         {
           "prefix": "import",
-          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.0/docs/rules/unambiguous.md"
+          "url": "https://github.com/un-ts/eslint-plugin-import-x/blob/v0.5.1/docs/rules/unambiguous.md"
         }
       ]
     }
@@ -1305,14 +1283,6 @@
         {
           "prefix": "style",
           "url": "https://eslint.style/rules/ts/block-spacing"
-        },
-        {
-          "prefix": "type",
-          "deprecated": true,
-          "replacedBy": [
-            "style/block-spacing"
-          ],
-          "url": "https://typescript-eslint.io/rules/block-spacing"
         }
       ]
     },
@@ -1323,14 +1293,6 @@
         {
           "prefix": "style",
           "url": "https://eslint.style/rules/ts/brace-style"
-        },
-        {
-          "prefix": "type",
-          "deprecated": true,
-          "replacedBy": [
-            "style/brace-style"
-          ],
-          "url": "https://typescript-eslint.io/rules/brace-style"
         }
       ]
     },
@@ -1347,14 +1309,6 @@
         {
           "prefix": "style",
           "url": "https://eslint.style/rules/ts/comma-dangle"
-        },
-        {
-          "prefix": "type",
-          "deprecated": true,
-          "replacedBy": [
-            "style/comma-dangle"
-          ],
-          "url": "https://typescript-eslint.io/rules/comma-dangle"
         }
       ]
     },
@@ -1365,14 +1319,6 @@
         {
           "prefix": "style",
           "url": "https://eslint.style/rules/ts/comma-spacing"
-        },
-        {
-          "prefix": "type",
-          "deprecated": true,
-          "replacedBy": [
-            "style/comma-spacing"
-          ],
-          "url": "https://typescript-eslint.io/rules/comma-spacing"
         }
       ]
     },
@@ -1416,14 +1362,6 @@
         {
           "prefix": "style",
           "url": "https://eslint.style/rules/ts/function-call-spacing"
-        },
-        {
-          "prefix": "type",
-          "deprecated": true,
-          "replacedBy": [
-            "style/func-call-spacing"
-          ],
-          "url": "https://typescript-eslint.io/rules/func-call-spacing"
         }
       ]
     },
@@ -1482,14 +1420,6 @@
         {
           "prefix": "style",
           "url": "https://eslint.style/rules/ts/indent"
-        },
-        {
-          "prefix": "type",
-          "deprecated": true,
-          "replacedBy": [
-            "style/indent"
-          ],
-          "url": "https://typescript-eslint.io/rules/indent"
         }
       ]
     },
@@ -1510,14 +1440,6 @@
         {
           "prefix": "style",
           "url": "https://eslint.style/rules/ts/key-spacing"
-        },
-        {
-          "prefix": "type",
-          "deprecated": true,
-          "replacedBy": [
-            "style/key-spacing"
-          ],
-          "url": "https://typescript-eslint.io/rules/key-spacing"
         }
       ]
     },
@@ -1528,19 +1450,18 @@
         {
           "prefix": "style",
           "url": "https://eslint.style/rules/ts/keyword-spacing"
-        },
-        {
-          "prefix": "type",
-          "deprecated": true,
-          "replacedBy": [
-            "style/keyword-spacing"
-          ],
-          "url": "https://typescript-eslint.io/rules/keyword-spacing"
         }
       ]
     },
     "line-comment-position": {
-      "url": "https://eslint.org/docs/latest/rules/line-comment-position"
+      "deprecated": true,
+      "url": "https://eslint.org/docs/latest/rules/line-comment-position",
+      "plugins": [
+        {
+          "prefix": "style",
+          "url": "https://eslint.style/rules/js/line-comment-position"
+        }
+      ]
     },
     "linebreak-style": {
       "deprecated": true,
@@ -1559,14 +1480,6 @@
         {
           "prefix": "style",
           "url": "https://eslint.style/rules/ts/lines-around-comment"
-        },
-        {
-          "prefix": "type",
-          "deprecated": true,
-          "replacedBy": [
-            "style/lines-around-comment"
-          ],
-          "url": "https://typescript-eslint.io/rules/lines-around-comment"
         }
       ]
     },
@@ -1584,14 +1497,6 @@
         {
           "prefix": "style",
           "url": "https://eslint.style/rules/ts/lines-between-class-members"
-        },
-        {
-          "prefix": "type",
-          "deprecated": true,
-          "replacedBy": [
-            "style/lines-between-class-members"
-          ],
-          "url": "https://typescript-eslint.io/rules/lines-between-class-members"
         }
       ]
     },
@@ -1640,7 +1545,14 @@
       ]
     },
     "multiline-comment-style": {
-      "url": "https://eslint.org/docs/latest/rules/multiline-comment-style"
+      "deprecated": true,
+      "url": "https://eslint.org/docs/latest/rules/multiline-comment-style",
+      "plugins": [
+        {
+          "prefix": "style",
+          "url": "https://eslint.style/rules/js/multiline-comment-style"
+        }
+      ]
     },
     "multiline-ternary": {
       "deprecated": true,
@@ -1835,14 +1747,6 @@
         {
           "prefix": "style",
           "url": "https://eslint.style/rules/ts/object-curly-spacing"
-        },
-        {
-          "prefix": "type",
-          "deprecated": true,
-          "replacedBy": [
-            "style/object-curly-spacing"
-          ],
-          "url": "https://typescript-eslint.io/rules/object-curly-spacing"
         }
       ]
     },
@@ -1899,14 +1803,6 @@
         {
           "prefix": "style",
           "url": "https://eslint.style/rules/ts/padding-line-between-statements"
-        },
-        {
-          "prefix": "type",
-          "deprecated": true,
-          "replacedBy": [
-            "style/padding-line-between-statements"
-          ],
-          "url": "https://typescript-eslint.io/rules/padding-line-between-statements"
         }
       ]
     },
@@ -1933,20 +1829,11 @@
         {
           "prefix": "style",
           "url": "https://eslint.style/rules/ts/quotes"
-        },
-        {
-          "prefix": "type",
-          "deprecated": true,
-          "replacedBy": [
-            "style/quotes"
-          ],
-          "url": "https://typescript-eslint.io/rules/quotes"
         }
       ]
     },
     "require-jsdoc": {
-      "deprecated": true,
-      "url": "https://eslint.org/docs/latest/rules/require-jsdoc"
+      "deprecated": true
     },
     "semi": {
       "deprecated": true,
@@ -1955,14 +1842,6 @@
         {
           "prefix": "style",
           "url": "https://eslint.style/rules/ts/semi"
-        },
-        {
-          "prefix": "type",
-          "deprecated": true,
-          "replacedBy": [
-            "style/semi"
-          ],
-          "url": "https://typescript-eslint.io/rules/semi"
         }
       ]
     },
@@ -1999,14 +1878,6 @@
         {
           "prefix": "style",
           "url": "https://eslint.style/rules/ts/space-before-blocks"
-        },
-        {
-          "prefix": "type",
-          "deprecated": true,
-          "replacedBy": [
-            "style/space-before-blocks"
-          ],
-          "url": "https://typescript-eslint.io/rules/space-before-blocks"
         }
       ]
     },
@@ -2017,14 +1888,6 @@
         {
           "prefix": "style",
           "url": "https://eslint.style/rules/ts/space-before-function-paren"
-        },
-        {
-          "prefix": "type",
-          "deprecated": true,
-          "replacedBy": [
-            "style/space-before-function-paren"
-          ],
-          "url": "https://typescript-eslint.io/rules/space-before-function-paren"
         }
       ]
     },
@@ -2045,14 +1908,6 @@
         {
           "prefix": "style",
           "url": "https://eslint.style/rules/ts/space-infix-ops"
-        },
-        {
-          "prefix": "type",
-          "deprecated": true,
-          "replacedBy": [
-            "style/space-infix-ops"
-          ],
-          "url": "https://typescript-eslint.io/rules/space-infix-ops"
         }
       ]
     },

@@ -1,30 +1,25 @@
 import type { ConvertedConfigs } from '../shared/types/main.ts';
 
-// import type {
-// 	ConvertedConfigKeysWithOptions,
-// } from './types.ts';
-
+/** @note created with 'node:compat' */
+import sourceConfig from '../../src/configs/airbnb/all.ts';
 import convertedConfigs from '../../src/configs/airbnb/index.ts';
 
 // #####
+
+export {
+	sourceConfig,
+	convertedConfigs,
+};
 
 export const convertedConfigKeys = Object.keys(
 	convertedConfigs,
 ) as [keyof ConvertedConfigs];
 
-// export const convertedConfigWithOptionKeys = [
-// 	'es6',
-// 	'imports',
-// 	'node',
-// ] as Readonly<Array<ConvertedConfigKeysWithOptions>>;
-
-// #####
-
 const extractedConfigKeys = convertedConfigKeys.filter(
 	(key): key is Readonly<Exclude<keyof ConvertedConfigs, 'es6'>> => key !== 'es6',
 );
 
-export const addedConfigKeys = [
+const addedConfigKeys = [
 	'es2022',
 	'typescript',
 	'disableLegacy',
@@ -32,7 +27,7 @@ export const addedConfigKeys = [
 
 type ConcatTuple<
 	K1 extends string[],
-	K2 extends string[]
+	K2 extends string[],
 > = [...K1, ...K2];
 
 export const customConfigKeys: ConcatTuple<

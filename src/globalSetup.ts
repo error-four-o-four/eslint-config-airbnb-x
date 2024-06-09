@@ -1,5 +1,7 @@
 import type { FileExtension } from 'eslint-plugin-import-x/types.js';
 
+import pkg from '../package.json' assert { type: 'json' };
+
 export const ECMA_VERSION = 2022;
 export const SOURCE_TYPE = 'module';
 
@@ -47,10 +49,10 @@ export const pluginNames: Record<
 
 export const pluginPaths: Record<
 	keyof typeof pluginPrefix,
-	string
+	keyof typeof pkg.dependencies
 > = {
 	import: 'eslint-plugin-import-x',
 	node: 'eslint-plugin-n',
 	style: '@stylistic/eslint-plugin',
-	type: '@typescript-eslint/eslint-plugin',
+	type: 'typescript-eslint',
 } as const;

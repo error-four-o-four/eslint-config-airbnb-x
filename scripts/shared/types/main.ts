@@ -4,10 +4,9 @@ import type { ImportSettings as ImportXSettings } from 'eslint-plugin-import-x/t
 
 import type { KebabCase } from 'type-fest';
 
-/** @note created with 'node:compat' */
-import convertedConfigs from '../../../src/configs/airbnb/index.ts';
-
 import { pluginNames, pluginPrefix } from '../../../src/globalSetup.ts';
+
+import { convertedConfigs } from '../../generate/setup.ts';
 
 export type ConvertedConfigs = typeof convertedConfigs;
 

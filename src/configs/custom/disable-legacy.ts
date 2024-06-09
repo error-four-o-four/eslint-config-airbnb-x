@@ -1,6 +1,5 @@
-// FILE GENERATED WITH SCRIPT
-
-import type { Linter } from 'eslint';
+/** @file GENERATED WITH SCRIPT */
+import type { FlatConfig } from '../../globalTypes.ts';
 
 export default {
 	name: 'airbnb:disable-legacy',
@@ -30,12 +29,14 @@ export default {
 		'jsx-quotes': 0,
 		'key-spacing': 0,
 		'keyword-spacing': 0,
+		'line-comment-position': 0,
 		'linebreak-style': 0,
 		'lines-around-comment': 0,
 		'lines-around-directive': 0,
 		'lines-between-class-members': 0,
 		'max-len': 0,
 		'max-statements-per-line': 0,
+		'multiline-comment-style': 0,
 		'multiline-ternary': 0,
 		'new-parens': 0,
 		'newline-after-var': 0,
@@ -56,6 +57,7 @@ export default {
 		'no-negated-in-lhs': 0,
 		'no-new-object': 0,
 		'no-new-require': 0,
+		'no-new-symbol': 0,
 		'no-path-concat': 0,
 		'no-process-env': 0,
 		'no-process-exit': 0,
@@ -77,7 +79,6 @@ export default {
 		'prefer-reflect': 0,
 		'quote-props': 0,
 		quotes: 0,
-		'require-jsdoc': 0,
 		'rest-spread-spacing': 0,
 		semi: 0,
 		'semi-spacing': 0,
@@ -91,9 +92,8 @@ export default {
 		'switch-colon-spacing': 0,
 		'template-curly-spacing': 0,
 		'template-tag-spacing': 0,
-		'valid-jsdoc': 0,
 		'wrap-iife': 0,
 		'wrap-regex': 0,
 		'yield-star-spacing': 0,
 	},
-} as Linter.FlatConfig;
+} satisfies FlatConfig;

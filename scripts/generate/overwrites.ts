@@ -1,47 +1,38 @@
 import type { Linter } from 'eslint';
 
-import type {
-	MetaDataProps,
-	MetaDataPluginProps,
-} from '../shared/types/main.ts';
-
-import type {
-	RuleProps,
-	OverwriteOptions,
-} from './types.ts';
+import type { RuleProps } from './replacements.ts';
 
 import {
+	assertNotNull,
 	assertRuleLevel,
 	assertRuleLevelAndOptions,
 } from '../shared/utils/assert.ts';
 
-import { verify } from './utils.ts';
+import { sourceConfig } from './setup.ts';
 
 const overwrites: Partial<
 	Record<
-		RuleProps['rule'],
-		({
-			value,
-			meta,
-			plugin,
-		}: OverwriteOptions) => Linter.RuleEntry
+		keyof typeof sourceConfig.rules,
+		(props: RuleProps) => Linter.RuleEntry
 	>
 > = {
 	'import/no-extraneous-dependencies': ({ value }) => {
 		assertRuleLevelAndOptions(value);
 
-		const [severity, dependants] = value;
+		const [severity, dependencies] = value;
 
 		return [
 			severity,
 			{
 				devDependencies: [
-					...dependants.devDependencies,
+					// eslint-disable-next-line typed/no-unsafe-member-access
+					...dependencies.devDependencies,
 					'**/eslint.config.js',
 					'**/vite.config.js',
 					'**/vite.config.*.js',
 				],
-				optionalDependencies: dependants.optionalDependencies,
+				// eslint-disable-next-line typed/no-unsafe-member-access
+				optionalDependencies: dependencies.optionalDependencies,
 			},
 		];
 	},
@@ -51,14 +42,14 @@ const overwrites: Partial<
 	// TODO: enable? semver-major
 	// 'array-bracket-newline': ['off', 'consistent'],; // object option alternative: { multiline: true, minItems: 3 }
 	// https://eslint.style/rules/js/array-bracket-newline
-	'style/array-bracket-newline': () => ['error', 'consistent'],
+	'array-bracket-newline': () => ['error', 'consistent'],
 
 	// enforce line breaks between array elements
 	// https://eslint.org/docs/rules/array-element-newline
 	// TODO: enable? semver-major
 	// 'array-element-newline': ['off', { multiline: true, minItems: 3 }],
 	// https://eslint.style/rules/js/array-element-newline
-	'style/array-element-newline': ({ value }) => {
+	'array-element-newline': ({ value }) => {
 		assertRuleLevelAndOptions(value);
 
 		const options = value[1];
@@ -66,7 +57,7 @@ const overwrites: Partial<
 		return ['error', options];
 	},
 
-	'style/comma-dangle': () => ['error', 'always-multiline'],
+	'comma-dangle': () => ['error', 'always-multiline'],
 
 	// specify the maximum length of a line in your program
 	// https://eslint.org/docs/rules/max-len
@@ -78,7 +69,7 @@ const overwrites: Partial<
 	// 	ignoreTemplateLiterals: true,
 	// }],
 	// https://eslint.style/rules/js/max-len
-	'style/max-len': ({ value }) => {
+	'max-len': ({ value }) => {
 		assertRuleLevelAndOptions(value);
 
 		const [
@@ -102,7 +93,7 @@ const overwrites: Partial<
 	// https://eslint.org/docs/rules/padding-line-between-statements
 	// 'padding-line-between-statements': 'off',
 	// https://eslint.style/rules/ts/padding-line-between-statements
-	'style/padding-line-between-statements': () => [
+	'padding-line-between-statements': () => [
 		'error',
 		{
 			blankLine: 'always',
@@ -124,7 +115,19 @@ const overwrites: Partial<
 	},
 };
 
-const overwritten = new Set(Object.keys(overwrites));
+const overwrittenMap = new Set(Object.keys(overwrites));
+
+export function requiresOverwrite(item: RuleProps) {
+	return overwrittenMap.has(item.rule);
+}
+
+export function getOverwrite(item: RuleProps) {
+	const fn = overwrites[item.rule];
+
+	assertNotNull(fn);
+
+	return fn(item);
+}
 
 // function assertRequiresOverwrite(
 // 	rule: string,
@@ -134,41 +137,40 @@ const overwritten = new Set(Object.keys(overwrites));
 // 	throw new Error(`Expected overwrite for '${rule}' to be required`);
 // }
 
-// eslint-disable-next-line import/prefer-default-export
-export const overwrite = {
-	isRequired(rule: string) {
-		return overwritten.has(rule);
-	},
-	get(
-		rule: string,
-		value: RuleProps['value'],
-		meta: MetaDataProps,
-		plugin?: MetaDataPluginProps,
-	): Linter.RuleEntry {
-		const isEslintRule = verify.isESLintRule(rule);
-		const isPluginRule = verify.isPluginRule(rule);
+// export const overwrite = {
+// 	isRequired(rule: string) {
+// 		return overwrittenMap.has(rule);
+// 	},
+// 	get(
+// 		rule: string,
+// 		value: RuleProps['value'],
+// 		meta: MetaDataProps,
+// 		plugin?: MetaDataPluginProps,
+// 	): Linter.RuleEntry {
+// 		const isEslintRule = verify.isESLintRule(rule);
+// 		const isPluginRule = verify.isPluginRule(rule);
 
-		if (!isEslintRule && !isPluginRule) {
-			throw new Error(`Expected valid rule - '${rule}' is invalid`);
-		}
+// 		if (!isEslintRule && !isPluginRule) {
+// 			throw new Error(`Expected valid rule - '${rule}' is invalid`);
+// 		}
 
-		const fn = overwrites[rule];
+// 		const fn = overwrites[rule];
 
-		if (!fn) {
-			throw new Error(`Expected overwrite for '${rule}' to be defined`);
-		}
+// 		if (!fn) {
+// 			throw new Error(`Expected overwrite for '${rule}' to be defined`);
+// 		}
 
-		const result = fn({
-			value,
-			meta,
-			plugin,
-		});
+// 		const result = fn({
+// 			value,
+// 			meta,
+// 			plugin,
+// 		});
 
-		console.log(`Overwritten '${rule}' in '${meta.source}'`);
+// 		console.log(`Overwritten '${rule}' in '${meta.source}'`);
 
-		return result;
-	},
-};
+// 		return result;
+// 	},
+// };
 
 // export function requiresOverwrite(rule: string) {
 // 	return overwritten.has(rule as RuleProps['rule']);

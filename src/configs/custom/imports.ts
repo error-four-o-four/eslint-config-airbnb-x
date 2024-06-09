@@ -1,27 +1,12 @@
-// FILE GENERATED WITH SCRIPT
-
-import type { Linter } from 'eslint';
+/** @file GENERATED WITH SCRIPT */
+import type { FlatConfig, ESLintPlugin } from '../../globalTypes.ts';
+import eslintPluginImportX from 'eslint-plugin-import-x';
 
 export default {
+	plugins: {
+		import: eslintPluginImportX as unknown as ESLintPlugin,
+	},
 	name: 'airbnb:imports',
-	languageOptions: {
-		ecmaVersion: 2022,
-		sourceType: 'module',
-		parserOptions: {
-			ecmaVersion: 2022,
-			sourceType: 'module',
-		},
-	},
-	settings: {
-		'import/resolver': {
-			node: { extensions: ['.json'] },
-			typescript: { extensions: ['.js', '.mjs'] },
-		},
-		'import/extensions': ['.js', '.mjs'],
-		'import/core-modules': [],
-		'import/ignore': ['node_modules', '\\.(coffee|scss|css|less|hbs|svg|json)$'],
-		'import/parsers': { espree: ['.js', '.mjs'] },
-	},
 	rules: {
 		'import/default': 'off',
 		'import/dynamic-import-chunkname': [
@@ -45,7 +30,12 @@ export default {
 		'import/first': 'error',
 		'import/group-exports': 'off',
 		'import/imports-first': 0,
-		'import/max-dependencies': ['off', { max: 10 }],
+		'import/max-dependencies': [
+			'off',
+			{
+				max: 10,
+			},
+		],
 		'import/named': 'error',
 		'import/namespace': 'off',
 		'import/newline-after-import': 'error',
@@ -63,7 +53,12 @@ export default {
 			},
 		],
 		'import/no-commonjs': 'off',
-		'import/no-cycle': ['error', { maxDepth: '∞' }],
+		'import/no-cycle': [
+			'error',
+			{
+				maxDepth: '∞',
+			},
+		],
 		'import/no-default-export': 'off',
 		'import/no-deprecated': 'off',
 		'import/no-duplicates': 'error',
@@ -101,8 +96,18 @@ export default {
 				optionalDependencies: false,
 			},
 		],
-		'import/no-import-module-exports': ['error', { exceptions: [] }],
-		'import/no-internal-modules': ['off', { allow: [] }],
+		'import/no-import-module-exports': [
+			'error',
+			{
+				exceptions: [],
+			},
+		],
+		'import/no-internal-modules': [
+			'off',
+			{
+				allow: [],
+			},
+		],
 		'import/no-mutable-exports': 'error',
 		'import/no-named-as-default': 'error',
 		'import/no-named-as-default-member': 'error',
@@ -130,7 +135,12 @@ export default {
 				unusedExports: true,
 			},
 		],
-		'import/no-useless-path-segments': ['error', { commonjs: true }],
+		'import/no-useless-path-segments': [
+			'error',
+			{
+				commonjs: true,
+			},
+		],
 		'import/no-webpack-loader-syntax': 'error',
 		'import/order': [
 			'error',
@@ -147,4 +157,4 @@ export default {
 		'import/prefer-default-export': 'error',
 		'import/unambiguous': 'off',
 	},
-} as Linter.FlatConfig;
+} satisfies FlatConfig;
