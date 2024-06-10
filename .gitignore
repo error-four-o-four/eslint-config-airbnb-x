@@ -1,4 +1,5 @@
 node_modules
 *.tsbuildinfo
 *.tgz
-extracted*.ts
+dist
+logs

@@ -39,7 +39,7 @@ import write from './utils/write.ts';
 type BaseConfigEntry = [string, Linter.BaseConfig];
 type FlatConfigEntry = [string, Linter.FlatConfig];
 
-const configsDestination = './lib/configs/compat';
+const configsDestination = './lib/configs/legacy';
 const mergedDestination = './lib/configs/merged';
 
 console.log('Converting configs ...');
@@ -56,7 +56,7 @@ const parsedMergedConfig = parse.config(mergedConfig, mergedDestination, 'import
 console.log('Writing files ...');
 
 await write.files(configsDestination, parsedConfigs);
-await write.file(`${mergedDestination}/compat.ts`, parsedMergedConfig);
+await write.file(`${mergedDestination}/legacy.ts`, parsedMergedConfig);
 
 // #####
 

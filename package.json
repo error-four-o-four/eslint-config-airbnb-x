@@ -16,11 +16,12 @@
 	"keywords": [
 		"eslint",
 		"eslint-config",
-		"eslint-flat-config",
 		"airbnb",
+		"unofficial",
 		"styleguide",
 		"style-guide",
-		"unofficial"
+		"typescript",
+		"typescript-eslint"
 	],
 	"files": [
 		"dist",
@@ -37,9 +38,17 @@
 			"types": "./dist/base/index.d.ts",
 			"import": "./dist/base/index.js"
 		},
-		"./compat": {
-			"types": "./dist/compat/index.d.ts",
-			"import": "./dist/compat/index.js"
+		"./base-ts": {
+			"types": "./dist/base-ts/index.d.ts",
+			"import": "./dist/base-ts/index.js"
+		},
+		"./legacy": {
+			"types": "./dist/legacy/index.d.ts",
+			"import": "./dist/legacy/index.js"
+		},
+		"./merged-legacy": {
+			"types": "./dist/legacy/merged.d.ts",
+			"import": "./dist/legacy/merged.js"
 		}
 	},
 	"engines": {
@@ -55,15 +64,19 @@
 		"type:check": "tsc -p tsconfig.json",
 		"node:compat": "tsx src/compatConfigs.ts",
 		"node:generate": "tsx src/generateConfigs.ts",
-		"clean:base": "rimraf dist/base",
-		"build:base": "//tsup-node --entry.index src/defineBaseConfig.ts --format esm --minify --dts -d ./dist/base",
-		"clean:compat": "rimraf dist/compat",
-		"build:compat": "//tsup-node --entry.index src/compat.ts --format esm --minify --dts -d ./dist/compat",
-		"clean:configs": "rimraf dist/configs",
-		"build:configs": "//tsup-node --entry.index src/configs.ts --format esm --minify --dts -d ./dist/configs",
 		"clean": "rimraf dist/",
-		"build": "//npm run clean && npm run build:all",
-		"build:all": "//npm run build:base && npm run build:compat && npm run build:configs"
+		"build": "npm run clean && npm run build:all",
+		"build:all": "npm run build:legacy && npm run build:configs && npm run build:base && npm run build:base:ts",
+		"clean:legacy": "rimraf dist/legacy",
+		"build:legacy": "npm run build:legacy:configs && npm run build:legacy:merged",
+		"build:legacy:configs": "tsup-node --entry.index lib/configs/legacy/index.ts --format esm --minify --dts -d ./dist/legacy",
+		"build:legacy:merged": "tsup-node --entry.merged lib/configs/merged/legacy.ts --format esm --minify --dts -d ./dist/legacy",
+		"clean:configs": "rimraf dist/configs",
+		"build:configs": "tsup-node --entry.index lib/configs/base/index.ts --format esm --minify --dts -d ./dist/configs",
+		"clean:base": "rimraf dist/base",
+		"build:base": "tsup-node --entry.index lib/configs/merged/base.ts --format esm --minify --dts -d ./dist/base",
+		"clean:base:ts": "rimraf dist/base-ts",
+		"build:base:ts": "tsup-node --entry.index lib/configs/merged/base-ts.ts --format esm --minify --dts -d ./dist/base-ts"
 	},
 	"dependencies": {
 		"@stylistic/eslint-plugin": "^2.1.0",

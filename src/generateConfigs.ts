@@ -31,7 +31,7 @@ import {
 
 // #####
 
-const configDestination = './lib/configs/custom';
+const configDestination = './lib/configs/base';
 const mergedDestination = './lib/configs/merged';
 
 console.log('Generating configs ...');
@@ -58,7 +58,7 @@ function generateMergedConfigs(input: TargetConfigs) {
 	const baseTs = generateTypescriptConfig(base);
 	baseTs.name = 'airbnb:base-ts';
 
-	return [['custom', base], ['custom-ts', baseTs]] as [string, FlatConfig][];
+	return [['base', base], ['base-ts', baseTs]] as [string, FlatConfig][];
 }
 
 function parseFlatConfigs(configs: TargetConfigs, folder: string) {
@@ -102,7 +102,7 @@ function parseMergedConfigs(entries: [string, FlatConfig][], folder: string) {
 		];
 
 		/** @todo string literals */
-		if (name === 'custom-ts') {
+		if (name === 'base-ts') {
 			params.push('type');
 		}
 

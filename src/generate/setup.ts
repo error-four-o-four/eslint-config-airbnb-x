@@ -2,8 +2,8 @@ import type { FlatConfig } from '../globalTypes.ts';
 import type { ConcatTuple } from '../utils/types.ts';
 
 /** @note created with 'node:compat' */
-import airbnbConfig from '../../lib/configs/merged/compat.ts';
-import sourceConfigs from '../../lib/configs/compat/index.ts';
+import airbnbConfig from '../../lib/configs/merged/legacy.ts';
+import sourceConfigs from '../../lib/configs/legacy/index.ts';
 
 import { toKebabCase } from '../utils/helpers.ts';
 

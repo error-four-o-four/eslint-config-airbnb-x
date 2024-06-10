@@ -1,8 +1,8 @@
 import type { Linter, Rule } from 'eslint';
 
 /** @note created with 'node:compat' */
-import airbnbConfig from '../../lib/configs/merged/compat.ts';
-import sourceConfigs from '../../lib/configs/compat/index.ts';
+import legacyConfig from '../../lib/configs/merged/legacy.ts';
+import sourceConfigs from '../../lib/configs/legacy/index.ts';
 
 import type { FlatConfigWithRules } from '../globalTypes.ts';
 
@@ -28,7 +28,7 @@ export type RawMetaData = Readonly<
 	>
 >;
 
-export type AirbnbRule = keyof typeof airbnbConfig.rules;
+export type AirbnbRule = keyof typeof legacyConfig.rules;
 
 // export type AirbnbBuiltInRule = AirbnbRule extends infer U
 // 	? U extends `${string}/${string}` ? never : U : never;
