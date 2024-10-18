@@ -1,0 +1,20 @@
+{
+  "name": "@eslint-config-airbnb-x/js",
+  "version": "0.0.0",
+  "description": "Unofficial port of eslint airbnb base styleguide to eslint-flat-config",
+	"keywords": [
+		"eslint",
+		"eslint-config",
+		"eslint-flat-config",
+		"airbnb",
+		"styleguide",
+		"unofficial"
+	],
+  "devDependencies": {
+    "@eslint-config-airbnb-x/utils": "file:../../shared"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "license": "MIT"
+}

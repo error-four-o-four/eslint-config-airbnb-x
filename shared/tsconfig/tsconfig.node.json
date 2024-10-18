@@ -1,0 +1,40 @@
+{
+	"$schema": "http://json.schemastore.org/tsconfig",
+	"display": "Node 18",
+	"compilerOptions": {
+		// https://github.com/tsconfig/bases/tree/main/bases
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
+		"target": "ESNext",
+
+		"lib": ["ESNext"],
+		"skipLibCheck": true,
+		"esModuleInterop": true,
+    "isolatedModules": true,
+
+		"strict": true,
+
+    "allowUnusedLabels": false,
+    "allowUnreachableCode": false,
+    "exactOptionalPropertyTypes": false,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noUncheckedIndexedAccess": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+
+		"inlineSources": false,
+		"forceConsistentCasingInFileNames": true,
+		"preserveWatchOutput": true,
+
+		"types": ["node"],
+	},
+	"exclude": [
+		"node_modules",
+		"**/node_modules",
+		"dist",
+		"**/dist",
+	]
+}

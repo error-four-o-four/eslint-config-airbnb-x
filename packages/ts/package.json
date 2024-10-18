@@ -1,0 +1,19 @@
+{
+  "name": "@eslint-config-airbnb-x/ts",
+  "version": "0.0.0",
+	"keywords": [
+		"eslint",
+		"eslint-config",
+		"eslint-flat-config",
+    "typescript",
+    "typescript-eslint",
+		"airbnb",
+		"styleguide",
+		"unofficial"
+	],
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "license": "MIT"
+}
